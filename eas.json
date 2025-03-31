@@ -29,6 +29,9 @@
       "node": "20.15.1",
       "env": {
         "API_URL": "https://1004-115-98-234-26.ngrok-free.app"
+      },
+      "android": {
+        "buildType": "apk"
       }
     },
     "test": {
