@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-first-app",
-    "slug": "my-first-app",
+    "name": "my-second-app",
+    "slug": "my-second-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "myapp",
@@ -10,14 +10,14 @@
     "ios": {
       "supportsTablet": true,
       "usesIcloudStorage": true,
-      "bundleIdentifier": "com.ganeshghate.myfirstapp"
+      "bundleIdentifier": "com.ganeshghate.mysecondapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ganeshghate.myfirstapp"
+      "package": "com.ganeshghate.mysecondapp"
     },
     "web": {
       "bundler": "metro",
@@ -55,7 +55,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "dbc957aa-d236-4d1d-9f7a-0abe226efcef"
+        "projectId": "83ecde07-6208-4c32-a202-5b1c336f44f8"
       }
     }
   }
