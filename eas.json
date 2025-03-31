@@ -6,7 +6,10 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://1004-115-98-234-26.ngrok-free.app"
+      }
     },
     "preview": {
       "android": {
@@ -22,7 +25,16 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://1004-115-98-234-26.ngrok-free.app"
+      }
+    },
+    "test": {
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://1004-115-98-234-26.ngrok-free.app"
+      }
+    }
   },
   "submit": {
     "production": {}
