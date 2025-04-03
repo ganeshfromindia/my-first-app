@@ -1,18 +1,11 @@
-// import { Stack } from "expo-router";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
   DarkTheme,
   DefaultTheme,
-  NavigationIndependentTree,
   ThemeProvider,
 } from "@react-navigation/native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { StatusBar } from "expo-status-bar";
-import { Colors } from "../constants/styles";
-// import AppMain from "./(pages)/_layout";
-import { Stack, Navigator } from "expo-router";
-
-// const Stack = createNativeStackNavigator();
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

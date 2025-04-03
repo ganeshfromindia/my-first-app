@@ -30,7 +30,7 @@ const ModalOverlay = (props: any) => {
       isVisible={props.show}
       deviceWidth={deviceWidth}
       deviceHeight={deviceHeight}
-      onBackdropPress={() => props.onCancel}
+      onBackdropPress={props.onCancel}
     >
       {content}
     </ReactNativeModal>
@@ -72,5 +72,6 @@ const styles = StyleSheet.create({
   modalContainer: {
     height: "80%",
     overflow: "scroll",
+    backgroundColor: "#ffffff",
   },
 });

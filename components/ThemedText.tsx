@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
   title: {
     margin: 8,
     borderRadius: 6,
-    backgroundColor: `#5e0ecc`,
+    // backgroundColor: `#5e0ecc`,
+    backgroundColor: `#ffb131`,
   },
   subtitle: {
     fontSize: 20,
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
   link: {
     lineHeight: 30,
     fontSize: 16,
-    color: "#0a7ea4",
+    // color: "#0a7ea4",
+    color: "#ffb131",
   },
 });

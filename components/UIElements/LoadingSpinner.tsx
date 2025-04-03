@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+const image = require("../../assets/images/loading.png");
+
 import {
   Animated,
   StyleSheet,
@@ -10,7 +12,7 @@ import {
 
 const LoadingSpinner = (props: any) => {
   const rotateAnimation = useAnimatedValue(0);
-
+  console.log("loading spiiner");
   useEffect(() => {
     Animated.loop(
       Animated.timing(rotateAnimation, {
@@ -27,11 +29,13 @@ const LoadingSpinner = (props: any) => {
   });
 
   return (
-    <View style={styles.loadingSpinnerOverlay}>
-      <Animated.Image
-        style={{ transform: [{ rotate: spin }] }}
-        source={{ uri: "../../../../../../assets/images/loading.png" }}
-      />
+    <View style={{ width: "100%", height: "100%" }}>
+      <View style={styles.loadingSpinnerOverlay}>
+        <Animated.Image
+          style={{ transform: [{ rotate: spin }], width: 125, height: 125 }}
+          source={image}
+        />
+      </View>
     </View>
   );
 };
@@ -40,11 +44,11 @@ export default LoadingSpinner;
 
 const styles = StyleSheet.create({
   loadingSpinnerOverlay: {
-    height: "100%",
-    width: "100%",
     position: "absolute",
     top: 0,
     left: 0,
+    bottom: 0,
+    right: 0,
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     justifyContent: "center",
     alignItems: "center",

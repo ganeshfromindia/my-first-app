@@ -116,7 +116,6 @@ const globalStyle = StyleSheet.create({
   },
   navLinkbuttonActive: {
     backgroundColor: "#ffb131",
-    color: "#ffffff",
   },
   center: {
     textAlign: "center",
@@ -177,6 +176,21 @@ const globalStyle = StyleSheet.create({
   },
   authenticationFormControlInputIsAutofill: {
     backgroundColor: "rgba(255, 255, 255, 0.07)",
+  },
+  tabContainer: {
+    justifyContent: "center",
+  },
+  tabContainerButton: {
+    minWidth: 160,
+  },
+  rowContainer: {
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "stretch",
+  },
+  autoFlex: {
+    flex: 1,
   },
 });
 

@@ -9,7 +9,7 @@ const Card = (props: any) => {
         styles.card,
         props.cardProduct && styles.cardProduct,
         props.center && styles.center,
-        ...props.style,
+        props && props.style,
       ]}
     >
       {props.children}
@@ -21,7 +21,6 @@ export default Card;
 
 const styles = StyleSheet.create({
   cardProduct: {
-    boxShadow: "none",
     backgroundColor: "transparent",
     paddingTop: 15,
   },

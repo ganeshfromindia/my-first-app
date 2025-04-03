@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 
 import Card from "../UIElements/Card";
 import Input from "../FormElements/Input";
-import Button from "../FormElements/Button";
 import ErrorModal from "../UIElements/ErrorModal";
 import LoadingSpinner from "../UIElements/LoadingSpinner";
 import ImageUpload from "../FormElements/ImageUpload";
@@ -14,18 +13,11 @@ import {
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 
-import { MAIN_URL } from "@/util/config";
-import {
-  ImageBackground,
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import ButtonComp from "../FormElements/Button";
 import AuthContext from "@/store/auth-context";
-import { Redirect } from "expo-router";
 import { useRouter } from "expo-router";
+import globalStyle from "@/assets/css/style";
 
 const AuthForm = () => {
   const router = useRouter();
@@ -92,7 +84,6 @@ const AuthForm = () => {
     if (isLoginMode) {
       try {
         const responseData = await sendRequest(
-          // `${MAIN_URL}/api/users/login`,
           `${process.env.EXPO_PUBLIC_API_URL}/api/users/login`,
           "POST",
           JSON.stringify({
@@ -112,7 +103,14 @@ const AuthForm = () => {
           responseData.email,
           responseData.image
         );
-        router.navigate("/welcomeScreen");
+        if (responseData.role === "Manufacturer") {
+          router.navigate("/(pages)/(dashboard)/admin/dashboardAdminScreen");
+        }
+        // } else if (responseData.role === "Admin") {
+        //   router.navigate("/adminDashboardScreen");
+        // } else if (responseData.role === "Trader") {
+        //   router.navigate("/welcomeScreen");
+        // }
       } catch (err) {
         console.log(err);
       }
@@ -130,7 +128,6 @@ const AuthForm = () => {
         formData.append("image", formState.inputs.image.value);
 
         const responseData = await sendRequest(
-          // `${MAIN_URL}/api/users/signup`,
           `${process.env.EXPO_PUBLIC_API_URL}}/api/users/signup`,
           "POST",
           formData
@@ -154,116 +151,118 @@ const AuthForm = () => {
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      {/* <div style={styles.background">
-        <div style={styles.shape"></div>
-        <div style={styles.shape"></div>
-      </div> */}
-      {isLoading && <LoadingSpinner asOverlay />}
+      {isLoading && <LoadingSpinner />}
       {!isLoading && (
-        // <ImageBackground
-        //   source={image}
-        //   resizeMode="cover"
-        //   style={styles.authenticationContainer}
-        // >
-        <ScrollView
-          contentContainerStyle={{
-            minHeight: "100%",
-            overflow: "scroll",
-            flexGrow: 1,
-          }}
-          style={styles.mainContainer}
-        >
-          <View style={styles.authenticationContainer}>
-            <Card style={[styles.authentication, styles.authenticationCard]}>
-              <View style={styles.authenticationForm}>
-                <Text style={styles.authenticationFormH3}>
-                  {isLoginMode ? "Login here" : "Please SignUp"}
-                </Text>
-                {!isLoginMode && (
+        <View>
+          <ScrollView
+            contentContainerStyle={{
+              minHeight: "100%",
+              height: "100%",
+              overflow: "scroll",
+              flexGrow: 1,
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={styles.authenticationContainer}>
+              <Card style={[styles.authentication, styles.authenticationCard]}>
+                <View style={styles.authenticationForm}>
+                  <Text style={styles.authenticationFormH3}>
+                    {isLoginMode ? "Login here" : "Please SignUp"}
+                  </Text>
+                  {!isLoginMode && (
+                    <Input
+                      element="input"
+                      id="name"
+                      type="text"
+                      label="Your Name"
+                      errorText="Please enter a name."
+                      onInput={inputHandler}
+                      authInput={true}
+                      authLabel={true}
+                      authGeneral={true}
+                    />
+                  )}
+                  {!isLoginMode && (
+                    <ImageUpload
+                      center
+                      id="image"
+                      onInput={inputHandler}
+                      errorText="Please provide an image."
+                    />
+                  )}
                   <Input
                     element="input"
-                    id="name"
+                    id="email"
                     type="text"
-                    label="Your Name"
-                    errorText="Please enter a name."
+                    label="E-Mail"
+                    errorText="Please enter a valid email address."
+                    validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
                     onInput={inputHandler}
                     authInput={true}
                     authLabel={true}
                     authGeneral={true}
                   />
-                )}
-                {!isLoginMode && (
-                  <ImageUpload
-                    center
-                    id="image"
-                    onInput={inputHandler}
-                    errorText="Please provide an image."
-                  />
-                )}
-                <Input
-                  element="input"
-                  id="email"
-                  type="text"
-                  label="E-Mail"
-                  errorText="Please enter a valid email address."
-                  validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
-                  onInput={inputHandler}
-                  authInput={true}
-                  authLabel={true}
-                  authGeneral={true}
-                />
-                <Input
-                  element="input"
-                  id="password"
-                  type="password"
-                  label="Password"
-                  validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(6)]}
-                  errorText="Please enter a valid password, at least 6 characters."
-                  onInput={inputHandler}
-                  authInput={true}
-                  authLabel={true}
-                  authGeneral={true}
-                />
-                {!isLoginMode && (
                   <Input
                     element="input"
-                    id="mobileNo"
-                    type="text"
-                    label="Mobile No"
-                    validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(10)]}
-                    errorText="Please enter a valid mobile no, at least 10 characters."
+                    id="password"
+                    type="password"
+                    label="Password"
+                    validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(6)]}
+                    errorText="Please enter a valid password, at least 6 characters."
                     onInput={inputHandler}
                     authInput={true}
                     authLabel={true}
                     authGeneral={true}
                   />
-                )}
-                <ButtonComp
-                  submit
-                  style={styles.authenticationButton}
-                  disabled={!formState.isValid}
-                  onClick={authSubmitHandler}
-                  title={isLoginMode ? "Login" : "Sign Up"}
-                ></ButtonComp>
-              </View>
+                  {!isLoginMode && (
+                    <Input
+                      element="input"
+                      id="mobileNo"
+                      type="text"
+                      label="Mobile No"
+                      validators={[
+                        VALIDATOR_REQUIRE(),
+                        VALIDATOR_MINLENGTH(10),
+                      ]}
+                      errorText="Please enter a valid mobile no, at least 10 characters."
+                      onInput={inputHandler}
+                      authInput={true}
+                      authLabel={true}
+                      authGeneral={true}
+                    />
+                  )}
+                  <ButtonComp
+                    submit
+                    style={styles.authenticationButton}
+                    disabled={!formState.isValid}
+                    onClick={authSubmitHandler}
+                    title={isLoginMode ? "Login" : "Sign Up"}
+                  ></ButtonComp>
+                </View>
 
-              <ButtonComp
-                top
-                inverse
-                style={styles.authenticationButton}
-                onClick={switchModeHandler}
-                title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
-              ></ButtonComp>
-            </Card>
-          </View>
-          <View>
-            <ButtonComp href={"https://picjumbo.com/author/viktorhanacek/"}>
-              Photo by Viktor Hanacek
-            </ButtonComp>
-            <ButtonComp href={"https://picjumbo.com"}>picjumbo.com</ButtonComp>
-          </View>
-        </ScrollView>
-        // {/* </ImageBackground> */}
+                <ButtonComp
+                  top
+                  inverse
+                  style={styles.authenticationButton}
+                  onClick={switchModeHandler}
+                  title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
+                ></ButtonComp>
+              </Card>
+            </View>
+            <View style={globalStyle.rowContainer}>
+              <View style={globalStyle.autoFlex}>
+                <ButtonComp href={"https://picjumbo.com/author/viktorhanacek/"}>
+                  Photo by Viktor Hanacek
+                </ButtonComp>
+              </View>
+              <View style={globalStyle.autoFlex}>
+                <ButtonComp href={"https://picjumbo.com"}>
+                  picjumbo.com
+                </ButtonComp>
+              </View>
+            </View>
+          </ScrollView>
+        </View>
       )}
     </React.Fragment>
   );
@@ -350,6 +349,6 @@ const styles = StyleSheet.create({
   },
   mainContainer: {
     paddingTop: 16,
-    minHeight: "100%",
+    height: "100%",
   },
 });

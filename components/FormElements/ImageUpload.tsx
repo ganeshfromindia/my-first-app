@@ -34,7 +34,6 @@ const ImageUpload: any = memo((props: any) => {
       // type: "text/csv" // .csv
       copyToCacheDirectory: false,
     });
-    console.log(result && result.assets && result.assets[0].uri);
   };
 
   return (

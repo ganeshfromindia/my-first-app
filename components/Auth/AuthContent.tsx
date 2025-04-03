@@ -1,11 +1,6 @@
-import { useState } from "react";
-import { Alert, StyleSheet, View, ImageBackground } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View, ImageBackground } from "react-native";
 
-import FlatButton from "../ui/FlatButton";
 import AuthForm from "./AuthForm";
-import { Colors } from "../../constants/styles";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 function AuthContent() {
   return (
     <>
@@ -15,9 +10,7 @@ function AuthContent() {
         style={styles.imgContainer}
         imageStyle={styles.backgroundImage}
       >
-        <View>
-          <AuthForm></AuthForm>
-        </View>
+        <AuthForm></AuthForm>
       </ImageBackground>
     </>
   );
@@ -33,10 +26,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#ff00ff",
     elevation: 2,
-    // shadowColor: "black",
-    // shadowOffset: { width: 1, height: 1 },
-    // shadowOpacity: 0.35,
-    // shadowRadius: 4,
     boxShadow: "1px 1px,4px rgba(0, 0, 0, 0.35)",
   },
   buttons: {

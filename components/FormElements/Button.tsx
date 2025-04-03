@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     cursor: "pointer",
     textDecorationLine: "none",
     fontSize: 15,
+    textAlign: "center",
   },
   submitButtonText: {
     color: "#212121ks",

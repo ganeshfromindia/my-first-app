@@ -2,18 +2,18 @@ import { createContext } from "react";
 
 interface UserDataType {
   isLoggedIn: boolean;
-  userId: number | null;
-  userName: string | null;
-  token: string | null;
-  role: string | null;
-  email: string | null;
-  mobileNo: number | null;
-  login: any;
-  logout: any;
-  image: string | null;
+  userId: number | any;
+  userName: string | any;
+  token: string | any;
+  role: string | any;
+  email: string | any;
+  mobileNo: number | any;
+  login: (userData: any | null) => void;
+  logout: () => void;
+  image: string | any;
 }
 
-const AuthContext = createContext<UserDataType>({
+const AuthContext = createContext<any>({
   isLoggedIn: false,
   userId: null,
   userName: null,

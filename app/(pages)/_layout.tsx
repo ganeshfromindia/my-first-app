@@ -1,108 +1,52 @@
-/*
-import { Tabs } from "expo-router";
-import React from "react";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-
-export default function TabLayout() {
-  return (
-    <Tabs>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="authScreen"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="welcomeScreen"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="house.fill" color={color} />
-          ),
-        }}
-      />
-    </Tabs>
-  );
-}
-
-*/
-
+import { PaperProvider } from "react-native-paper";
 import { Stack, Tabs } from "expo-router";
 import React from "react";
-import { Platform } from "react-native";
-
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
-import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
+import AuthContext from "../../store/auth-context";
+
+import useAuth from "@/hooks/auth-hook";
+
 export default function TabLayout() {
+  const {
+    token,
+    login,
+    logout,
+    userId,
+    userName,
+    email,
+    mobileNo,
+    role,
+    image,
+  } = useAuth();
   const colorScheme = useColorScheme();
-
-  //   return (
-  //     <Tabs
-  //       screenOptions={{
-  //         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-  //         headerShown: false,
-  //         tabBarButton: HapticTab,
-  //         tabBarBackground: TabBarBackground,
-  //         tabBarStyle: Platform.select({
-  //           ios: {
-  //             // Use a transparent background on iOS to show the blur effect
-  //             position: "absolute",
-  //           },
-  //           default: {},
-  //         }),
-  //       }}
-  //     >
-  //       <Tabs.Screen
-  //         name="index"
-  //         options={{
-  //           title: "Home",
-  //           tabBarIcon: ({ color }) => (
-  //             <IconSymbol size={28} name="house.fill" color={color} />
-  //           ),
-  //         }}
-  //       />
-  //       <Tabs.Screen
-  //         name="authScreen"
-  //         options={{
-  //           title: "Home",
-  //           tabBarIcon: ({ color }) => (
-  //             <IconSymbol size={28} name="house.fill" color={color} />
-  //           ),
-  //         }}
-  //       />
-  //       <Tabs.Screen
-  //         name="welcomeScreen"
-  //         options={{
-  //           title: "Home",
-  //           tabBarIcon: ({ color }) => (
-  //             <IconSymbol size={28} name="house.fill" color={color} />
-  //           ),
-  //         }}
-  //       />
-  //     </Tabs>
-  //   );
-
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false, title: "" }} />
-      <Stack.Screen name="authScreen" />
-      <Stack.Screen name="welcomeScreen" />
-    </Stack>
+    <AuthContext.Provider
+      value={{
+        isLoggedIn: !!token,
+        token: token,
+        userId: userId,
+        userName: userName,
+        email: email,
+        mobileNo: mobileNo,
+        login: login,
+        logout: logout,
+        role: role,
+        image: image,
+      }}
+    >
+      <PaperProvider>
+        <Stack>
+          <Stack.Screen
+            name="index"
+            options={{ headerShown: false, title: "" }}
+          />
+          <Stack.Screen name="authScreen" />
+          <Stack.Screen name="(dashboard)" />
+          <Stack.Screen name="(products)" />
+          <Stack.Screen name="(traders)" />
+        </Stack>
+      </PaperProvider>
+    </AuthContext.Provider>
   );
 }
