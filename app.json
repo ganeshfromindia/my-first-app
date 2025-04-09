@@ -38,8 +38,17 @@
           "image": "./assets/images/splash.png",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
       ]
     ],
+
     "splash": {
       "image": "./assets/images/splash.png",
       "backgroundColor": "#ffff"
