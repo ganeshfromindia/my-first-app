@@ -128,7 +128,8 @@ const globalStyle = StyleSheet.create({
     marginVertical: 0,
     padding: 1,
     width: "90%",
-    maxWidth: 40,
+    // maxWidth: 40,
+    maxWidth: "100%",
     boxShadow: "0 2px 8px rgba(0, 0, 0, 0.26)",
     borderRadius: 6,
     backgroundColor: "#ffffff",
@@ -142,7 +143,7 @@ const globalStyle = StyleSheet.create({
     fontWeight: 500,
   },
   authenticationInput: {
-    height: 50,
+    height: 40,
     width: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.07)",
     borderRadius: 3,
@@ -191,6 +192,12 @@ const globalStyle = StyleSheet.create({
   },
   autoFlex: {
     flex: 1,
+  },
+  cross: {
+    color: "#ff0000",
+  },
+  check: {
+    color: "#00ff00",
   },
 });
 

@@ -16,10 +16,9 @@ import {
 } from "../../../../util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
-import "./Trader.css";
 import AuthContext from "@/store/auth-context";
 
-import { MultiSelect } from "react-native-element-dropdown";
+import { MultiSelect, Dropdown } from "react-native-element-dropdown";
 import { MAIN_URL } from "@/util/config";
 import Modal from "@/components/UIElements/Modal";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -41,12 +40,14 @@ const Trader = ({
   traderDataRecd: any;
   handleClose: any;
 }) => {
-  const [selected, setSelected] = useState<any>([]);
+  const [selected, setSelected] = useState<any>(null);
+  const [isFocus, setIsFocus] = useState<any>(false);
   const selectInputRef = useRef<any>();
   const renderAfterCalled = useRef(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProducts, setLoadedProducts] = useState<any>();
   const [traders, setTraders] = useState([]);
+  const [tradersObj, setTradersObj] = useState([]);
   const [defaultProducts, setDefaultProducts] = useState<any>(null);
   const [productData, setProductData] = useState();
   const auth = useContext(AuthContext);
@@ -67,10 +68,23 @@ const Trader = ({
 
   useEffect(() => {
     if (traderDataRecd) {
-      setProductData(JSON.parse(JSON.stringify(traderDataRecd.products)));
       setTraderData(traderDataRecd);
     }
   }, [traderDataRecd]);
+
+  useEffect(() => {
+    if (selected) {
+      setDefaultProducts([]);
+      setIsDisabled(pointerEvent.none);
+      setTraderData(selected.data);
+    }
+  }, [selected]);
+
+  useEffect(() => {
+    if (defaultProducts) {
+      let traderData = traders;
+    }
+  }, [defaultProducts]);
 
   const fetchProducts = useCallback(
     async (page: any) => {
@@ -78,7 +92,9 @@ const Trader = ({
       if (auth) {
         try {
           const response = await sendRequest(
-            `${MAIN_URL}/api/products/manufacturer/id?uid=${
+            `${
+              process.env.EXPO_PUBLIC_API_URL
+            }/api/products/manufacturer/id?uid=${
               auth.userId
             }&page=${page}&size=${1000}&delay=1`,
             "GET",
@@ -95,7 +111,7 @@ const Trader = ({
               key: index,
             })
           );
-          setLoadedProducts(selectProductData);
+          setLoadedProducts(mapOptions(selectProductData));
           if (traderDataRecd && selectProductData) {
             let traderProductsArray = traderDataRecd &&
               traderDataRecd.products &&
@@ -116,7 +132,10 @@ const Trader = ({
               flags[defaultProductsArray[i].id] = true;
               output.push(defaultProductsArray[i]);
             }
-            setDefaultProducts(output);
+            let valuesOfDefaultProducts = mapOptions(output).map(
+              (data: any) => data.value
+            );
+            setDefaultProducts(valuesOfDefaultProducts);
             //setLoading(false);
           }
         } catch (err) {
@@ -132,13 +151,14 @@ const Trader = ({
       if (auth.token && auth.userId) {
         try {
           sendRequest(
-            `${MAIN_URL}/api/traders/getAllTraders/traders`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/traders/getAllTraders/traders`,
             "GET",
             null,
             { Authorization: "Bearer " + auth.token }
-          ).then((response: any) =>
-            resolve(setTraders(mapOptions(response.trader)))
-          );
+          ).then((response: any) => {
+            setTradersObj(response.trader);
+            resolve(setTraders(mapOptions(response.trader)));
+          });
         } catch (err) {
           reject("No data");
         }
@@ -146,41 +166,44 @@ const Trader = ({
     });
   }, [sendRequest, auth.token, auth.userId]);
 
-  const handleTraderSelect = (options: any) => {
-    let defaultProductsArray;
-    setTraderData(options);
-    setIsDisabled(pointerEvent.none);
-    if (options && loadedProducts) {
-      let traderProductsArray = options &&
-        options.products &&
-        options.products.length > 0 && [
-          ...JSON.parse(JSON.stringify(options.products)),
-        ];
-      if (traderProductsArray.length > 0) {
-        defaultProductsArray = loadedProducts.filter((data: any) =>
-          data._id.includes(...traderProductsArray)
-        );
-      }
-      let flags = [];
-      let output = [];
-      let l = defaultProductsArray.length;
-      let i;
-      if (defaultProducts && defaultProducts.length > 0) {
-        for (i = 0; i < l; i++) {
-          if (flags[defaultProductsArray[i].id]) continue;
-          flags[defaultProductsArray[i].id] = true;
-          output.push(defaultProductsArray[i]);
-        }
-      }
-
-      setDefaultProducts(output);
-    }
-  };
+  // const handleTraderSelect = (options: any) => {
+  //   let defaultProductsArray;
+  //   setTraderData(options);
+  //   setIsDisabled(pointerEvent.none);
+  //   if (options && loadedProducts) {
+  //     let traderProductsArray = options &&
+  //       options.products &&
+  //       options.products.length > 0 && [
+  //         ...JSON.parse(JSON.stringify(options.products)),
+  //       ];
+  //     if (traderProductsArray.length > 0) {
+  //       defaultProductsArray = loadedProducts.filter((data: any) =>
+  //         data._id.includes(...traderProductsArray)
+  //       );
+  //     }
+  //     let flags = [];
+  //     let output = [];
+  //     let l = defaultProductsArray.length;
+  //     let i;
+  //     if (defaultProducts && defaultProducts.length > 0) {
+  //       for (i = 0; i < l; i++) {
+  //         if (flags[defaultProductsArray[i].id]) continue;
+  //         flags[defaultProductsArray[i].id] = true;
+  //         output.push(defaultProductsArray[i]);
+  //       }
+  //     }
+  //     let valuesOfDefaultProducts = mapOptions(output).map(
+  //       (data: any) => data.value
+  //     );
+  //     setDefaultProducts(valuesOfDefaultProducts);
+  //   }
+  // };
 
   const mapOptions = (options: any) => {
     if (options && options.length > 0) {
       return options.map((data: any) => ({
-        value: data.title,
+        data: data,
+        value: data.id,
         key: data.id,
         label: data.title,
       }));
@@ -204,7 +227,7 @@ const Trader = ({
 
       if (traderData && traderData.id) {
         await sendRequest(
-          `${MAIN_URL}/api/traders/${traderData.id}`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/traders/${traderData.id}`,
           "PATCH",
           JSON.stringify(formData),
           {
@@ -215,7 +238,7 @@ const Trader = ({
         handleClose();
       } else {
         const responseData = await sendRequest(
-          `${MAIN_URL}/api/traders/create`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/traders/create`,
           "POST",
           JSON.stringify(formData),
           {
@@ -287,21 +310,22 @@ const Trader = ({
       title: "",
       value: "",
     });
-    if (selectInputRef && selectInputRef.current) {
-      selectInputRef.current.select.clearValue();
-    }
+    // if (selectInputRef && selectInputRef.current) {
+    //   selectInputRef.current.select.clearValue();
+    // }
     setDefaultProducts([]);
     setIsDisabled(pointerEvent.auto);
   };
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      {isLoading && <LoadingSpinner asOverlay />}
+      {/* {isLoading && <LoadingSpinner asOverlay />} */}
       {!isLoading && !traderDataRecd && (
         <View style={[s.formControl, s.placeForm, styles.searchTrader]}>
           <View style={styles.containerdd}>
-            <MultiSelect
-              style={styles.dropdown}
+            <Dropdown
+              style={[styles.dropdown, isFocus && { borderColor: "#ffb131" }]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
@@ -309,12 +333,15 @@ const Trader = ({
               data={traders}
               labelField="label"
               valueField="value"
-              placeholder="Select item"
+              placeholder={!isFocus ? "Select item" : "..."}
               value={selected}
               search
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
               searchPlaceholder="Search..."
               onChange={(item) => {
                 setSelected(item);
+                setIsFocus(false);
               }}
               renderLeftIcon={() => (
                 <AntDesign
@@ -325,14 +352,6 @@ const Trader = ({
                 />
               )}
               renderItem={renderItem}
-              renderSelectedItem={(item, unSelect) => (
-                <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                  <View style={styles.selectedStyle}>
-                    <Text style={styles.textSelectedStyle}>{item.label}</Text>
-                    <AntDesign color="black" name="delete" size={17} />
-                  </View>
-                </TouchableOpacity>
-              )}
             />
           </View>
           <Text> Or Add New Trader</Text>
@@ -362,7 +381,7 @@ const Trader = ({
             />
             <Input
               id="email"
-              element="textarea"
+              element="input"
               label="Email"
               validators={[VALIDATOR_EMAIL()]}
               errorText="Please enter a valid email."
@@ -371,7 +390,7 @@ const Trader = ({
             />
             <Input
               id="address"
-              element="address"
+              element="input"
               label="Address"
               errorText="Please enter a address."
               onInput={inputHandler}
@@ -399,11 +418,11 @@ const Trader = ({
             />
           )*/}
           </View>
+
           {loadedProducts && defaultProducts && (
             <View>
               <View style={styles.containerdd}>
                 <MultiSelect
-                  ref={selectInputRef}
                   style={styles.dropdown}
                   placeholderStyle={styles.placeholderStyle}
                   selectedTextStyle={styles.selectedTextStyle}
@@ -417,7 +436,7 @@ const Trader = ({
                   search
                   searchPlaceholder="Search..."
                   onChange={(item) => {
-                    setSelected(item);
+                    setDefaultProducts(item);
                   }}
                   renderLeftIcon={() => (
                     <AntDesign

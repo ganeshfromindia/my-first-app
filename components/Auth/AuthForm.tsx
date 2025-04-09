@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
 
 import Card from "../UIElements/Card";
 import Input from "../FormElements/Input";
@@ -13,17 +13,27 @@ import {
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View, ScrollView, StatusBar } from "react-native";
 import ButtonComp from "../FormElements/Button";
 import AuthContext from "@/store/auth-context";
 import { useRouter } from "expo-router";
 import globalStyle from "@/assets/css/style";
+import { Dimensions } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 const AuthForm = () => {
   const router = useRouter();
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const [scrollViewMinHeight, setScrollViewMinHeight] = useState(0);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
+  const image = { uri: "../../images/bkg.jpeg" };
+
+  const renderAfterCalled = useRef(false);
+  let ScrollViewMinHeight;
+  const deviceHeight = Dimensions.get("window").height;
+  const headerHeight = useHeaderHeight();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -104,7 +114,7 @@ const AuthForm = () => {
           responseData.image
         );
         if (responseData.role === "Manufacturer") {
-          router.navigate("/(pages)/(dashboard)/admin/dashboardAdminScreen");
+          router.navigate("/(pages)/(traders)/list/TradersList");
         }
         // } else if (responseData.role === "Admin") {
         //   router.navigate("/adminDashboardScreen");
@@ -146,21 +156,27 @@ const AuthForm = () => {
       }
     }
   };
-  const image = { uri: "../../images/bkg.jpeg" };
+
+  useEffect(() => {
+    if (!renderAfterCalled.current) {
+      ScrollViewMinHeight = deviceHeight - headerHeight;
+      setScrollViewMinHeight(ScrollViewMinHeight);
+    }
+    renderAfterCalled.current = true;
+  }, []);
 
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError} />
-      {isLoading && <LoadingSpinner />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {/* {isLoading && <LoadingSpinner asOverlay />} */}
       {!isLoading && (
         <View>
           <ScrollView
             contentContainerStyle={{
-              minHeight: "100%",
-              height: "100%",
+              minHeight: scrollViewMinHeight,
               overflow: "scroll",
-              flexGrow: 1,
               justifyContent: "space-between",
+              flexGrow: 1,
             }}
           >
             <View style={styles.authenticationContainer}>
@@ -176,6 +192,7 @@ const AuthForm = () => {
                       type="text"
                       label="Your Name"
                       errorText="Please enter a name."
+                      validators={[]}
                       onInput={inputHandler}
                       authInput={true}
                       authLabel={true}
@@ -231,22 +248,22 @@ const AuthForm = () => {
                       authGeneral={true}
                     />
                   )}
+                  <View style={styles.authenticationButton}>
+                    <ButtonComp
+                      submit
+                      disabled={!formState.isValid}
+                      onClick={authSubmitHandler}
+                      title={isLoginMode ? "Login" : "Sign Up"}
+                    ></ButtonComp>
+                  </View>
+                </View>
+                <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
-                    submit
-                    style={styles.authenticationButton}
-                    disabled={!formState.isValid}
-                    onClick={authSubmitHandler}
-                    title={isLoginMode ? "Login" : "Sign Up"}
+                    inverse
+                    onClick={switchModeHandler}
+                    title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
                   ></ButtonComp>
                 </View>
-
-                <ButtonComp
-                  top
-                  inverse
-                  style={styles.authenticationButton}
-                  onClick={switchModeHandler}
-                  title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
-                ></ButtonComp>
               </Card>
             </View>
             <View style={globalStyle.rowContainer}>
@@ -277,7 +294,7 @@ const styles = StyleSheet.create({
   },
 
   authenticationContainer: {
-    marginVertical: 5,
+    paddingVertical: 5,
   },
   authentication: {
     width: "80%",
@@ -285,16 +302,15 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
     marginVertical: 0,
     textAlign: "center",
-    overflow: "scroll",
+    position: "relative",
   },
   authenticationCard: {
     boxShadow: "none",
-    paddingHorizontal: 1,
     paddingTop: 50,
     borderRadius: 17,
   },
   authenticationForm: {
-    marginBottom: 16,
+    marginVertical: 18,
     height: "100%",
     width: "100%",
     backgroundColor: "rgba(255, 255, 255, 0.13)",
@@ -319,12 +335,6 @@ const styles = StyleSheet.create({
   authenticationButton: {
     marginTop: 50,
     width: "100%",
-    backgroundColor: "#ffffff",
-    color: "#080710",
-    fontSize: 18,
-    fontWeight: 600,
-    borderRadius: 5,
-    cursor: "pointer",
   },
   authenticationContainerImageUploadCenter: {
     borderColor: "#465f66",
@@ -350,5 +360,11 @@ const styles = StyleSheet.create({
   mainContainer: {
     paddingTop: 16,
     height: "100%",
+  },
+  top: {
+    position: "absolute",
+    top: 0,
+    left: "26.5%",
+    width: 150,
   },
 });

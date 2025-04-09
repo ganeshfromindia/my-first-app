@@ -4,14 +4,23 @@ import * as SplashScreen from "expo-splash-screen";
 import AuthContext from "../../store/auth-context";
 
 import { Redirect } from "expo-router";
-import useAuth from "@/hooks/auth-hook";
 
 function AuthStack() {
   return <Redirect href="/authScreen" />;
 }
 
 function AuthenticatedStack() {
-  return <Redirect href="/welcomeScreen" />;
+  const auth = useContext(AuthContext);
+
+  if (auth && auth.token) {
+    if (auth.role == "Manufacturer") {
+      return <Redirect href="/(pages)/(traders)/list/TradersList" />;
+    } else if (auth.role == "Trader") {
+      return <Redirect href="/(pages)/(traders)/list/TradersList" />;
+    } else if (auth.role == "Admin") {
+      <Redirect href="/(pages)/(dashboard)/admin/dashboardAdminScreen" />;
+    }
+  }
 }
 
 function Navigation() {

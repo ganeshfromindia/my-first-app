@@ -42,9 +42,18 @@ export default function TabLayout() {
             options={{ headerShown: false, title: "" }}
           />
           <Stack.Screen name="authScreen" />
-          <Stack.Screen name="(dashboard)" />
-          <Stack.Screen name="(products)" />
-          <Stack.Screen name="(traders)" />
+          <Stack.Screen
+            name="(dashboard)"
+            options={{ headerShown: false, title: "" }}
+          />
+          <Stack.Screen
+            name="(products)"
+            options={{ headerShown: false, title: "" }}
+          />
+          <Stack.Screen
+            name="(traders)"
+            options={{ headerShown: false, title: "" }}
+          />
         </Stack>
       </PaperProvider>
     </AuthContext.Provider>

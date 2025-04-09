@@ -13,15 +13,15 @@ const deviceHeight = Dimensions.get("window").height;
 const ModalOverlay = (props: any) => {
   const content = (
     <View style={styles.modalContainer}>
-      <View style={[styles.modalHeader, props.headerClass]}>
+      <View style={[styles.modalHeader]}>
         <Text style={styles.modalHeaderh2}>{props.header}</Text>
       </View>
 
-      <View style={[styles.modalContent, props.contentClass]}>
-        <Text>{props.children}</Text>
+      <View style={[styles.modalContent]}>
+        <View>{props.children}</View>
       </View>
-      <View style={[styles.modalFooter, props.footerClass]}>
-        <Text>{props.footer}</Text>
+      <View style={[styles.modalFooter]}>
+        <View>{props.footer}</View>
       </View>
     </View>
   );

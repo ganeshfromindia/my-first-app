@@ -12,7 +12,6 @@ import {
 
 const LoadingSpinner = (props: any) => {
   const rotateAnimation = useAnimatedValue(0);
-  console.log("loading spiiner");
   useEffect(() => {
     Animated.loop(
       Animated.timing(rotateAnimation, {

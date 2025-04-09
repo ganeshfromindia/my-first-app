@@ -84,7 +84,24 @@ const Input: any = (props: any) => {
   };
 
   const element =
-    props.element === "input" && props.type !== "password" ? (
+    props.element === "textarea" ? (
+      <TextInput
+        multiline={true}
+        id={props.id}
+        numberOfLines={props.rows || 3}
+        onChange={changeHandler}
+        onEndEditing={(e) => onEndEditing(e)}
+        defaultValue={primaryValue}
+        key={primaryValue === "" ? "textAreaKey" : primaryValue}
+        style={[
+          props.authInput && globalStyle.authenticationInput,
+          globalStyle.authenticationFormControlnput,
+          props.authGeneral && globalStyle.authenticationGeneral,
+          !inputState.isValid &&
+            globalStyle.authenticationFormControlInvalidInput,
+        ]}
+      />
+    ) : props.element === "input" && props.type !== "password" ? (
       <TextInput
         id={props.id}
         keyboardType={props.keyboardType}
@@ -94,9 +111,8 @@ const Input: any = (props: any) => {
         onEndEditing={(e) => onEndEditing(e)}
         defaultValue={passedValue}
         style={[
-          props.authInput &&
-            globalStyle.authenticationInput &&
-            globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
+          globalStyle.authenticationFormControlnput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
             globalStyle.authenticationFormControlInvalidInput,
@@ -111,9 +127,8 @@ const Input: any = (props: any) => {
         onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
         style={[
-          props.authInput &&
-            globalStyle.authenticationInput &&
-            globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
+          globalStyle.authenticationFormControlnput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
             globalStyle.authenticationFormControlInvalidInput,
@@ -121,17 +136,15 @@ const Input: any = (props: any) => {
       />
     ) : (
       <TextInput
-        multiline={true}
         id={props.id}
-        numberOfLines={props.rows || 3}
-        onChange={changeHandler}
+        keyboardType={props.keyboardType}
+        secureTextEntry={props.secure}
+        placeholder={props.placeholder}
+        onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
-        defaultValue={primaryValue}
-        key={primaryValue === "" ? "textAreaKey" : primaryValue}
         style={[
-          props.authInput &&
-            globalStyle.authenticationInput &&
-            globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
+          globalStyle.authenticationFormControlnput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
             globalStyle.authenticationFormControlInvalidInput,

@@ -18,11 +18,20 @@ import { MAIN_URL } from "@/util/config";
 import ErrorModal from "@/components/UIElements/ErrorModal";
 import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
 
-import { View, Text } from "react-native";
+import { View, Text, ScrollView, StyleSheet } from "react-native";
 
 import s from "../../../../assets/css/style";
+import globalStyle from "../../../../assets/css/style";
+import { ThemedText } from "@/components/ThemedText";
+import IconButton from "@/components/ui/IconButton";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 const TradersList = () => {
+  const color = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.dark.tint },
+    "text"
+  );
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const renderAfterCalled = useRef(false);
@@ -75,7 +84,7 @@ const TradersList = () => {
 
   const handleEditButtonClick = useCallback((data: any) => {
     setOpen(true);
-    setTraderData(JSON.parse(data));
+    setTraderData(data);
   }, []);
 
   const handleDeleteButtonClick = useCallback(
@@ -83,9 +92,14 @@ const TradersList = () => {
       let id = JSON.parse(data.id);
       try {
         if (id) {
-          await sendRequest(`${MAIN_URL}/api/traders/${id}`, "DELETE", null, {
-            Authorization: "Bearer " + auth.token,
-          });
+          await sendRequest(
+            `${process.env.EXPO_PUBLIC_API_URL}/api/traders/${id}`,
+            "DELETE",
+            null,
+            {
+              Authorization: "Bearer " + auth.token,
+            }
+          );
           fetchTraders(1);
         }
       } catch (err) {}
@@ -98,7 +112,7 @@ const TradersList = () => {
       if (traderId && auth.token) {
         try {
           const response = await sendRequest(
-            `${MAIN_URL}/api/products/trader/manufacturer/id?uid=${traderId}&page=${page}&size=${perPage}&delay=1`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/manufacturer/id?uid=${traderId}&page=${page}&size=${perPage}&delay=1`,
             "GET",
             null,
             { Authorization: "Bearer " + auth.token }
@@ -118,7 +132,7 @@ const TradersList = () => {
   const fetchProductsManf = useCallback(
     async (page: number = 1) => {
       setLoading(true);
-      if (auth) {
+      if (auth && auth.userId) {
         try {
           const response = await sendRequest(
             `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPage}&delay=1`,
@@ -163,7 +177,7 @@ const TradersList = () => {
   const handleOpenP = useCallback(
     async (trader: any) => {
       setTraderId(trader.id);
-      setLoading(true);
+      // setLoading(true);
       fetchProducts(1);
     },
     [fetchProducts]
@@ -179,24 +193,15 @@ const TradersList = () => {
 
   const handleProductsDetailButtonClick = useCallback(
     (data: any) => {
-      handleOpenP(JSON.parse(data));
+      handleOpenP(data);
     },
     [handleOpenP]
   );
 
   useEffect(() => {
-    if (!renderAfterCalled.current) {
-      fetchTraders(1);
-    }
-    renderAfterCalled.current = true;
-  }, [fetchTraders]);
-
-  useEffect(() => {
-    if (!renderAfterCalledFP.current) {
-      fetchProductsManf(1);
-    }
-    renderAfterCalledFP.current = true;
-  }, [fetchProductsManf]);
+    fetchTraders(1);
+    fetchProductsManf(1);
+  }, [auth]);
 
   useEffect(() => {
     if (!open) {
@@ -241,9 +246,8 @@ const TradersList = () => {
               normal={true}
               buttonfont={true}
               maxwidth={true}
-            >
-              Add Trader
-            </ButtonComp>
+              title="Add Trader"
+            ></ButtonComp>
             <Modal
               show={open}
               onCancel={handleClose}
@@ -257,9 +261,8 @@ const TradersList = () => {
                   normal={true}
                   buttonfont={true}
                   maxwidth={true}
-                >
-                  CLOSE
-                </ButtonComp>
+                  title="CLOSE"
+                ></ButtonComp>
               }
             >
               <View className="map-container">
@@ -276,8 +279,8 @@ const TradersList = () => {
   }
   return (
     <React.Fragment>
-      <ErrorModal error={error} onClear={clearError} />
-      {isLoading && <LoadingSpinner asOverlay />}
+      {error && <ErrorModal error={error} onClear={clearError} />}
+      {/* {isLoading && <LoadingSpinner asOverlay />} */}
       {!isLoading && (
         <Card cardProduct center>
           <ButtonComp
@@ -286,59 +289,90 @@ const TradersList = () => {
             normal={true}
             buttonfont={true}
             maxwidth={true}
-          >
-            Add Trader
-          </ButtonComp>
+            title="Add Trader"
+          ></ButtonComp>
         </Card>
       )}
       {loadedTraders && !isLoading && (
         <>
           <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>SN</DataTable.Title>
-              <DataTable.Title numeric>Edit</DataTable.Title>
-              <DataTable.Title numeric>Delete</DataTable.Title>
-              <DataTable.Title numeric>Trader</DataTable.Title>
-              <DataTable.Title numeric>Email</DataTable.Title>
-              <DataTable.Title numeric>Address</DataTable.Title>
-              <DataTable.Title numeric>Products</DataTable.Title>
-            </DataTable.Header>
-            {loadedTraders &&
-              loadedTraders.map((data: any, index: number) => (
-                <DataTable.Row key={index}>
-                  <DataTable.Cell onPress={() => handleEditButtonClick(data)}>
-                    <DataTable.Cell numeric>{data.serialNo}</DataTable.Cell>
-                    Edit
-                  </DataTable.Cell>
-                  <DataTable.Cell
-                    numeric
-                    onPress={() => handleDeleteButtonClick(data)}
-                  >
-                    Delete
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric>{data.title}</DataTable.Cell>
-                  <DataTable.Cell numeric>{data.email}</DataTable.Cell>
-                  <DataTable.Cell numeric>{data.address}</DataTable.Cell>
-                  <DataTable.Cell
-                    numeric
-                    onPress={() => handleProductsDetailButtonClick(data)}
-                  >
-                    <ButtonComp>Products</ButtonComp>
-                  </DataTable.Cell>
-                </DataTable.Row>
-              ))}
-            <DataTable.Pagination
-              page={currentPage}
-              numberOfPages={Math.ceil(totalRows / itemsPerPage)}
-              numberOfItemsPerPage={itemsPerPage}
-              onPageChange={(page) => handlePageChange(page)}
-              numberOfItemsPerPageList={numberOfItemsPerPageList}
-              onItemsPerPageChange={(numberOfItemsPerPage: number) => {
-                handlePerRowsChange(numberOfItemsPerPage);
-              }}
-              showFastPaginationControls
-              selectPageDropdownLabel={"Rows per page"}
-            />
+            <ScrollView
+              horizontal
+              contentContainerStyle={{ flexDirection: "column" }}
+            >
+              <DataTable.Header>
+                <DataTable.Title style={{ width: 40 }}>SN</DataTable.Title>
+                <DataTable.Title style={{ width: 50 }}>Edit</DataTable.Title>
+                <DataTable.Title style={{ width: 50 }}>Delete</DataTable.Title>
+                <DataTable.Title style={{ width: 100 }}>Trader</DataTable.Title>
+                <DataTable.Title style={{ width: 150 }}>Email</DataTable.Title>
+                <DataTable.Title style={{ width: 100 }}>
+                  Address
+                </DataTable.Title>
+                <DataTable.Title style={{ width: 100 }}>
+                  Products
+                </DataTable.Title>
+              </DataTable.Header>
+              {loadedTraders &&
+                loadedTraders.map((data: any, index: number) => (
+                  <DataTable.Row key={index}>
+                    <DataTable.Cell style={{ width: 40 }}>
+                      {data.serialNo}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: 50 }}>
+                      <IconButton
+                        icon="pencil"
+                        size={20}
+                        color={color}
+                        onPress={() => handleEditButtonClick(data)}
+                      />
+                      {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
+                        Edit
+                      </ThemedText> */}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: 50 }}>
+                      <IconButton
+                        icon="trash-bin"
+                        size={20}
+                        color={color}
+                        onPress={() => handleDeleteButtonClick(data)}
+                      />
+                      {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
+                        Delete
+                      </ThemedText> */}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: 100 }}>
+                      {data.title}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: 150 }}>
+                      {data.email}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={{ width: 100 }}>
+                      {data.address}
+                    </DataTable.Cell>
+                    <DataTable.Cell
+                      style={{ width: 100 }}
+                      onPress={() => handleProductsDetailButtonClick(data)}
+                    >
+                      <ThemedText style={[styles.editDeleteBtn]} type="outline">
+                        Products
+                      </ThemedText>
+                    </DataTable.Cell>
+                  </DataTable.Row>
+                ))}
+              <DataTable.Pagination
+                page={currentPage}
+                numberOfPages={Math.ceil(totalRows / itemsPerPage)}
+                numberOfItemsPerPage={itemsPerPage}
+                onPageChange={(page) => handlePageChange(page)}
+                numberOfItemsPerPageList={numberOfItemsPerPageList}
+                onItemsPerPageChange={(numberOfItemsPerPage: number) => {
+                  handlePerRowsChange(numberOfItemsPerPage);
+                }}
+                showFastPaginationControls
+                selectPageDropdownLabel={"Rows per page"}
+              />
+            </ScrollView>
           </DataTable>
           <Modal
             show={open}
@@ -390,7 +424,7 @@ const TradersList = () => {
         <View>
           {loadedProducts && !isLoading && (
             <>
-              <DataTable>
+              <DataTable style={{ flex: 1 }}>
                 <DataTable.Header>
                   <DataTable.Title>SN</DataTable.Title>
                   <DataTable.Title numeric>Product</DataTable.Title>
@@ -409,177 +443,174 @@ const TradersList = () => {
                   <DataTable.Title numeric>In House</DataTable.Title>
                 </DataTable.Header>
                 {loadedProducts &&
-                  loadedProducts.map((data: any, index: number) =>
-                    (data && data.dmf && data.dmf.length > 0 ? (
-                      (dmfHTML = data.dmf
-                        .map((dataDMF: any) => dataDMF.label)
-                        .map((dataLabel: any, indexLabel: number) => (
-                          <View>
-                            <Text>{dataLabel}</Text>
-                          </View>
-                        )))
-                    ) : (
-                      <Text>No</Text>
-                    ))(
-                      <DataTable.Row key={index}>
-                        <DataTable.Cell numeric>{data.serialNo}</DataTable.Cell>
-                        <DataTable.Cell>{data.title}</DataTable.Cell>
-                        <DataTable.Cell>{data.description}</DataTable.Cell>
-                        <DataTable.Cell numeric>{data.price}</DataTable.Cell>
-                        <DataTable.Cell>
-                          {data.COA ? "Yes" : "NA"}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {data.MSDS ? "Yes" : "NA"}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {data.CEP ? "Yes" : "NA"}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {data.QOS ? "Yes" : "NA"}
-                        </DataTable.Cell>
-                        <DataTable.Cell>{dmfHTML}</DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("IP") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("BP") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("EP") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("JP") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("USP") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                        <DataTable.Cell>
-                          {JSON.parse(
-                            JSON.stringify(data.pharmacopoeias[0])
-                          ).includes("InHouse") ? (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          ) : (
-                            <Text
-                              className="check"
-                              role="img"
-                              aria-label="check"
-                            >
-                              {" "}
-                              &#10004;{" "}
-                            </Text>
-                          )}
-                        </DataTable.Cell>
-                      </DataTable.Row>
-                    )
-                  )}
+                  loadedProducts.map((data: any, index: number) => (
+                    <DataTable.Row key={index}>
+                      <DataTable.Cell numeric>{data.serialNo}</DataTable.Cell>
+                      <DataTable.Cell>{data.title}</DataTable.Cell>
+                      <DataTable.Cell>{data.description}</DataTable.Cell>
+                      <DataTable.Cell numeric>{data.price}</DataTable.Cell>
+                      <DataTable.Cell>{data.COA ? "Yes" : "NA"}</DataTable.Cell>
+                      <DataTable.Cell>
+                        {data.MSDS ? "Yes" : "NA"}
+                      </DataTable.Cell>
+                      <DataTable.Cell>{data.CEP ? "Yes" : "NA"}</DataTable.Cell>
+                      <DataTable.Cell>{data.QOS ? "Yes" : "NA"}</DataTable.Cell>
+                      <DataTable.Cell>
+                        {
+                          (dmfHTML =
+                            data && data.dmf && data.dmf.length > 0 ? (
+                              JSON.parse(data.dmf)
+                                .map((dataDMF: any) => dataDMF.label)
+                                .map((dataLabel: any, indexLabel: number) => (
+                                  <View key={indexLabel}>
+                                    <Text>{dataLabel}</Text>
+                                  </View>
+                                ))
+                            ) : (
+                              <Text>No</Text>
+                            ))
+                        }
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("IP") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("BP") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("EP") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("JP") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("USP") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                      <DataTable.Cell>
+                        {JSON.parse(
+                          JSON.stringify(data.pharmacopoeias[0])
+                        ).includes("InHouse") ? (
+                          <Text
+                            style={globalStyle.check}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#10004;{" "}
+                          </Text>
+                        ) : (
+                          <Text
+                            style={globalStyle.cross}
+                            role="img"
+                            aria-label="check"
+                          >
+                            {" "}
+                            &#x274C;{" "}
+                          </Text>
+                        )}
+                      </DataTable.Cell>
+                    </DataTable.Row>
+                  ))}
                 <DataTable.Pagination
                   page={currentPageP}
                   numberOfPages={Math.ceil(totalRowsP / itemsPerPage)}
@@ -593,7 +624,7 @@ const TradersList = () => {
                   selectPageDropdownLabel={"Rows per page"}
                 />
               </DataTable>
-              <Modal
+              {/* <Modal
                 show={open}
                 onCancel={handleClose}
                 header={(traderData && traderData.title) || "Add Trader"}
@@ -611,14 +642,14 @@ const TradersList = () => {
                   </ButtonComp>
                 }
               >
-                {/* <View className="map-container">  */}
+               
                 <View>
                   <Trader
                     traderDataRecd={traderData}
                     handleClose={handleClose}
                   ></Trader>
                 </View>
-              </Modal>
+              </Modal> */}
             </>
           )}
         </View>
@@ -628,3 +659,11 @@ const TradersList = () => {
 };
 
 export default TradersList;
+
+const styles = StyleSheet.create({
+  editDeleteBtn: {
+    position: "relative",
+    width: 75,
+    marginHorizontal: 5,
+  },
+});

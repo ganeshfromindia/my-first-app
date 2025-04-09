@@ -203,25 +203,25 @@ const dashboardAdminScreen = (props: PropsWithChildren) => {
     renderAfterCalledFP.current = true;
   }, [fetchManufacturers]);
 
-  if (loadedManufacturers && loadedManufacturers.length === 0) {
-    return (
-      <View style={s.center}>
-        <Card cardProduct>
-          <Text style={s.navLinkbuttonActive}>No Manufacturers found.</Text>
-        </Card>
-      </View>
-    );
-  }
+  // if (loadedManufacturers && loadedManufacturers.length === 0) {
+  //   return (
+  //     <View style={s.center}>
+  //       <Card cardProduct>
+  //         <Text style={s.navLinkbuttonActive}>No Manufacturers found.</Text>
+  //       </Card>
+  //     </View>
+  //   );
+  // }
 
-  if (loadedTraders && loadedTraders.length === 0) {
-    return (
-      <View style={s.center}>
-        <Card cardProduct>
-          <Text>No Traders found.</Text>
-        </Card>
-      </View>
-    );
-  }
+  // if (loadedTraders && loadedTraders.length === 0) {
+  //   return (
+  //     <View style={s.center}>
+  //       <Card cardProduct>
+  //         <Text>No Traders found.</Text>
+  //       </Card>
+  //     </View>
+  //   );
+  // }
 
   function handleCurrentTab(presentTab: string) {
     setCurrentTab(presentTab);
@@ -239,7 +239,7 @@ const dashboardAdminScreen = (props: PropsWithChildren) => {
       {loadedManufacturers && loadedManufacturers.length === 0 && (
         <View style={s.center}>
           <Card cardProduct>
-            <Text style={s.navLinkbuttonActive}>No Manufacturers found.</Text>
+            <Text>No Manufacturers found.</Text>
           </Card>
         </View>
       )}
@@ -252,7 +252,7 @@ const dashboardAdminScreen = (props: PropsWithChildren) => {
         </View>
       )}
       {!isLoading && (
-        <View style={[s.navLinkbuttonActive, s.rowContainer]}>
+        <View style={[s.rowContainer]}>
           <View style={s.autoFlex}>
             <ButtonComp
               onClick={() => handleCurrentTab("manufacturers")}

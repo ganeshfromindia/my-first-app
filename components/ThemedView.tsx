@@ -18,9 +18,14 @@ export function ThemedView({
     "background"
   );
 
+  const border = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    "borderColor"
+  );
+
   return (
     <View
-      style={[{ backgroundColor }, style]}
+      style={[{ backgroundColor, borderRadius: 5 }, style]}
       {...otherProps}
       pointerEvents="auto"
     />

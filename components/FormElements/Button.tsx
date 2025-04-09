@@ -10,6 +10,8 @@ import {
   Text,
 } from "react-native";
 import { Link } from "expo-router";
+import { ThemedText } from "../ThemedText";
+import { ThemedView } from "../ThemedView";
 
 const ButtonComp = (props: any) => {
   if (props.href) {
@@ -26,7 +28,7 @@ const ButtonComp = (props: any) => {
           props.buttonfont && styles.buttonFont,
         ]}
       >
-        <Text style={styles.buttonText}>{props.children}</Text>
+        <ThemedText style={styles.buttonText}>{props.children}</ThemedText>
       </Link>
     );
   }
@@ -44,13 +46,13 @@ const ButtonComp = (props: any) => {
           props.buttonfont && styles.buttonFont,
         ]}
       >
-        <Text style={styles.buttonText}> {props.children} </Text>
+        <ThemedText style={styles.buttonText}> {props.children} </ThemedText>
       </Link>
     );
   }
   return (
-    <View style={[styles.buttonHolder, props.top && styles.top]}>
-      <View
+    <View style={[styles.buttonHolder]}>
+      <ThemedView
         style={[
           styles.button,
           props.inverse && styles.buttonInverse,
@@ -59,16 +61,17 @@ const ButtonComp = (props: any) => {
           props.maxwidth && styles.maxWidthFitCont,
           props && props.style,
           props.top && styles.buttonTop,
+          props.disabled && styles.buttonDisabled,
         ]}
       >
         <TouchableOpacity onPress={props.onClick} disabled={props.disabled}>
-          <Text
+          <ThemedText
             style={[styles.buttonText, props.submit && styles.submitButtonText]}
           >
             {props.title}
-          </Text>
+          </ThemedText>
         </TouchableOpacity>
-      </View>
+      </ThemedView>
     </View>
   );
 };
@@ -82,25 +85,22 @@ const styles = StyleSheet.create({
   },
   buttonHolder: {
     position: "relative",
+    borderRadius: 5,
   },
   button: {
     paddingVertical: 10,
     paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: "#ffb131",
-    borderRadius: 4,
-    backgroundColor: "#ffb131",
-    marginRight: 1,
+    width: "100%",
   },
   buttonText: {
-    color: "#ffffff",
     cursor: "pointer",
     textDecorationLine: "none",
     fontSize: 15,
     textAlign: "center",
+    lineHeight: 21,
   },
   submitButtonText: {
-    color: "#212121ks",
+    color: "#212121",
     cursor: "pointer",
     textDecorationLine: "none",
     fontSize: 15,
@@ -156,9 +156,7 @@ const styles = StyleSheet.create({
   },
 
   buttonDisabled: {
-    backgroundColor: "#cccccc",
-    color: "#979797",
-    borderColor: "#cccccc",
+    opacity: 0.5,
     cursor: "not-allowed",
   },
   buttonDisabledHover: {
@@ -183,12 +181,6 @@ const styles = StyleSheet.create({
   },
   buttonTop: {
     backgroundColor: "#ffb131",
-  },
-  top: {
-    position: "absolute",
-    top: "-5%",
-    left: "30%",
-    width: "auto",
   },
   buttonNormalButton: {
     backgroundColor: "#ffb131",
