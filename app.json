@@ -51,7 +51,7 @@
 
     "splash": {
       "image": "./assets/images/splash.png",
-      "backgroundColor": "#ffff"
+      "backgroundColor": "#ffffff"
     },
     "experiments": {
       "typedRoutes": true
