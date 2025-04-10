@@ -421,10 +421,14 @@ const TradersList = () => {
         }
       >
         {/* <View  className="map-container">      */}
-        <View>
-          {loadedProducts && !isLoading && (
-            <>
-              <DataTable style={{ flex: 1 }}>
+
+        {loadedProducts && !isLoading && (
+          <>
+            <DataTable style={{ flex: 1 }}>
+              <ScrollView
+                horizontal
+                contentContainerStyle={{ flexDirection: "column" }}
+              >
                 <DataTable.Header>
                   <DataTable.Title>SN</DataTable.Title>
                   <DataTable.Title numeric>Product</DataTable.Title>
@@ -623,8 +627,9 @@ const TradersList = () => {
                   showFastPaginationControls
                   selectPageDropdownLabel={"Rows per page"}
                 />
-              </DataTable>
-              {/* <Modal
+              </ScrollView>
+            </DataTable>
+            {/* <Modal
                 show={open}
                 onCancel={handleClose}
                 header={(traderData && traderData.title) || "Add Trader"}
@@ -650,9 +655,8 @@ const TradersList = () => {
                   ></Trader>
                 </View>
               </Modal> */}
-            </>
-          )}
-        </View>
+          </>
+        )}
       </Modal>
     </React.Fragment>
   );

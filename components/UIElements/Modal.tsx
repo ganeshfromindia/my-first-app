@@ -1,6 +1,8 @@
 import React from "react";
 import ReactNativeModal from "react-native-modal";
 import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -11,13 +13,18 @@ const deviceHeight = Dimensions.get("window").height;
 //     );
 
 const ModalOverlay = (props: any) => {
+  const backgroundColor = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.dark.tint },
+    "background"
+  );
+
   const content = (
     <View style={styles.modalContainer}>
       <View style={[styles.modalHeader]}>
         <Text style={styles.modalHeaderh2}>{props.header}</Text>
       </View>
 
-      <View style={[styles.modalContent]}>
+      <View style={[styles.modalContent, { backgroundColor }]}>
         <View>{props.children}</View>
       </View>
       <View style={[styles.modalFooter]}>
