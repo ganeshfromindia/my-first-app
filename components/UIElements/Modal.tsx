@@ -18,13 +18,18 @@ const ModalOverlay = (props: any) => {
     "background"
   );
 
+  const color = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.dark.tint },
+    "text"
+  );
+
   const content = (
     <View style={styles.modalContainer}>
       <View style={[styles.modalHeader]}>
         <Text style={styles.modalHeaderh2}>{props.header}</Text>
       </View>
 
-      <View style={[styles.modalContent, { backgroundColor }]}>
+      <View style={[styles.modalContent]}>
         <View>{props.children}</View>
       </View>
       <View style={[styles.modalFooter]}>
