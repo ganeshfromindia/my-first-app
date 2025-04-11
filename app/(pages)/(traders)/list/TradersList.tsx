@@ -7,6 +7,7 @@ import React, {
   useRef,
 } from "react";
 import { DataTable } from "react-native-paper";
+import { PaperProvider } from "react-native-paper";
 
 import Card from "@/components/UIElements/Card";
 import ButtonComp from "@/components/FormElements/Button";
@@ -26,12 +27,14 @@ import { ThemedText } from "@/components/ThemedText";
 import IconButton from "@/components/ui/IconButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
+import { ThemedView } from "@/components/ThemedView";
 
 const TradersList = () => {
   const color = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
     "text"
   );
+
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const renderAfterCalled = useRef(false);
@@ -408,6 +411,7 @@ const TradersList = () => {
         header="Products"
         contentClass="place-item__modal-content"
         footerClass="place-item__modal-actions abc"
+        datatable
         footer={
           <ButtonComp
             type="button"
@@ -424,7 +428,7 @@ const TradersList = () => {
 
         {loadedProducts && !isLoading && (
           <>
-            <DataTable style={{ flex: 1 }}>
+            <DataTable>
               <ScrollView
                 horizontal
                 contentContainerStyle={{ flexDirection: "column" }}

@@ -3,6 +3,7 @@ import ReactNativeModal from "react-native-modal";
 import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
+import { ThemedView } from "../ThemedView";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -14,17 +15,17 @@ const deviceHeight = Dimensions.get("window").height;
 
 const ModalOverlay = (props: any) => {
   const backgroundColor = useThemeColor(
-    { light: Colors.light.tint, dark: Colors.dark.tint },
+    { light: "#ffffff", dark: "#121212" },
     "background"
   );
-
-  const color = useThemeColor(
-    { light: Colors.light.tint, dark: Colors.dark.tint },
-    "text"
-  );
-
   const content = (
-    <View style={styles.modalContainer}>
+    <View
+      style={[
+        !props.datatable && styles.modalContainer,
+        styles.datatableContainer,
+        { backgroundColor },
+      ]}
+    >
       <View style={[styles.modalHeader]}>
         <Text style={styles.modalHeaderh2}>{props.header}</Text>
       </View>
@@ -85,5 +86,9 @@ const styles = StyleSheet.create({
     height: "80%",
     overflow: "scroll",
     backgroundColor: "#ffffff",
+  },
+  datatableContainer: {
+    height: "80%",
+    overflow: "scroll",
   },
 });
