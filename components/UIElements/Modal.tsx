@@ -1,9 +1,18 @@
 import React from "react";
 import ReactNativeModal from "react-native-modal";
-import { Dimensions, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import { ThemedView } from "../ThemedView";
+import ButtonComp from "../FormElements/Button";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -14,38 +23,60 @@ const deviceHeight = Dimensions.get("window").height;
 //     );
 
 const ModalOverlay = (props: any) => {
-  const backgroundColor = useThemeColor(
+  const datatable = useThemeColor(
     { light: "#ffffff", dark: "#121212" },
     "background"
   );
-  const content = (
-    <View
-      style={[
-        !props.datatable && styles.modalContainer,
-        styles.datatableContainer,
-        { backgroundColor },
-      ]}
-    >
-      <View style={[styles.modalHeader]}>
-        <Text style={styles.modalHeaderh2}>{props.header}</Text>
-      </View>
-
-      <View style={[styles.modalContent]}>
-        <View>{props.children}</View>
-      </View>
-      <View style={[styles.modalFooter]}>
-        <View>{props.footer}</View>
-      </View>
-    </View>
+  const noDatatable = useThemeColor(
+    { light: "#ffffff", dark: "#ffffff" },
+    "background"
   );
+  let content;
+  if (props.show) {
+    content = (
+      <View
+        style={[
+          styles.modalContainer,
+          props.datatable && { backgroundColor: datatable },
+          !props.datatable && { backgroundColor: noDatatable },
+        ]}
+      >
+        <View style={[styles.modalHeader]}>
+          <Text style={styles.modalHeaderh2}>{props.header}</Text>
+        </View>
+
+        <View style={[styles.modalContent]}>
+          <View>{props.children}</View>
+        </View>
+        <View style={[styles.modalFooter]}>
+          <View style={{ flex: 1 }}>{props.footer}</View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <ReactNativeModal
       isVisible={props.show}
       deviceWidth={deviceWidth}
       deviceHeight={deviceHeight}
       onBackdropPress={props.onCancel}
+      propagateSwipe={true}
     >
-      {content}
+      <View>
+        <SafeAreaView style={{ flex: 0 }}>
+          <ScrollView
+            contentContainerStyle={{
+              height: "auto",
+              justifyContent: "space-between",
+              alignItems: "stretch",
+              flexGrow: 1,
+            }}
+          >
+            {content}
+          </ScrollView>
+        </SafeAreaView>
+      </View>
     </ReactNativeModal>
   );
 };
@@ -70,25 +101,22 @@ const styles = StyleSheet.create({
   },
   modalHeaderh2: {
     margin: 0.5,
+    padding: 12,
   },
 
   modalContent: {
-    paddingHorizontal: 0.5,
-    paddingVertical: 1,
+    padding: 12,
   },
 
   modalFooter: {
-    paddingHorizontal: 2.5,
-    paddingVertical: 1,
+    padding: 12,
   },
 
   modalContainer: {
-    height: "80%",
+    height: "100%",
     overflow: "scroll",
-    backgroundColor: "#ffffff",
   },
-  datatableContainer: {
-    height: "80%",
-    overflow: "scroll",
+  test: {
+    backgroundColor: "#ff0000",
   },
 });

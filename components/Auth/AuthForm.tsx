@@ -192,7 +192,7 @@ const AuthForm = () => {
                       type="text"
                       label="Your Name"
                       errorText="Please enter a name."
-                      validators={[]}
+                      validators={[VALIDATOR_REQUIRE()]}
                       onInput={inputHandler}
                       authInput={true}
                       authLabel={true}
@@ -250,6 +250,9 @@ const AuthForm = () => {
                   )}
                   <View style={styles.authenticationButton}>
                     <ButtonComp
+                      normal={true}
+                      buttonfont={true}
+                      maxwidth={true}
                       submit
                       disabled={!formState.isValid}
                       onClick={authSubmitHandler}
@@ -259,6 +262,9 @@ const AuthForm = () => {
                 </View>
                 <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
+                    normal={true}
+                    buttonfont={true}
+                    maxwidth={true}
                     inverse
                     onClick={switchModeHandler}
                     title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}

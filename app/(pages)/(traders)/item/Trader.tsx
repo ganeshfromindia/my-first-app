@@ -21,10 +21,20 @@ import AuthContext from "@/store/auth-context";
 import { MultiSelect, Dropdown } from "react-native-element-dropdown";
 import { MAIN_URL } from "@/util/config";
 import Modal from "@/components/UIElements/Modal";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 import s from "../../../../assets/css/style";
+
+import { Dimensions } from "react-native";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 enum pointerEvent {
   none = "none",
@@ -40,15 +50,21 @@ const Trader = ({
   traderDataRecd: any;
   handleClose: any;
 }) => {
+  const [scrollViewMinHeight, setScrollViewMinHeight] = useState(0);
+  const renderAfterCalledMH = useRef(false);
+  let ScrollViewMinHeight;
+  const deviceHeight = Dimensions.get("window").height;
+  const headerHeight = useHeaderHeight();
   const [selected, setSelected] = useState<any>(null);
   const [isFocus, setIsFocus] = useState<any>(false);
+  const [isFocusMulti, setIsFocusMulti] = useState<any>(false);
   const selectInputRef = useRef<any>();
   const renderAfterCalled = useRef(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProducts, setLoadedProducts] = useState<any>();
   const [traders, setTraders] = useState([]);
   const [tradersObj, setTradersObj] = useState([]);
-  const [defaultProducts, setDefaultProducts] = useState<any>(null);
+  const [defaultProducts, setDefaultProducts] = useState<string[]>([]);
   const [productData, setProductData] = useState();
   const auth = useContext(AuthContext);
   const [open, setOpen] = useState(false);
@@ -60,7 +76,9 @@ const Trader = ({
   const renderItem = (item: any) => {
     return (
       <View style={styles.item}>
-        <Text style={styles.selectedTextStyle}>{item.label}</Text>
+        <Text style={[styles.selectedTextStyle, { color: "#000000" }]}>
+          {item.label}
+        </Text>
         <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
       </View>
     );
@@ -317,181 +335,171 @@ const Trader = ({
     setIsDisabled(pointerEvent.auto);
   };
 
+  useEffect(() => {
+    if (!renderAfterCalled.current) {
+      ScrollViewMinHeight = deviceHeight - headerHeight;
+      setScrollViewMinHeight(ScrollViewMinHeight);
+    }
+    renderAfterCalled.current = true;
+  }, []);
+
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
       {/* {isLoading && <LoadingSpinner asOverlay />} */}
-      {!isLoading && !traderDataRecd && (
-        <View style={[s.formControl, s.placeForm, styles.searchTrader]}>
-          <View style={styles.containerdd}>
-            <Dropdown
-              style={[styles.dropdown, isFocus && { borderColor: "#ffb131" }]}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              inputSearchStyle={styles.inputSearchStyle}
-              iconStyle={styles.iconStyle}
-              data={traders}
-              labelField="label"
-              valueField="value"
-              placeholder={!isFocus ? "Select item" : "..."}
-              value={selected}
-              search
-              onFocus={() => setIsFocus(true)}
-              onBlur={() => setIsFocus(false)}
-              searchPlaceholder="Search..."
-              onChange={(item) => {
-                setSelected(item);
-                setIsFocus(false);
-              }}
-              renderLeftIcon={() => (
-                <AntDesign
-                  style={styles.icon}
-                  color="black"
-                  name="Safety"
-                  size={20}
-                />
-              )}
-              renderItem={renderItem}
-            />
+
+      <View>
+        {!isLoading && !traderDataRecd && (
+          <View style={[s.formControl, s.placeForm, styles.searchTrader]}>
+            <View style={styles.containerdd}>
+              <Dropdown
+                style={[
+                  styles.dropdown,
+                  isFocus && { borderColor: "#ffb131", borderWidth: 1 },
+                ]}
+                placeholderStyle={styles.placeholderStyle}
+                selectedTextStyle={styles.selectedTextStyle}
+                inputSearchStyle={styles.inputSearchStyle}
+                iconStyle={styles.iconStyle}
+                data={traders}
+                labelField="label"
+                valueField="value"
+                placeholder={!isFocus ? "Select item" : "..."}
+                value={selected}
+                search
+                onFocus={() => setIsFocus(true)}
+                onBlur={() => setIsFocus(false)}
+                searchPlaceholder="Search..."
+                onChange={(item) => {
+                  setSelected(item);
+                  setIsFocus(false);
+                }}
+                renderLeftIcon={() => (
+                  <AntDesign
+                    style={styles.icon}
+                    color="black"
+                    name="Safety"
+                    size={20}
+                  />
+                )}
+                renderItem={renderItem}
+              />
+            </View>
+            <Text style={{ paddingHorizontal: 12, paddingVertical: 5 }}>
+              Or Add New Trader
+            </Text>
+            <View style={{ width: 150, margin: "auto" }}>
+              <ButtonComp
+                onClick={handleNewTrader}
+                normal={true}
+                buttonfont={true}
+                maxwidth={true}
+                title="ADD NEW TRADER"
+              ></ButtonComp>
+            </View>
           </View>
-          <Text> Or Add New Trader</Text>
-          <ButtonComp
-            type="button"
-            onClick={handleNewTrader}
-            normal={true}
-            buttonfont={true}
-            maxwidth={true}
-          >
-            ADD NEW TRADER
-          </ButtonComp>
-        </View>
-      )}
-      {!isLoading && (newTrader || traderData) && (
-        <View style={s.placeForm}>
-          <View pointerEvents={isDisabled}>
-            <Input
-              id="title"
-              element="input"
-              type="text"
-              label="Title"
-              validators={[VALIDATOR_REQUIRE()]}
-              errorText="Please enter a valid title."
-              onInput={inputHandler}
-              initialValue={traderData && traderData.title}
-            />
-            <Input
-              id="email"
-              element="input"
-              label="Email"
-              validators={[VALIDATOR_EMAIL()]}
-              errorText="Please enter a valid email."
-              onInput={inputHandler}
-              initialValue={traderData && traderData.email}
-            />
-            <Input
-              id="address"
-              element="input"
-              label="Address"
-              errorText="Please enter a address."
-              onInput={inputHandler}
-              validators={[VALIDATOR_REQUIRE()]}
-              initialValue={traderData && traderData.address}
-            />
-
-            {/*loadedProducts && defaultProducts && !loading && (
-            <Select
-              ref={selectInputRef}
-              defaultValue={defaultProducts}
-              closeMenuOnSelect={false}
-              components={animatedComponents}
-              isMulti
-              options={loadedProducts}
-              placeholder="Select Products"
-              onChange={handleMultiProductSelect}
-              formatOptionLabel={(option, { context }) => {
-                //  context can be either `menu` or `value`
-                //   menu - dropdown
-                //   value - value displayed
-
-                return context === "value" ? option.value : option.label;
-              }}
-            />
-          )*/}
-          </View>
-
-          {loadedProducts && defaultProducts && (
+        )}
+        {!isLoading && (newTrader || traderData) && (
+          <View style={[s.formControl, s.placeForm, styles.searchTrader]}>
+            <View style={styles.containerdd} pointerEvents={isDisabled}>
+              <Input
+                id="title"
+                element="input"
+                type="text"
+                label="Title"
+                validators={[VALIDATOR_REQUIRE()]}
+                errorText="Please enter a valid title."
+                onInput={inputHandler}
+                initialValue={traderData && traderData.title}
+              />
+              <Input
+                id="email"
+                element="input"
+                label="Email"
+                validators={[VALIDATOR_EMAIL()]}
+                errorText="Please enter a valid email."
+                onInput={inputHandler}
+                initialValue={traderData && traderData.email}
+              />
+              <Input
+                id="address"
+                element="input"
+                label="Address"
+                errorText="Please enter a address."
+                onInput={inputHandler}
+                validators={[VALIDATOR_REQUIRE()]}
+                initialValue={traderData && traderData.address}
+              />
+            </View>
             <View>
-              <View style={styles.containerdd}>
-                <MultiSelect
-                  style={styles.dropdown}
-                  placeholderStyle={styles.placeholderStyle}
-                  selectedTextStyle={styles.selectedTextStyle}
-                  inputSearchStyle={styles.inputSearchStyle}
-                  iconStyle={styles.iconStyle}
-                  data={loadedProducts}
-                  labelField="label"
-                  valueField="value"
-                  placeholder="Select Products"
-                  value={defaultProducts}
-                  search
-                  searchPlaceholder="Search..."
-                  onChange={(item) => {
-                    setDefaultProducts(item);
-                  }}
-                  renderLeftIcon={() => (
-                    <AntDesign
-                      style={styles.icon}
-                      color="black"
-                      name="Safety"
-                      size={20}
-                    />
-                  )}
-                  renderItem={renderItem}
-                  renderSelectedItem={(item, unSelect) => (
-                    <TouchableOpacity
-                      onPress={() => unSelect && unSelect(item)}
-                    >
-                      <View style={styles.selectedStyle}>
-                        <Text style={styles.textSelectedStyle}>
-                          {item.label}
-                        </Text>
-                        <AntDesign color="black" name="delete" size={17} />
-                      </View>
-                    </TouchableOpacity>
-                  )}
-                />
+              {loadedProducts && defaultProducts && (
+                <View style={styles.containerMultiSelect}>
+                  <MultiSelect
+                    mode="modal"
+                    style={styles.dropdown}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    search
+                    data={loadedProducts}
+                    labelField="label"
+                    valueField="value"
+                    placeholder="Select Products"
+                    value={defaultProducts}
+                    searchPlaceholder="Search..."
+                    onChange={(item) => {
+                      setDefaultProducts(item);
+                    }}
+                    renderLeftIcon={() => (
+                      <AntDesign
+                        style={styles.icon}
+                        color="black"
+                        name="Safety"
+                        size={20}
+                      />
+                    )}
+                    renderItem={renderItem}
+                    renderSelectedItem={(item, unSelect) => (
+                      <TouchableOpacity
+                        onPress={() => unSelect && unSelect(item)}
+                      >
+                        <View style={styles.selectedStyle}>
+                          <Text
+                            style={[
+                              styles.textSelectedStyle,
+                              { color: "#000000" },
+                            ]}
+                          >
+                            {item.label}
+                          </Text>
+                          <AntDesign color="black" name="delete" size={17} />
+                        </View>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
+              )}
+              <View style={{ width: 100, margin: "auto" }}>
+                <ButtonComp
+                  normal={true}
+                  buttonfont={true}
+                  maxwidth={true}
+                  disabled={!formState.isValid}
+                  title="SAVE"
+                ></ButtonComp>
               </View>
             </View>
-          )}
-          <View style={s.height25}></View>
-          <ButtonComp
-            type="submit"
-            normal={true}
-            buttonfont={true}
-            maxwidth={true}
-            disabled={!formState.isValid}
-          >
-            SAVE
-          </ButtonComp>
-        </View>
-      )}
+          </View>
+        )}
+      </View>
+
       <Modal
         show={open}
         onCancel={handleCloseInfo}
         header={"Trader Login Details"}
         contentClass="place-item__modal-content"
         footerClass="place-item__modal-actions"
-        footer={
-          <ButtonComp
-            type="button"
-            onClick={handleCloseInfo}
-            normal={true}
-            buttonfont={true}
-            maxwidth={true}
-          >
-            CLOSE
-          </ButtonComp>
-        }
       >
         <View style={styles.messageContainer}>
           <Text>{traderInfo && traderInfo.username}</Text>
@@ -506,6 +514,9 @@ export default Trader;
 
 const styles = StyleSheet.create({
   containerdd: {
+    padding: 16,
+  },
+  containerMultiSelect: {
     padding: 16,
   },
   dropdown: {
@@ -528,7 +539,6 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 14,
-    color: "#ff0000",
   },
   iconStyle: {
     width: 20,
@@ -564,13 +574,11 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-    color: "#ff00ff",
     elevation: 2,
   },
   textSelectedStyle: {
     marginRight: 5,
     fontSize: 16,
-    color: "#00ff00",
   },
   messageContainer: {
     flexDirection: "column",
@@ -580,7 +588,6 @@ const styles = StyleSheet.create({
   searchTrader: {
     flexDirection: "column",
     justifyContent: "space-between",
-    height: 150,
     marginBottom: 10,
   },
   SearchTraderDiv: {
@@ -589,5 +596,9 @@ const styles = StyleSheet.create({
   fieldset: {
     padding: 0,
     margin: 0,
+  },
+  dropdownContainer: {
+    width: "100%",
+    justifyContent: "flex-start",
   },
 });

@@ -30,7 +30,8 @@ import { Colors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ThemedView";
 
 const TradersList = () => {
-  const color = useThemeColor(
+  const color = useThemeColor({ light: "#000000", dark: "#ffffff" }, "text");
+  const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
     "text"
   );
@@ -171,8 +172,7 @@ const TradersList = () => {
     }
   }, [traderId, fetchProducts]);
 
-  const handleOpen = (trader: any, e: any) => {
-    e.preventDefault();
+  const handleOpen = (trader: any) => {
     setTraderData(trader);
     setOpen(true);
   };
@@ -245,7 +245,7 @@ const TradersList = () => {
           <Card cardProduct={true}>
             <Text>No traders found</Text>
             <ButtonComp
-              onClick={($event: any) => handleOpen(null, $event)}
+              onClick={() => handleOpen(null)}
               normal={true}
               buttonfont={true}
               maxwidth={true}
@@ -257,15 +257,17 @@ const TradersList = () => {
               header="Add Trader"
               contentClass="place-item__modal-content"
               footerClass="place-item__modal-actions abc"
+              datatable={false}
               footer={
-                <ButtonComp
-                  type="button"
-                  onClick={handleClose}
-                  normal={true}
-                  buttonfont={true}
-                  maxwidth={true}
-                  title="CLOSE"
-                ></ButtonComp>
+                <View style={{ width: 100, margin: "auto" }}>
+                  <ButtonComp
+                    onClick={handleClose}
+                    normal={true}
+                    buttonfont={true}
+                    maxwidth={true}
+                    title="CLOSE"
+                  ></ButtonComp>
+                </View>
               }
             >
               <View className="map-container">
@@ -287,8 +289,7 @@ const TradersList = () => {
       {!isLoading && (
         <Card cardProduct center>
           <ButtonComp
-            type="button"
-            onClick={($event: any) => handleOpen(null, $event)}
+            onClick={() => handleOpen(null)}
             normal={true}
             buttonfont={true}
             maxwidth={true}
@@ -326,7 +327,7 @@ const TradersList = () => {
                       <IconButton
                         icon="pencil"
                         size={20}
-                        color={color}
+                        color={colorIcon}
                         onPress={() => handleEditButtonClick(data)}
                       />
                       {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
@@ -337,7 +338,7 @@ const TradersList = () => {
                       <IconButton
                         icon="trash-bin"
                         size={20}
-                        color={color}
+                        color={colorIcon}
                         onPress={() => handleDeleteButtonClick(data)}
                       />
                       {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
@@ -383,16 +384,17 @@ const TradersList = () => {
             header={(traderData && traderData.title) || "Add Trader"}
             contentClass="place-item__modal-content"
             footerClass="place-item__modal-actions"
+            datatable={false}
             footer={
-              <ButtonComp
-                type="button"
-                onClick={handleClose}
-                normal={true}
-                buttonfont={true}
-                maxwidth={true}
-              >
-                CLOSE
-              </ButtonComp>
+              <View style={{ width: 100, margin: "auto" }}>
+                <ButtonComp
+                  onClick={handleClose}
+                  normal={true}
+                  buttonfont={true}
+                  maxwidth={true}
+                  title="CLOSE"
+                ></ButtonComp>
+              </View>
             }
           >
             {/* <View className="map-container"> */}
@@ -411,17 +413,17 @@ const TradersList = () => {
         header="Products"
         contentClass="place-item__modal-content"
         footerClass="place-item__modal-actions abc"
-        datatable
+        datatable={true}
         footer={
-          <ButtonComp
-            type="button"
-            onClick={handleCloseP}
-            normal={true}
-            buttonfont={true}
-            maxwidth={true}
-          >
-            CLOSE
-          </ButtonComp>
+          <View style={{ width: 100, margin: "auto" }}>
+            <ButtonComp
+              onClick={handleCloseP}
+              normal={true}
+              buttonfont={true}
+              maxwidth={true}
+              title="CLOSE"
+            ></ButtonComp>
+          </View>
         }
       >
         {/* <View  className="map-container">      */}
@@ -434,52 +436,74 @@ const TradersList = () => {
                 contentContainerStyle={{ flexDirection: "column" }}
               >
                 <DataTable.Header>
-                  <DataTable.Title>SN</DataTable.Title>
-                  <DataTable.Title numeric>Product</DataTable.Title>
-                  <DataTable.Title numeric>Description</DataTable.Title>
-                  <DataTable.Title numeric>Price</DataTable.Title>
-                  <DataTable.Title numeric>COA</DataTable.Title>
-                  <DataTable.Title numeric>MSDS</DataTable.Title>
-                  <DataTable.Title numeric>CEP</DataTable.Title>
-                  <DataTable.Title numeric>QOS</DataTable.Title>
-                  <DataTable.Title numeric>DMF</DataTable.Title>
-                  <DataTable.Title numeric>IP</DataTable.Title>
-                  <DataTable.Title numeric>BP</DataTable.Title>
-                  <DataTable.Title numeric>EP</DataTable.Title>
-                  <DataTable.Title numeric>JP</DataTable.Title>
-                  <DataTable.Title numeric>USP</DataTable.Title>
-                  <DataTable.Title numeric>In House</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>SN</DataTable.Title>
+                  <DataTable.Title style={{ width: 30, flexWrap: "nowrap" }}>
+                    Product
+                  </DataTable.Title>
+                  <DataTable.Title style={{ width: 120 }}>
+                    Description
+                  </DataTable.Title>
+                  <DataTable.Title style={{ width: 60 }}>Price</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>COA</DataTable.Title>
+                  <DataTable.Title style={{ width: 50 }}>MSDS</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>CEP</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>QOS</DataTable.Title>
+                  <DataTable.Title style={{ width: 120 }}>DMF</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>IP</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>BP</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>EP</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>JP</DataTable.Title>
+                  <DataTable.Title style={{ width: 30 }}>USP</DataTable.Title>
+                  <DataTable.Title style={{ width: 60 }}>
+                    In House
+                  </DataTable.Title>
                 </DataTable.Header>
                 {loadedProducts &&
                   loadedProducts.map((data: any, index: number) => (
                     <DataTable.Row key={index}>
-                      <DataTable.Cell numeric>{data.serialNo}</DataTable.Cell>
-                      <DataTable.Cell>{data.title}</DataTable.Cell>
-                      <DataTable.Cell>{data.description}</DataTable.Cell>
-                      <DataTable.Cell numeric>{data.price}</DataTable.Cell>
-                      <DataTable.Cell>{data.COA ? "Yes" : "NA"}</DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
+                        {data.serialNo}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30, flexWrap: "nowrap" }}>
+                        {data.title}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 120 }}>
+                        {data.description}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 60 }}>
+                        {data.price}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
+                        {data.COA ? "Yes" : "NA"}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 50 }}>
                         {data.MSDS ? "Yes" : "NA"}
                       </DataTable.Cell>
-                      <DataTable.Cell>{data.CEP ? "Yes" : "NA"}</DataTable.Cell>
-                      <DataTable.Cell>{data.QOS ? "Yes" : "NA"}</DataTable.Cell>
-                      <DataTable.Cell>
-                        {
-                          (dmfHTML =
-                            data && data.dmf && data.dmf.length > 0 ? (
-                              JSON.parse(data.dmf)
-                                .map((dataDMF: any) => dataDMF.label)
-                                .map((dataLabel: any, indexLabel: number) => (
-                                  <View key={indexLabel}>
-                                    <Text>{dataLabel}</Text>
-                                  </View>
-                                ))
-                            ) : (
-                              <Text>No</Text>
-                            ))
-                        }
+                      <DataTable.Cell style={{ width: 30 }}>
+                        {data.CEP ? "Yes" : "NA"}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
+                        {data.QOS ? "Yes" : "NA"}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 120 }}>
+                        <View style={{ flexDirection: "column" }}>
+                          {
+                            (dmfHTML =
+                              data && data.dmf && data.dmf.length > 0 ? (
+                                JSON.parse(data.dmf)
+                                  .map((dataDMF: any) => dataDMF.label)
+                                  .map((dataLabel: any, indexLabel: number) => (
+                                    <View key={indexLabel}>
+                                      <Text style={{ color }}>{dataLabel}</Text>
+                                    </View>
+                                  ))
+                              ) : (
+                                <Text>No</Text>
+                              ))
+                          }
+                        </View>
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("IP") ? (
@@ -502,7 +526,7 @@ const TradersList = () => {
                           </Text>
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("BP") ? (
@@ -525,7 +549,7 @@ const TradersList = () => {
                           </Text>
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("EP") ? (
@@ -548,7 +572,7 @@ const TradersList = () => {
                           </Text>
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("JP") ? (
@@ -571,7 +595,7 @@ const TradersList = () => {
                           </Text>
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("USP") ? (
@@ -594,7 +618,7 @@ const TradersList = () => {
                           </Text>
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell>
+                      <DataTable.Cell style={{ width: 60 }}>
                         {JSON.parse(
                           JSON.stringify(data.pharmacopoeias[0])
                         ).includes("InHouse") ? (
@@ -640,6 +664,7 @@ const TradersList = () => {
                 contentClass="place-item__modal-content"
                 footerClass="place-item__modal-actions"
                 footer={
+                <View style={{ width: 100, margin: "auto" }}>
                   <ButtonComp
                     type="button"
                     onClick={handleClose}
@@ -649,6 +674,7 @@ const TradersList = () => {
                   >
                     CLOSE
                   </ButtonComp>
+                  </View>
                 }
               >
                

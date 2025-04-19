@@ -23,7 +23,7 @@ exports[`renders correctly 1`] = `
     ]
   }
 >
-  Snapshot test abc!
+  Snapshot test abcdefg!
 </Text>
 `;
 

@@ -5,7 +5,7 @@ import { ThemedText } from "../ThemedText";
 
 it(`renders correctly`, () => {
   const tree = renderer
-    .create(<ThemedText>Snapshot test abc!</ThemedText>)
+    .create(<ThemedText>Snapshot test abcdefg!</ThemedText>)
     .toJSON();
 
   expect(tree).toMatchSnapshot();

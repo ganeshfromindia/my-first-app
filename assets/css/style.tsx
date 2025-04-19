@@ -164,10 +164,17 @@ const globalStyle = StyleSheet.create({
     }),
   },
   authenticationFormControlInvalidInput: {
-    backgroundColor: "rgba(255, 255, 255, 0.07)",
+    backgroundColor: "rgba(255, 0, 0, 0.50)",
+  },
+  authenticationFormControlValidInput: {
+    backgroundColor: "rgba(255, 255, 0, 0.50)",
   },
   authenticationFormControlnput: {
-    backgroundColor: "rgba(255, 255, 255, 0.07)",
+    // backgroundColor: "rgba(255, 255, 255, 0.07)",
+    backgroundColor: "rgba(230, 218, 218, 0.50)",
+    height: 40,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
   },
   authenticationFormControlInputFocus: {
     backgroundColor: "rgba(255, 255, 255, 0.07)",

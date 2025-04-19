@@ -23,7 +23,7 @@ const ButtonComp = (props: any) => {
           styles.button,
           props.inverse && styles.buttonInverse,
           props.danger && styles.buttonDanger,
-          props.normal && styles.buttonNormalButton,
+          props.normal && styles.buttonNormal,
           props.maxwidth && styles.maxWidthFitCont,
           props.buttonfont && styles.buttonFont,
         ]}
@@ -41,7 +41,7 @@ const ButtonComp = (props: any) => {
           styles.button,
           props.inverse && styles.buttonInverse,
           props.danger && styles.buttonDanger,
-          props.normal && styles.buttonNormalButton,
+          props.normal && styles.buttonNormal,
           props.maxwidth && styles.maxWidthFitCont,
           props.buttonfont && styles.buttonFont,
         ]}
@@ -57,7 +57,7 @@ const ButtonComp = (props: any) => {
           styles.button,
           props.inverse && styles.buttonInverse,
           props.danger && styles.buttonDanger,
-          props.normal && styles.buttonNormalButton,
+          props.normal && styles.buttonNormal,
           props.maxwidth && styles.maxWidthFitCont,
           props && props.style,
           props.top && styles.buttonTop,
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
   buttonHolder: {
     position: "relative",
     borderRadius: 5,
+    borderWidth: 2,
+    borderColor: "#ffb131",
+    margin: 5,
   },
   button: {
     paddingVertical: 10,
@@ -95,9 +98,9 @@ const styles = StyleSheet.create({
   buttonText: {
     cursor: "pointer",
     textDecorationLine: "none",
-    fontSize: 15,
+    fontSize: 12,
     textAlign: "center",
-    lineHeight: 21,
+    lineHeight: 17,
   },
   submitButtonText: {
     color: "#212121",
@@ -182,9 +185,7 @@ const styles = StyleSheet.create({
   buttonTop: {
     backgroundColor: "#ffb131",
   },
-  buttonNormalButton: {
-    backgroundColor: "#ffb131",
-    color: "#ffffff",
+  buttonNormal: {
     padding: 7,
     borderRadius: 3,
     width: 75,

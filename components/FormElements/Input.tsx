@@ -94,11 +94,13 @@ const Input: any = (props: any) => {
         defaultValue={primaryValue}
         key={primaryValue === "" ? "textAreaKey" : primaryValue}
         style={[
-          props.authInput && globalStyle.authenticationInput,
           globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
+            inputState.isTouched &&
             globalStyle.authenticationFormControlInvalidInput,
+          // inputState.isValid && globalStyle.authenticationFormControlValidInput,
         ]}
       />
     ) : props.element === "input" && props.type !== "password" ? (
@@ -111,11 +113,13 @@ const Input: any = (props: any) => {
         onEndEditing={(e) => onEndEditing(e)}
         defaultValue={passedValue}
         style={[
-          props.authInput && globalStyle.authenticationInput,
           globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
+            inputState.isTouched &&
             globalStyle.authenticationFormControlInvalidInput,
+          // inputState.isValid && globalStyle.authenticationFormControlValidInput,
         ]}
       />
     ) : props.element === "input" && props.type === "password" ? (
@@ -127,11 +131,13 @@ const Input: any = (props: any) => {
         onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
         style={[
-          props.authInput && globalStyle.authenticationInput,
           globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
+            inputState.isTouched &&
             globalStyle.authenticationFormControlInvalidInput,
+          // inputState.isValid && globalStyle.authenticationFormControlValidInput,
         ]}
       />
     ) : (
@@ -143,11 +149,13 @@ const Input: any = (props: any) => {
         onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
         style={[
-          props.authInput && globalStyle.authenticationInput,
           globalStyle.authenticationFormControlnput,
+          props.authInput && globalStyle.authenticationInput,
           props.authGeneral && globalStyle.authenticationGeneral,
           !inputState.isValid &&
+            inputState.isTouched &&
             globalStyle.authenticationFormControlInvalidInput,
+          // inputState.isValid && globalStyle.authenticationFormControlValidInput,
         ]}
       />
     );
