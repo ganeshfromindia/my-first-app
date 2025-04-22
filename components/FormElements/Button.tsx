@@ -12,8 +12,13 @@ import {
 import { Link } from "expo-router";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const ButtonComp = (props: any) => {
+  const borderColor = useThemeColor(
+    { light: "#ffb131", dark: "#000000" },
+    "borderColor"
+  );
   if (props.href) {
     return (
       <Link
@@ -51,7 +56,7 @@ const ButtonComp = (props: any) => {
     );
   }
   return (
-    <View style={[styles.buttonHolder]}>
+    <View style={[styles.buttonHolder, !props.mode && { borderColor }]}>
       <ThemedView
         style={[
           styles.button,
@@ -86,9 +91,9 @@ const styles = StyleSheet.create({
   buttonHolder: {
     position: "relative",
     borderRadius: 5,
-    borderWidth: 2,
-    borderColor: "#ffb131",
     margin: 5,
+    borderWidth: 2,
+    borderColor: "transparent",
   },
   button: {
     paddingVertical: 10,

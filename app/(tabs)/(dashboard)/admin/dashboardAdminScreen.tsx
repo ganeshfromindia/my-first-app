@@ -18,9 +18,9 @@ import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
 import ErrorModal from "@/components/UIElements/ErrorModal";
 import { StyleSheet, Text, View } from "react-native";
 
-import s from "../../../../assets/css/style";
+import s from "@/assets/css/style";
 
-const dashboardAdminScreen = (props: PropsWithChildren) => {
+const DashboardAdminScreen = (props: any) => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const renderAfterCalled = useRef(false);
@@ -255,12 +255,18 @@ const dashboardAdminScreen = (props: PropsWithChildren) => {
         <View style={[s.rowContainer]}>
           <View style={s.autoFlex}>
             <ButtonComp
+              normal={true}
+              buttonfont={true}
+              maxwidth={true}
               onClick={() => handleCurrentTab("manufacturers")}
               title="Manufacturers"
             ></ButtonComp>
           </View>
           <View style={s.autoFlex}>
             <ButtonComp
+              normal={true}
+              buttonfont={true}
+              maxwidth={true}
               onClick={() => handleCurrentTab("traders")}
               title="Traders"
             ></ButtonComp>
@@ -353,4 +359,4 @@ const dashboardAdminScreen = (props: PropsWithChildren) => {
   );
 };
 
-export default dashboardAdminScreen;
+export default DashboardAdminScreen;

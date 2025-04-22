@@ -88,11 +88,9 @@ const Input: any = (props: any) => {
       <TextInput
         multiline={true}
         id={props.id}
-        numberOfLines={props.rows || 3}
-        onChange={changeHandler}
+        onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
-        defaultValue={primaryValue}
-        key={primaryValue === "" ? "textAreaKey" : primaryValue}
+        defaultValue={passedValue}
         style={[
           globalStyle.authenticationFormControlnput,
           props.authInput && globalStyle.authenticationInput,
@@ -148,6 +146,7 @@ const Input: any = (props: any) => {
         placeholder={props.placeholder}
         onChangeText={setPrimaryValue}
         onEndEditing={(e) => onEndEditing(e)}
+        defaultValue={passedValue}
         style={[
           globalStyle.authenticationFormControlnput,
           props.authInput && globalStyle.authenticationInput,

@@ -7,10 +7,11 @@ import ButtonComp from "./Button";
 
 import * as DocumentPicker from "expo-document-picker";
 
+import * as mime from "react-native-mime-types";
+
 const ImageUpload: any = memo((props: any) => {
   const [previewUrl, setPreviewUrl] = useState<any>();
   const [isValid, setIsValid] = useState<any>(false);
-  const [doc, setDoc] = useState<any>();
 
   useEffect(() => {
     if (props && props.data) {
@@ -18,7 +19,7 @@ const ImageUpload: any = memo((props: any) => {
         "http://localhost:5000/" + props.data + `?${new Date().getTime()}`
         // "http://api.infoportal.co.in/" + props.data + `?${new Date().getTime()}`
       );
-      props.onInput(props.id, props.data, true);
+      props.onInput(props.id, props.data, true, true);
     }
   }, []);
 
@@ -27,7 +28,6 @@ const ImageUpload: any = memo((props: any) => {
     let fileIsValid;
     fileIsValid = false;
     setIsValid(false);
-    setDoc(null);
     setPreviewUrl(null);
 
     let result = await DocumentPicker.getDocumentAsync({
@@ -63,19 +63,17 @@ const ImageUpload: any = memo((props: any) => {
           ]);
           return;
         }
-        let nameParts = name.split(".");
-        let fileType = nameParts[nameParts.length - 1];
+
         let fileUpload = {
           name: name,
           size: size,
           uri: uri,
-          type: "application/" + fileType,
+          type: mime.lookup(name),
         };
         setIsValid(true);
-        setDoc(doc);
         setPreviewUrl(fileUpload.uri);
         fileIsValid = true;
-        props.onInput(props.id, doc, fileIsValid);
+        props.onInput(props.id, fileUpload, fileIsValid, true);
       } else {
         Alert.alert("Something went wrong", "Please try again", [
           {
@@ -86,7 +84,6 @@ const ImageUpload: any = memo((props: any) => {
           },
         ]);
         setIsValid(false);
-        setDoc(null);
         setPreviewUrl(null);
         fileIsValid = false;
       }
@@ -101,7 +98,14 @@ const ImageUpload: any = memo((props: any) => {
             <Image style={styles.img} src={previewUrl} alt="Preview" />
           </View>
         )}
-        <ButtonComp onClick={pickDocHandler} title="Pick File"></ButtonComp>
+        <ButtonComp
+          mode={true}
+          normal={true}
+          buttonfont={true}
+          maxwidth={true}
+          onClick={pickDocHandler}
+          title="Pick File"
+        ></ButtonComp>
       </View>
       {!isValid && props.data == null && <Text>{props.errorText}</Text>}
     </View>

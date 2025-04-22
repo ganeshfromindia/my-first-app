@@ -22,7 +22,7 @@ export default Card;
 const styles = StyleSheet.create({
   cardProduct: {
     backgroundColor: "transparent",
-    paddingTop: 15,
+    paddingTop: 30,
   },
   card: {
     position: "relative",

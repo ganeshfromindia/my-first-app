@@ -6,18 +6,57 @@ import {
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
+import AuthContext from "@/store/auth-context";
+import useAuth from "@/hooks/auth-hook";
+import { useContext } from "react";
+import { PaperProvider } from "react-native-paper";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { NavigationContainer } from "@react-navigation/native";
 
 export default function RootLayout() {
+  const {
+    token,
+    login,
+    logout,
+    userId,
+    userName,
+    email,
+    mobileNo,
+    role,
+    image,
+  } = useAuth();
+  const auth = useContext(AuthContext);
   const colorScheme = useColorScheme();
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen
-          name="(pages)"
-          options={{ headerShown: false, title: "" }}
-        />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+      <AuthContext.Provider
+        value={{
+          isLoggedIn: !!token,
+          token: token,
+          userId: userId,
+          userName: userName,
+          email: email,
+          mobileNo: mobileNo,
+          login: login,
+          logout: logout,
+          role: role,
+          image: image,
+        }}
+      >
+        <PaperProvider>
+          <Stack>
+            <Stack.Screen
+              name="(pages)"
+              options={{ headerShown: false, title: "" }}
+            />
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false, title: "" }}
+            />
+            <Stack.Screen name="+not-found" />
+          </Stack>
+        </PaperProvider>
+      </AuthContext.Provider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );

@@ -10,10 +10,7 @@ import Input from "@/components/FormElements/Input";
 import ButtonComp from "@/components/FormElements/Button";
 import ErrorModal from "@/components/UIElements/ErrorModal";
 import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
-import {
-  VALIDATOR_REQUIRE,
-  VALIDATOR_EMAIL,
-} from "../../../../util/validators";
+import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
@@ -30,7 +27,7 @@ import {
 } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-import s from "../../../../assets/css/style";
+import s from "@/assets/css/style";
 
 import { Dimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -235,7 +232,7 @@ const Trader = ({
         title: formState.inputs.title.value,
         email: formState.inputs.email.value,
         address: formState.inputs.address.value,
-        products: productData,
+        products: defaultProducts,
         folder:
           "Manufacturers/" +
           auth.userName +
@@ -255,6 +252,7 @@ const Trader = ({
         );
         handleClose();
       } else {
+        console.log(formData);
         const responseData = await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/traders/create`,
           "POST",
@@ -270,7 +268,9 @@ const Trader = ({
           password: "And Password is " + responseData.password,
         });
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const handleMultiProductSelect = (options: any) => {
@@ -486,6 +486,7 @@ const Trader = ({
                   buttonfont={true}
                   maxwidth={true}
                   disabled={!formState.isValid}
+                  onClick={traderSubmitHandler}
                   title="SAVE"
                 ></ButtonComp>
               </View>

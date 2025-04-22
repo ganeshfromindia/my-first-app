@@ -21,8 +21,7 @@ import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
 
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 
-import s from "../../../../assets/css/style";
-import globalStyle from "../../../../assets/css/style";
+import globalStyle from "@/assets/css/style";
 import { ThemedText } from "@/components/ThemedText";
 import IconButton from "@/components/ui/IconButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -227,7 +226,7 @@ const TradersList = () => {
     return (
       <React.Fragment>
         <ErrorModal error={error} onClear={clearError} />
-        <View style={s.center}>
+        <View style={globalStyle.center}>
           <Card cardProduct={true}>
             <Text>
               No Products found. Please add products first and then add Trader
@@ -241,7 +240,7 @@ const TradersList = () => {
     return (
       <React.Fragment>
         <ErrorModal error={error} onClear={clearError} />
-        <View style={s.center}>
+        <View style={globalStyle.center}>
           <Card cardProduct={true}>
             <Text>No traders found</Text>
             <ButtonComp
@@ -285,9 +284,9 @@ const TradersList = () => {
   return (
     <React.Fragment>
       {error && <ErrorModal error={error} onClear={clearError} />}
-      {/* {isLoading && <LoadingSpinner asOverlay />} */}
+      {isLoading && <LoadingSpinner asOverlay />}
       {!isLoading && (
-        <Card cardProduct center>
+        <Card style={[styles.cardProduct, globalStyle.center]}>
           <ButtonComp
             onClick={() => handleOpen(null)}
             normal={true}
@@ -645,7 +644,7 @@ const TradersList = () => {
                   ))}
                 <DataTable.Pagination
                   page={currentPageP}
-                  numberOfPages={Math.ceil(totalRowsP / itemsPerPage)}
+                  numberOfPages={Math.ceil(totalRowsP / itemsPerPageP)}
                   numberOfItemsPerPage={itemsPerPageP}
                   onPageChange={(pageP) => handlePageChangeP(pageP)}
                   numberOfItemsPerPageList={numberOfItemsPerPageListP}
@@ -699,5 +698,9 @@ const styles = StyleSheet.create({
     position: "relative",
     width: 75,
     marginHorizontal: 5,
+  },
+  cardProduct: {
+    backgroundColor: "transparent",
+    paddingTop: 15,
   },
 });

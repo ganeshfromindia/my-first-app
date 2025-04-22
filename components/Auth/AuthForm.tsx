@@ -113,20 +113,23 @@ const AuthForm = () => {
           responseData.email,
           responseData.image
         );
+        console.log(responseData.role);
         if (responseData.role === "Manufacturer") {
-          router.navigate("/(pages)/(traders)/list/TradersList");
+          router.navigate(
+            "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
+          );
+        } else if (responseData.role === "Admin") {
+          router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
+        } else if (responseData.role === "Trader") {
+          router.navigate("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
         }
-        // } else if (responseData.role === "Admin") {
-        //   router.navigate("/adminDashboardScreen");
-        // } else if (responseData.role === "Trader") {
-        //   router.navigate("/welcomeScreen");
-        // }
       } catch (err) {
         console.log(err);
       }
     } else {
       try {
         const formData = new FormData();
+
         formData.append(
           "folder",
           "Manufacturers/" + formState.inputs.name.value + "/Users"
@@ -135,10 +138,13 @@ const AuthForm = () => {
         formData.append("name", formState.inputs.name.value);
         formData.append("mobileNo", formState.inputs.mobileNo.value);
         formData.append("password", formState.inputs.password.value);
-        formData.append("image", formState.inputs.image.value);
-
+        formData.append("image", {
+          uri: formState.inputs.image.value.uri,
+          name: formState.inputs.image.value.name,
+          type: "image/jpeg",
+        } as any);
         const responseData = await sendRequest(
-          `${process.env.EXPO_PUBLIC_API_URL}}/api/users/signup`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/users/signup`,
           "POST",
           formData
         );
@@ -250,6 +256,7 @@ const AuthForm = () => {
                   )}
                   <View style={styles.authenticationButton}>
                     <ButtonComp
+                      mode={true}
                       normal={true}
                       buttonfont={true}
                       maxwidth={true}
@@ -262,6 +269,7 @@ const AuthForm = () => {
                 </View>
                 <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
+                    mode={true}
                     normal={true}
                     buttonfont={true}
                     maxwidth={true}
@@ -329,7 +337,7 @@ const styles = StyleSheet.create({
     paddingVertical: 50,
   },
   authenticationFormH3: {
-    fontSize: 32,
+    fontSize: 25,
     fontWeight: 500,
     lineHeight: 42,
     textAlign: "center",

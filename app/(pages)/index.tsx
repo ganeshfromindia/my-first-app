@@ -14,11 +14,15 @@ function AuthenticatedStack() {
 
   if (auth && auth.token) {
     if (auth.role == "Manufacturer") {
-      return <Redirect href="/(pages)/(traders)/list/TradersList" />;
+      return (
+        <Redirect href="/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen" />
+      );
     } else if (auth.role == "Trader") {
-      return <Redirect href="/(pages)/(traders)/list/TradersList" />;
+      return (
+        <Redirect href="/(tabs)/(dashboard)/trader/dashboardTraderScreen" />
+      );
     } else if (auth.role == "Admin") {
-      <Redirect href="/(pages)/(dashboard)/admin/dashboardAdminScreen" />;
+      <Redirect href="/(tabs)/(dashboard)/admin/dashboardAdminScreen" />;
     }
   }
 }
