@@ -28,7 +28,7 @@
     "production": {
       "node": "20.15.1",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://0d15-115-98-235-127.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://2ec0-115-98-233-146.ngrok-free.app"
       },
       "android": {
         "buildType": "apk"
