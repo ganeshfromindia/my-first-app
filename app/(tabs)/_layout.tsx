@@ -27,13 +27,14 @@ export default function TabLayout() {
   const auth = useContext(AuthContext);
   return (
     <Tabs
+      backBehavior="history"
       screenOptions={{ headerShown: false, tabBarActiveTintColor: colorIcon }}
     >
       {auth.role === "Admin" && (
         <Tabs.Screen
           name="(dashboard)/admin/dashboardAdminScreen"
           options={{
-            title: "Tab a",
+            title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
         />
@@ -50,7 +51,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(dashboard)/manufacturer/dashboardManufacturerScreen"
           options={{
-            title: "Tab b",
+            title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
         />
@@ -67,7 +68,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(dashboard)/trader/dashboardTraderScreen"
           options={{
-            title: "Tab c",
+            title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
         />
@@ -84,8 +85,10 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(products)/list/ProductsList"
           options={{
-            title: "Tab d",
-            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            title: "Products",
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="product-hunt" color={color} />
+            ),
           }}
         />
       )}
@@ -101,8 +104,10 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(traders)/list/TradersList"
           options={{
-            title: "Tab e",
-            tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            title: "Traders",
+            tabBarIcon: ({ color }) => (
+              <TabBarIcon name="user-plus" color={color} />
+            ),
           }}
         />
       )}

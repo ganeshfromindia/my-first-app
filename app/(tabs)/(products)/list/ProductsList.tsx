@@ -6,7 +6,20 @@ import React, {
   useEffect,
 } from "react";
 import globalStyle from "@/assets/css/style";
-import { View, Text, ScrollView, StyleSheet } from "react-native";
+import IconButton from "@/components/ui/IconButton";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import * as mime from "react-native-mime-types";
+import * as Sharing from "expo-sharing";
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  PermissionsAndroid,
+  Alert,
+  Platform,
+} from "react-native";
 import { DataTable } from "react-native-paper";
 import Card from "@/components/UIElements/Card";
 import ButtonComp from "@/components/FormElements/Button";
@@ -21,6 +34,23 @@ import { Colors } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 
 const ProductsList = () => {
+  const FileExts = [
+    "jpg",
+    "png",
+    "gif",
+    "heic",
+    "webp",
+    "bmp",
+    "doc",
+    "docx",
+    "xls",
+    "xlsx",
+    "pdf",
+    "jpeg",
+  ];
+  const { StorageAccessFramework } = FileSystem;
+  const downloadPath =
+    FileSystem.documentDirectory + (Platform.OS == "android" ? "" : "");
   const color = useThemeColor({ light: "#000000", dark: "#ffffff" }, "text");
   const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
@@ -49,7 +79,7 @@ const ProductsList = () => {
     traders: [],
   };
   const auth = useContext(AuthContext);
-
+  const [downloadProgress, setDownloadProgress] = useState<any>();
   const [currentPageP, setCurrentPageP] = useState(0);
   const [perPageP, setPerPageP] = useState(10);
   const [totalRowsP, setTotalRowsP] = useState(0);
@@ -62,6 +92,7 @@ const ProductsList = () => {
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [allowAddProduct, setAllowAddProduct] = useState(false);
+  const [isDownloaded, setisdownloaded] = useState<any>();
   const subHeader = true;
 
   const fetchManufacturerDashboardData = useCallback(async () => {
@@ -109,38 +140,6 @@ const ProductsList = () => {
       }
     },
     [perPage, sendRequest, auth]
-  );
-
-  const handleDownloadButtonClick = useCallback(
-    (data: any, e: any) => {
-      if (auth) {
-        const fileReader = new FileReader();
-        let fileWithPath = data.id;
-        sendRequest(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/download?file=${fileWithPath}`,
-          "GET",
-          null,
-          {
-            Authorization: "Bearer " + auth.token,
-            responseType: "blob",
-          }
-        )
-          .then((res: any) => {
-            fileReader.readAsDataURL(new Blob([res]));
-          })
-          .catch((err: any) => console.log(err));
-        let currentFilename = fileWithPath.split("/").pop();
-        fileReader.addEventListener("loadend", () => {
-          const blobString = fileReader.result;
-          const link: any = document.createElement("a");
-          link.href = blobString;
-          link.setAttribute("download", currentFilename);
-          document.body.appendChild(link);
-          link.click();
-        });
-      }
-    },
-    [sendRequest, auth]
   );
 
   const handleDeleteButtonClick = useCallback(
@@ -229,6 +228,93 @@ const ProductsList = () => {
   const handlePageChangeP = (page: number) => {
     fetchProducts(page);
   };
+
+  const handleDownloadButtonClick = async (data: any, e: any) => {
+    let fileNameArray = data.split("/");
+    let fileName = fileNameArray[fileNameArray.length - 1];
+    if (Platform.OS == "android") {
+      const dir = ensureDirAsync(downloadPath);
+    }
+
+    //alert(fileName)
+    const downloadResumable: any = FileSystem.createDownloadResumable(
+      `${process.env.EXPO_PUBLIC_API_URL}/${data}`,
+      downloadPath + fileName,
+      {},
+      downloadCallback
+    );
+
+    try {
+      const { uri } = await downloadResumable.downloadAsync();
+      if (Platform.OS == "android") saveAndroidFile(uri, fileName);
+      else saveIosFile(uri);
+    } catch (e) {
+      console.error("download error:", e);
+    }
+  };
+
+  const saveAndroidFile = async (fileUri: any, fileName = "File") => {
+    try {
+      const fileString = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+
+      const permissions =
+        await StorageAccessFramework.requestDirectoryPermissionsAsync();
+      if (!permissions.granted) {
+        return;
+      }
+
+      try {
+        let type = mime.lookup(fileName) || "";
+        await StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          fileName,
+          type
+        )
+          .then(async (uri) => {
+            await FileSystem.writeAsStringAsync(uri, fileString, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            alert("Report Downloaded Successfully");
+          })
+          .catch((e) => {});
+      } catch (e: any) {
+        throw new Error(e);
+      }
+    } catch (err) {}
+  };
+
+  const saveIosFile = async (fileUri: any) => {
+    if (FileExts.every((x) => !fileUri.endsWith(x))) {
+      const UTI = "public.item";
+      const shareResult = await Sharing.shareAsync(fileUri, { UTI });
+    }
+    // your ios code
+    // i use expo share module to save ios file
+  };
+
+  const downloadCallback = (downloadProgress: any) => {
+    const progress =
+      downloadProgress.totalBytesWritten /
+      downloadProgress.totalBytesExpectedToWrite;
+    setDownloadProgress(progress);
+  };
+
+  const ensureDirAsync = async (dir: any, intermediates = true) => {
+    const props = await FileSystem.getInfoAsync(dir);
+    if (props.exists && props.isDirectory) {
+      return props;
+    }
+    let _ = await FileSystem.makeDirectoryAsync(dir, { intermediates });
+    return await ensureDirAsync(dir, intermediates);
+  };
+
+  const saveFile = async (fileUri: string) => {
+    const asset = await MediaLibrary.createAssetAsync(fileUri);
+    await MediaLibrary.createAlbumAsync("Download", asset, false);
+  };
+
   if (!allowAddProduct && auth.role === "Manufacturer") {
     return (
       <React.Fragment>
@@ -321,10 +407,26 @@ const ProductsList = () => {
                     Description
                   </DataTable.Title>
                   <DataTable.Title style={{ width: 60 }}>Price</DataTable.Title>
-                  <DataTable.Title style={{ width: 300 }}>COA</DataTable.Title>
-                  <DataTable.Title style={{ width: 50 }}>MSDS</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>CEP</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>QOS</DataTable.Title>
+                  <DataTable.Title
+                    style={{ width: 60, justifyContent: "center" }}
+                  >
+                    COA
+                  </DataTable.Title>
+                  <DataTable.Title
+                    style={{ width: 60, justifyContent: "center" }}
+                  >
+                    MSDS
+                  </DataTable.Title>
+                  <DataTable.Title
+                    style={{ width: 60, justifyContent: "center" }}
+                  >
+                    CEP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    style={{ width: 60, justifyContent: "center" }}
+                  >
+                    QOS
+                  </DataTable.Title>
                   <DataTable.Title style={{ width: 120 }}>DMF</DataTable.Title>
                   <DataTable.Title style={{ width: 30 }}>IP</DataTable.Title>
                   <DataTable.Title style={{ width: 30 }}>BP</DataTable.Title>
@@ -350,26 +452,81 @@ const ProductsList = () => {
                       <DataTable.Cell style={{ width: 60 }}>
                         {data.price}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 300 }}>
+                      <DataTable.Cell
+                        style={{
+                          width: 60,
+                          justifyContent: "center",
+                        }}
+                      >
                         {data.coa ? (
-                          <ButtonComp
-                            title="Download COA"
-                            onClick={($event: any) =>
-                              handleDownloadButtonClick(data, $event)
+                          <IconButton
+                            icon="cloud-download"
+                            size={20}
+                            color={colorIcon}
+                            onPress={($event: any) =>
+                              handleDownloadButtonClick(data.coa, $event)
                             }
                           />
                         ) : (
                           "NA"
                         )}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 50 }}>
-                        {data.MSDS ? "Yes" : "NA"}
+                      <DataTable.Cell
+                        style={{
+                          width: 60,
+                          justifyContent: "center",
+                        }}
+                      >
+                        {data.msds ? (
+                          <IconButton
+                            icon="cloud-download"
+                            size={20}
+                            color={colorIcon}
+                            onPress={($event: any) =>
+                              handleDownloadButtonClick(data.msds, $event)
+                            }
+                          />
+                        ) : (
+                          "NA"
+                        )}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {data.CEP ? "Yes" : "NA"}
+                      <DataTable.Cell
+                        style={{
+                          width: 60,
+                          justifyContent: "center",
+                        }}
+                      >
+                        {data.cep ? (
+                          <IconButton
+                            icon="cloud-download"
+                            size={20}
+                            color={colorIcon}
+                            onPress={($event: any) =>
+                              handleDownloadButtonClick(data.cep, $event)
+                            }
+                          />
+                        ) : (
+                          "NA"
+                        )}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {data.QOS ? "Yes" : "NA"}
+                      <DataTable.Cell
+                        style={{
+                          width: 60,
+                          justifyContent: "center",
+                        }}
+                      >
+                        {data.qos ? (
+                          <IconButton
+                            icon="cloud-download"
+                            size={20}
+                            color={colorIcon}
+                            onPress={($event: any) =>
+                              handleDownloadButtonClick(data.qos, $event)
+                            }
+                          />
+                        ) : (
+                          "NA"
+                        )}
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 120 }}>
                         <View style={{ flexDirection: "column" }}>

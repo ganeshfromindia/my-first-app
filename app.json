@@ -13,6 +13,24 @@
       "bundleIdentifier": "com.ganeshghate.mysecondapp"
     },
     "android": {
+      "permissions": [
+        "INTERNET",
+        "SYSTEM_ALERT_WINDOW",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "DOWNLOAD_WITHOUT_NOTIFICATION"
+      ],
+      "intentFilters": [
+        {
+          "autoVerify": true,
+          "action": ["MAIN", "DOWNLOAD_COMPLETE"],
+          "data": {
+            "scheme": "https",
+            "host": "*.example.com"
+          },
+          "category": ["LAUNCHER"]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
