@@ -1,17 +1,11 @@
 import { Tabs } from "expo-router";
 import React, { useContext } from "react";
-import { Platform } from "react-native";
 
-import { HapticTab } from "@/components/HapticTab";
-import { IconSymbol } from "@/components/ui/IconSymbol";
-import TabBarBackground from "@/components/ui/TabBarBackground";
 import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
+
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { FontAwesome } from "@expo/vector-icons";
 import AuthContext from "@/store/auth-context";
-import useAuth from "@/hooks/auth-hook";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function TabLayout() {
   const colorIcon = useThemeColor(

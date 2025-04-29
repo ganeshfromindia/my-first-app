@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import globalStyle from "@/assets/css/style";
-import IconButton from "@/components/ui/IconButton";
+import IconButton from "../../../components/ui/IconButton";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as mime from "react-native-mime-types";
@@ -21,17 +21,18 @@ import {
   Platform,
 } from "react-native";
 import { DataTable } from "react-native-paper";
-import Card from "@/components/UIElements/Card";
-import ButtonComp from "@/components/FormElements/Button";
-import Modal from "@/components/UIElements/Modal";
+import Card from "../../../components/UIElements/Card";
+import ButtonComp from "../../../components/FormElements/Button";
+import Modal from "../../../components/UIElements/Modal";
 import Product from "../item/Product";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
-import ErrorModal from "@/components/UIElements/ErrorModal";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "../../../components/ThemedText";
+import { useFocusEffect } from "@react-navigation/native";
 
 const ProductsList = () => {
   const FileExts = [
@@ -166,7 +167,7 @@ const ProductsList = () => {
 
   const handleEditButtonClick = (data: any) => {
     setOpen(true);
-    setProductData(JSON.parse(data.target.value));
+    setProductData(data);
   };
 
   const handlePageChange = (page: number) => {
@@ -220,6 +221,19 @@ const ProductsList = () => {
       fetchManufacturerDashboardData();
     }
   }, [fetchManufacturerDashboardData, auth.userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch data or perform initialization logic when the screen is focused
+      if (auth.userId) {
+        fetchManufacturerDashboardData();
+        fetchProducts(1);
+      }
+      return () => {
+        // Optional: Clean up resources when the screen is unfocused
+      };
+    }, [])
+  );
 
   const handlePerRowsChangeP = async (newPerPageP: number) => {
     setPerPageP(newPerPageP);
@@ -400,7 +414,8 @@ const ProductsList = () => {
               >
                 <DataTable.Header>
                   <DataTable.Title style={{ width: 30 }}>SN</DataTable.Title>
-                  <DataTable.Title style={{ width: 30, flexWrap: "nowrap" }}>
+                  <DataTable.Title style={{ width: 50 }}>Edit</DataTable.Title>
+                  <DataTable.Title style={{ width: 100 }}>
                     Product
                   </DataTable.Title>
                   <DataTable.Title style={{ width: 120 }}>
@@ -443,7 +458,18 @@ const ProductsList = () => {
                       <DataTable.Cell style={{ width: 30 }}>
                         {data.serialNo}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30, flexWrap: "nowrap" }}>
+                      <DataTable.Cell style={{ width: 50 }}>
+                        <IconButton
+                          icon="pencil"
+                          size={20}
+                          color={colorIcon}
+                          onPress={() => handleEditButtonClick(data)}
+                        />
+                        {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
+                                              Edit
+                                            </ThemedText> */}
+                      </DataTable.Cell>
+                      <DataTable.Cell style={{ width: 100 }}>
                         {data.title}
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 120 }}>
@@ -529,26 +555,43 @@ const ProductsList = () => {
                         )}
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 120 }}>
-                        <View style={{ flexDirection: "column" }}>
-                          {
-                            (dmfHTML =
-                              data && data.dmf && data.dmf.length > 0 ? (
-                                JSON.parse(data.dmf)
-                                  .map((dataDMF: any) => dataDMF.label)
-                                  .map((dataLabel: any, indexLabel: number) => (
-                                    <View key={indexLabel}>
-                                      <Text style={{ color }}>{dataLabel}</Text>
-                                    </View>
-                                  ))
-                              ) : (
-                                <Text>No</Text>
-                              ))
-                          }
+                        <View
+                          style={{
+                            flexDirection: "column",
+                          }}
+                        >
+                          <ScrollView>
+                            {
+                              (dmfHTML =
+                                data && data.dmf && data.dmf.length > 0 ? (
+                                  JSON.parse(data.dmf)
+                                    .map((dataDMF: any) => dataDMF.label)
+                                    .map(
+                                      (dataLabel: any, indexLabel: number) => (
+                                        <View key={indexLabel}>
+                                          <Text
+                                            style={[
+                                              globalStyle.defaultFont,
+                                              { color },
+                                            ]}
+                                          >
+                                            {dataLabel}
+                                          </Text>
+                                        </View>
+                                      )
+                                    )
+                                ) : (
+                                  <Text style={[globalStyle.defaultFont]}>
+                                    No
+                                  </Text>
+                                ))
+                            }
+                          </ScrollView>
                         </View>
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("IP") ? (
                           <Text
                             style={globalStyle.check}
@@ -571,7 +614,7 @@ const ProductsList = () => {
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("BP") ? (
                           <Text
                             style={globalStyle.check}
@@ -594,7 +637,7 @@ const ProductsList = () => {
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("EP") ? (
                           <Text
                             style={globalStyle.check}
@@ -617,7 +660,7 @@ const ProductsList = () => {
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("JP") ? (
                           <Text
                             style={globalStyle.check}
@@ -640,7 +683,7 @@ const ProductsList = () => {
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("USP") ? (
                           <Text
                             style={globalStyle.check}
@@ -663,7 +706,7 @@ const ProductsList = () => {
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 60 }}>
                         {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0])
+                          JSON.stringify(data.pharmacopoeias[0] || "")
                         ).includes("InHouse") ? (
                           <Text
                             style={globalStyle.check}

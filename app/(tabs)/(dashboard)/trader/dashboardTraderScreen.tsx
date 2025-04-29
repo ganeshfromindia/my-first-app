@@ -1,8 +1,8 @@
 import React, { useState, useContext, useEffect, useCallback } from "react";
-import Input from "@/components/FormElements/Input";
-import ButtonComp from "@/components/FormElements/Button";
-import ErrorModal from "@/components/UIElements/ErrorModal";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
+import Input from "../../../components/FormElements/Input";
+import ButtonComp from "../../../components/FormElements/Button";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { VALIDATOR_REQUIRE } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";

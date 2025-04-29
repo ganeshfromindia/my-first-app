@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { MultiSelect, Dropdown } from "react-native-element-dropdown";
 
-import Input from "@/components/FormElements/Input";
-import ButtonComp from "@/components/FormElements/Button";
-import ErrorModal from "@/components/UIElements/ErrorModal";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
-import ImageUpload from "@/components/FormElements/ImageUpload";
+import Input from "../../../components/FormElements/Input";
+import ButtonComp from "../../../components/FormElements/Button";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
+import ImageUpload from "../../../components/FormElements/ImageUpload";
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
@@ -30,7 +30,13 @@ const Product = ({
   const renderItem = (item: any) => {
     return (
       <View style={styles.item}>
-        <Text style={[styles.selectedTextStyle, { color: "#000000" }]}>
+        <Text
+          style={[
+            styles.selectedTextStyle,
+            globalStyle.defaultFont,
+            { color: "#000000" },
+          ]}
+        >
           {item.label}
         </Text>
         <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
@@ -40,9 +46,19 @@ const Product = ({
 
   useEffect(() => {
     if (productdata) {
-      if (productdata.dmf.length > 0) setDMFData(JSON.parse(productdata.dmf));
-      if (productdata.pharmacopoeias.length > 0)
-        setPharmacopoeiaData(JSON.parse(productdata.pharmacopoeias));
+      if (productdata.dmf.length > 0) {
+        let jsonParsedDMF = JSON.parse(productdata.dmf);
+        let dmfValue = jsonParsedDMF.map((data: any) => data.value);
+        setDMFData(dmfValue);
+      }
+
+      if (productdata.pharmacopoeias.length > 0) {
+        let jsonParsedpharmacopoeias = JSON.parse(productdata.pharmacopoeias);
+        let pharmacopoeiasValue = jsonParsedpharmacopoeias.map(
+          (data: any) => data.value
+        );
+        setPharmacopoeiaData(pharmacopoeiasValue);
+      }
       setPageData(productdata);
     }
   }, [productdata]);
@@ -86,6 +102,13 @@ const Product = ({
           "/Products/" +
           renameProduct(formState.inputs.title.value)
       );
+      let derivedDMF = optionsDMF.filter((data: any) =>
+        dmfData.includes(data.value)
+      );
+      let derivedPharmacopoeias = optionsPharamacopoeia.filter((data: any) =>
+        pharmacopoeiaData.includes(data.value)
+      );
+
       formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("price", formState.inputs.price.value);
@@ -94,10 +117,11 @@ const Product = ({
       formData.append("msds", formState.inputs.msds.value);
       formData.append("cep", formState.inputs.cep.value);
       formData.append("qos", formState.inputs.qos.value);
-      formData.append("dmf", JSON.stringify(dmfData));
+      formData.append("dmf", JSON.stringify(derivedDMF));
       formData.append("impurities", formState.inputs.impurities.value);
       formData.append("refStandards", formState.inputs.refStandards.value);
-      formData.append("pharmacopoeias", JSON.stringify(pharmacopoeiaData));
+      formData.append("pharmacopoeias", JSON.stringify(derivedPharmacopoeias));
+
       if (productdata && productdata.id) {
         const responseData = await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/products/${productdata.id}`,
@@ -105,6 +129,7 @@ const Product = ({
           formData,
           {
             Authorization: "Bearer " + auth.token,
+            Accept: "application/json",
           }
         );
         setPageData((prev: any) => responseData.product);
@@ -365,7 +390,11 @@ const Product = ({
               <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
                 <View style={styles.selectedStyle}>
                   <Text
-                    style={[styles.textSelectedStyle, { color: "#000000" }]}
+                    style={[
+                      styles.textSelectedStyle,
+                      globalStyle.defaultFont,
+                      { color: "#000000" },
+                    ]}
                   >
                     {item.label}
                   </Text>
@@ -407,7 +436,11 @@ const Product = ({
               <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
                 <View style={styles.selectedStyle}>
                   <Text
-                    style={[styles.textSelectedStyle, { color: "#000000" }]}
+                    style={[
+                      styles.textSelectedStyle,
+                      globalStyle.defaultFont,
+                      { color: "#000000" },
+                    ]}
                   >
                     {item.label}
                   </Text>

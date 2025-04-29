@@ -8,12 +8,13 @@ import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
 import AuthContext from "@/store/auth-context";
 import useAuth from "@/hooks/auth-hook";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
-import { SafeAreaProvider } from "react-native-safe-area-context";
-import { NavigationContainer } from "@react-navigation/native";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
 
 export default function RootLayout() {
+  SplashScreen.preventAutoHideAsync();
   const {
     token,
     login,
@@ -27,6 +28,19 @@ export default function RootLayout() {
   } = useAuth();
   const auth = useContext(AuthContext);
   const colorScheme = useColorScheme();
+  const [loaded, error] = useFonts({
+    "Work Sans": require("../assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"),
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
+
+  if (!loaded && !error) {
+    return null;
+  }
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <AuthContext.Provider

@@ -6,10 +6,10 @@ import React, {
   useState,
 } from "react";
 
-import Input from "@/components/FormElements/Input";
-import ButtonComp from "@/components/FormElements/Button";
-import ErrorModal from "@/components/UIElements/ErrorModal";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
+import Input from "../../../components/FormElements/Input";
+import ButtonComp from "../../../components/FormElements/Button";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
@@ -17,7 +17,7 @@ import AuthContext from "@/store/auth-context";
 
 import { MultiSelect, Dropdown } from "react-native-element-dropdown";
 import { MAIN_URL } from "@/util/config";
-import Modal from "@/components/UIElements/Modal";
+import Modal from "../../../components/UIElements/Modal";
 import {
   StyleSheet,
   Text,
@@ -32,6 +32,7 @@ import s from "@/assets/css/style";
 import { Dimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import globalStyle from "@/assets/css/style";
 
 enum pointerEvent {
   none = "none",
@@ -57,10 +58,10 @@ const Trader = ({
   const [isFocusMulti, setIsFocusMulti] = useState<any>(false);
   const selectInputRef = useRef<any>();
   const renderAfterCalled = useRef(false);
+  const renderAfterCalledMD = useRef(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProducts, setLoadedProducts] = useState<any>();
   const [traders, setTraders] = useState([]);
-  const [tradersObj, setTradersObj] = useState([]);
   const [defaultProducts, setDefaultProducts] = useState<string[]>([]);
   const [productData, setProductData] = useState();
   const auth = useContext(AuthContext);
@@ -69,11 +70,20 @@ const Trader = ({
   const [traderData, setTraderData] = useState<any>();
   const [newTrader, setNewTrader] = useState(false);
   const [isDisabled, setIsDisabled] = useState<pointerEvent>(pointerEvent.auto);
+  const [isEmailDisabled, setIsEmailDisabled] = useState<pointerEvent>(
+    pointerEvent.auto
+  );
 
   const renderItem = (item: any) => {
     return (
       <View style={styles.item}>
-        <Text style={[styles.selectedTextStyle, { color: "#000000" }]}>
+        <Text
+          style={[
+            styles.selectedTextStyle,
+            globalStyle.defaultFont,
+            { color: "#000000" },
+          ]}
+        >
           {item.label}
         </Text>
         <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
@@ -84,6 +94,9 @@ const Trader = ({
   useEffect(() => {
     if (traderDataRecd) {
       setTraderData(traderDataRecd);
+      setIsEmailDisabled(pointerEvent.none);
+      const selectedProducts = traderDataRecd.products;
+      setDefaultProducts(selectedProducts);
     }
   }, [traderDataRecd]);
 
@@ -92,14 +105,12 @@ const Trader = ({
       setDefaultProducts([]);
       setIsDisabled(pointerEvent.none);
       setTraderData(selected.data);
+      formState.inputs.title.isValid = true;
+      formState.inputs.email.isValid = true;
+      formState.inputs.address.isValid = true;
+      formState.isValid = true;
     }
   }, [selected]);
-
-  useEffect(() => {
-    if (defaultProducts) {
-      let traderData = traders;
-    }
-  }, [defaultProducts]);
 
   const fetchProducts = useCallback(
     async (page: any) => {
@@ -171,8 +182,11 @@ const Trader = ({
             null,
             { Authorization: "Bearer " + auth.token }
           ).then((response: any) => {
-            setTradersObj(response.trader);
-            resolve(setTraders(mapOptions(response.trader)));
+            if (response.trader && response.trader.length > 0) {
+              resolve(setTraders(mapOptions(response.trader)));
+            } else {
+              resolve("No trader data");
+            }
           });
         } catch (err) {
           reject("No data");
@@ -252,7 +266,6 @@ const Trader = ({
         );
         handleClose();
       } else {
-        console.log(formData);
         const responseData = await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/traders/create`,
           "POST",
@@ -328,19 +341,24 @@ const Trader = ({
       title: "",
       value: "",
     });
+    formState.inputs.title.isValid = false;
+    formState.inputs.email.isValid = false;
+    formState.inputs.address.isValid = false;
+    formState.isValid = false;
     // if (selectInputRef && selectInputRef.current) {
     //   selectInputRef.current.select.clearValue();
     // }
     setDefaultProducts([]);
     setIsDisabled(pointerEvent.auto);
+    setIsEmailDisabled(pointerEvent.auto);
   };
 
   useEffect(() => {
-    if (!renderAfterCalled.current) {
+    if (!renderAfterCalledMD.current) {
       ScrollViewMinHeight = deviceHeight - headerHeight;
       setScrollViewMinHeight(ScrollViewMinHeight);
     }
-    renderAfterCalled.current = true;
+    renderAfterCalledMD.current = true;
   }, []);
 
   return (
@@ -385,7 +403,12 @@ const Trader = ({
                 renderItem={renderItem}
               />
             </View>
-            <Text style={{ paddingHorizontal: 12, paddingVertical: 5 }}>
+            <Text
+              style={[
+                globalStyle.defaultFont,
+                { paddingHorizontal: 12, paddingVertical: 5 },
+              ]}
+            >
               Or Add New Trader
             </Text>
             <View style={{ width: 150, margin: "auto" }}>
@@ -412,15 +435,17 @@ const Trader = ({
                 onInput={inputHandler}
                 initialValue={traderData && traderData.title}
               />
-              <Input
-                id="email"
-                element="input"
-                label="Email"
-                validators={[VALIDATOR_EMAIL()]}
-                errorText="Please enter a valid email."
-                onInput={inputHandler}
-                initialValue={traderData && traderData.email}
-              />
+              <View pointerEvents={isEmailDisabled}>
+                <Input
+                  id="email"
+                  element="input"
+                  label="Email"
+                  validators={[VALIDATOR_EMAIL()]}
+                  errorText="Please enter a valid email."
+                  onInput={inputHandler}
+                  initialValue={traderData && traderData.email}
+                />
+              </View>
               <Input
                 id="address"
                 element="input"
@@ -467,6 +492,7 @@ const Trader = ({
                         <View style={styles.selectedStyle}>
                           <Text
                             style={[
+                              globalStyle.defaultFont,
                               styles.textSelectedStyle,
                               { color: "#000000" },
                             ]}
@@ -503,8 +529,12 @@ const Trader = ({
         footerClass="place-item__modal-actions"
       >
         <View style={styles.messageContainer}>
-          <Text>{traderInfo && traderInfo.username}</Text>
-          <Text>{traderInfo && traderInfo.password}</Text>
+          <Text style={globalStyle.defaultFont}>
+            {traderInfo && traderInfo.username}
+          </Text>
+          <Text style={globalStyle.defaultFont}>
+            {traderInfo && traderInfo.password}
+          </Text>
         </View>
       </Modal>
     </React.Fragment>

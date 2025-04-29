@@ -64,6 +64,12 @@
             "usesCleartextTraffic": true
           }
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": ["./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"]
+        }
       ]
     ],
 

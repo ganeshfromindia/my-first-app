@@ -9,13 +9,13 @@ import React, {
 } from "react";
 import { DataTable } from "react-native-paper";
 
-import Card from "@/components/UIElements/Card";
+import Card from "../../../components/UIElements/Card";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
 import { MAIN_URL } from "@/util/config";
-import ButtonComp from "@/components/FormElements/Button";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
-import ErrorModal from "@/components/UIElements/ErrorModal";
+import ButtonComp from "../../../components/FormElements/Button";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
 import { StyleSheet, Text, View } from "react-native";
 
 import s from "@/assets/css/style";
@@ -207,7 +207,7 @@ const DashboardAdminScreen = (props: any) => {
   //   return (
   //     <View style={s.center}>
   //       <Card cardProduct>
-  //         <Text style={s.navLinkbuttonActive}>No Manufacturers found.</Text>
+  //         <Text style={[s.navLinkbuttonActive,  s.defaultFont]}>No Manufacturers found.</Text>
   //       </Card>
   //     </View>
   //   );
@@ -217,7 +217,7 @@ const DashboardAdminScreen = (props: any) => {
   //   return (
   //     <View style={s.center}>
   //       <Card cardProduct>
-  //         <Text>No Traders found.</Text>
+  //         <Text style={[s.navLinkbuttonActive,  s.defaultFont]}>No Traders found.</Text>
   //       </Card>
   //     </View>
   //   );
@@ -239,7 +239,7 @@ const DashboardAdminScreen = (props: any) => {
       {loadedManufacturers && loadedManufacturers.length === 0 && (
         <View style={s.center}>
           <Card cardProduct>
-            <Text>No Manufacturers found.</Text>
+            <Text style={[s.defaultFont]}>No Manufacturers found.</Text>
           </Card>
         </View>
       )}
@@ -247,7 +247,7 @@ const DashboardAdminScreen = (props: any) => {
       {loadedTraders && loadedTraders.length === 0 && (
         <View style={s.center}>
           <Card cardProduct>
-            <Text>No Traders found.</Text>
+            <Text style={[s.defaultFont]}>No Traders found.</Text>
           </Card>
         </View>
       )}

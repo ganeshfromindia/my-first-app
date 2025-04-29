@@ -9,24 +9,25 @@ import React, {
 import { DataTable } from "react-native-paper";
 import { PaperProvider } from "react-native-paper";
 
-import Card from "@/components/UIElements/Card";
-import ButtonComp from "@/components/FormElements/Button";
-import Modal from "@/components/UIElements/Modal";
+import Card from "../../../components/UIElements/Card";
+import ButtonComp from "../../../components/FormElements/Button";
+import Modal from "../../../components/UIElements/Modal";
 import Trader from "../item/Trader";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
 import { MAIN_URL } from "@/util/config";
-import ErrorModal from "@/components/UIElements/ErrorModal";
-import LoadingSpinner from "@/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 
 import globalStyle from "@/assets/css/style";
-import { ThemedText } from "@/components/ThemedText";
-import IconButton from "@/components/ui/IconButton";
+import { ThemedText } from "../../../components/ThemedText";
+import IconButton from "../../../components/ui/IconButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
-import { ThemedView } from "@/components/ThemedView";
+import { ThemedView } from "../../../components/ThemedView";
+import { useFocusEffect } from "@react-navigation/native";
 
 const TradersList = () => {
   const color = useThemeColor({ light: "#000000", dark: "#ffffff" }, "text");
@@ -222,13 +223,39 @@ const TradersList = () => {
 
   let dmfHTML: any;
 
-  if (manfProducts.length === 0) {
+  useEffect(() => {
+    if (!renderAfterCalled.current) {
+      fetchTraders(1);
+    }
+    renderAfterCalled.current = true;
+  }, [fetchTraders]);
+
+  useEffect(() => {
+    if (!renderAfterCalledFP.current) {
+      fetchProductsManf(1);
+    }
+    renderAfterCalledFP.current = true;
+  }, [fetchProductsManf]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Fetch data or perform initialization logic when the screen is focused
+      if (auth.userId) {
+        fetchProductsManf();
+      }
+      return () => {
+        // Optional: Clean up resources when the screen is unfocused
+      };
+    }, [])
+  );
+
+  if (manfProducts.length == 0) {
     return (
       <React.Fragment>
         <ErrorModal error={error} onClear={clearError} />
         <View style={globalStyle.center}>
           <Card cardProduct={true}>
-            <Text>
+            <Text style={globalStyle.defaultFont}>
               No Products found. Please add products first and then add Trader
             </Text>
           </Card>
@@ -242,7 +269,7 @@ const TradersList = () => {
         <ErrorModal error={error} onClear={clearError} />
         <View style={globalStyle.center}>
           <Card cardProduct={true}>
-            <Text>No traders found</Text>
+            <Text style={globalStyle.defaultFont}>No traders found</Text>
             <ButtonComp
               onClick={() => handleOpen(null)}
               normal={true}
@@ -436,7 +463,7 @@ const TradersList = () => {
               >
                 <DataTable.Header>
                   <DataTable.Title style={{ width: 30 }}>SN</DataTable.Title>
-                  <DataTable.Title style={{ width: 30, flexWrap: "nowrap" }}>
+                  <DataTable.Title style={{ width: 100 }}>
                     Product
                   </DataTable.Title>
                   <DataTable.Title style={{ width: 120 }}>
@@ -463,7 +490,7 @@ const TradersList = () => {
                       <DataTable.Cell style={{ width: 30 }}>
                         {data.serialNo}
                       </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30, flexWrap: "nowrap" }}>
+                      <DataTable.Cell style={{ width: 100 }}>
                         {data.title}
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 120 }}>
@@ -485,21 +512,39 @@ const TradersList = () => {
                         {data.QOS ? "Yes" : "NA"}
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 120 }}>
-                        <View style={{ flexDirection: "column" }}>
-                          {
-                            (dmfHTML =
-                              data && data.dmf && data.dmf.length > 0 ? (
-                                JSON.parse(data.dmf)
-                                  .map((dataDMF: any) => dataDMF.label)
-                                  .map((dataLabel: any, indexLabel: number) => (
-                                    <View key={indexLabel}>
-                                      <Text style={{ color }}>{dataLabel}</Text>
-                                    </View>
-                                  ))
-                              ) : (
-                                <Text>No</Text>
-                              ))
-                          }
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            maxHeight: 50,
+                          }}
+                        >
+                          <ScrollView>
+                            {
+                              (dmfHTML =
+                                data && data.dmf && data.dmf.length > 0 ? (
+                                  JSON.parse(data.dmf)
+                                    .map((dataDMF: any) => dataDMF.label)
+                                    .map(
+                                      (dataLabel: any, indexLabel: number) => (
+                                        <View key={indexLabel}>
+                                          <Text
+                                            style={[
+                                              globalStyle.defaultFont,
+                                              { color },
+                                            ]}
+                                          >
+                                            {dataLabel}
+                                          </Text>
+                                        </View>
+                                      )
+                                    )
+                                ) : (
+                                  <Text style={globalStyle.defaultFont}>
+                                    No
+                                  </Text>
+                                ))
+                            }
+                          </ScrollView>
                         </View>
                       </DataTable.Cell>
                       <DataTable.Cell style={{ width: 30 }}>

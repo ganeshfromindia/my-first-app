@@ -140,7 +140,6 @@ const globalStyle = StyleSheet.create({
   authenticationLabel: {
     marginTop: 30,
     fontSize: 16,
-    fontWeight: 500,
   },
   authenticationInput: {
     height: 40,
@@ -154,7 +153,6 @@ const globalStyle = StyleSheet.create({
     fontWeight: 300,
   },
   authenticationGeneral: {
-    fontFamily: "Poppins",
     color: "#ffffff",
     letterSpacing: 0.5,
     ...Platform.select({
@@ -205,6 +203,11 @@ const globalStyle = StyleSheet.create({
   },
   check: {
     color: "#00ff00",
+  },
+  defaultFont: {
+    fontFamily: "Work Sans",
+    fontWeight: 400,
+    fontStyle: "normal",
   },
 });
 

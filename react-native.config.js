@@ -3,5 +3,5 @@ module.exports = {
     ios: {},
     android: {},
   },
-  assets: ["./assets/fonts/SpaceMono-Regular.ttf"],
+  assets: ["./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"],
 };
