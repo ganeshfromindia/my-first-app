@@ -1,39 +1,35 @@
 import React, {
-  useMemo,
   useState,
   useCallback,
   useContext,
   useEffect,
   useRef,
-  PropsWithChildren,
 } from "react";
 import { DataTable } from "react-native-paper";
 
 import Card from "../../../components/UIElements/Card";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
-import { MAIN_URL } from "@/util/config";
 import ButtonComp from "../../../components/FormElements/Button";
 import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import ErrorModal from "../../../components/UIElements/ErrorModal";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import s from "@/assets/css/style";
 
-const DashboardAdminScreen = (props: any) => {
+const DashboardAdminScreen = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const renderAfterCalled = useRef(false);
   const renderAfterCalledFP = useRef(false);
   const [loadedTraders, setLoadedTraders] = useState([]);
   const [loadedManufacturers, setLoadedManufacturers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [totalRowsTrader, setTotalRowsTrader] = useState(0);
   const [totalRowsManufacturer, setTotalRowsManufacturer] = useState(0);
   const [perPageM, setPerPageM] = useState(10);
-  const [currentPageM, setCurrentPageM] = useState(1);
   const [perPageT, setPerPageT] = useState(10);
   const [currentPageT, setCurrentPageT] = useState(1);
+  const [currentPageM, setCurrentPageM] = useState(1);
   const [currentTab, setCurrentTab] = useState("traders");
 
   const [numberOfItemsPerPageListT] = useState([10, 20, 40]);
@@ -46,12 +42,26 @@ const DashboardAdminScreen = (props: any) => {
   );
 
   const handlePerRowsChangeT = async (newPerPage: number) => {
+    setCurrentPageT(0);
+    fetchTraders(1);
     setPerPageT(newPerPage);
+    onItemsPerPageChangeT(newPerPage);
   };
 
   const handlePageChangeT = (page: number) => {
-    fetchTraders(page);
+    fetchTraders(page + 1);
     setCurrentPageT(page);
+  };
+  const handlePerRowsChangeM = async (newPerPage: number) => {
+    setCurrentPageM(0);
+    fetchManufacturers(1);
+    setPerPageM(newPerPage);
+    onItemsPerPageChangeM(newPerPage);
+  };
+
+  const handlePageChangeM = (page: number) => {
+    fetchManufacturers(page);
+    setCurrentPageM(page);
   };
 
   const fetchTraders = useCallback(
@@ -98,29 +108,6 @@ const DashboardAdminScreen = (props: any) => {
     [perPageM, sendRequest, auth]
   );
 
-  const handlePerRowsChangeTrader = async (
-    newPerPage: number,
-    page: number
-  ) => {
-    setLoading(true);
-    try {
-      const response = await sendRequest(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/traderslist?page=${page}&size=${perPageT}&delay=1`,
-        "GET",
-        null,
-        { Authorization: "Bearer " + auth.token }
-      );
-      let tradersList = response.traders;
-      setLoadedTraders(tradersList);
-      setPerPageT(newPerPage);
-    } catch (err) {}
-  };
-
-  const handlePageChangeTrader = (page: number) => {
-    fetchTraders(page);
-    setCurrentPageT(page);
-  };
-
   const handleDeleteTraderButtonClick = useCallback(
     async (data: any) => {
       let id = JSON.parse(data.id);
@@ -142,30 +129,6 @@ const DashboardAdminScreen = (props: any) => {
     },
     [sendRequest, auth, fetchTraders]
   );
-
-  const handlePerRowsChangeManufacturer = async (
-    newPerPage: number,
-    page: number
-  ) => {
-    try {
-      const response = await sendRequest(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/manufacturerslist?page=${page}&size=${perPageM}&delay=1`,
-        "GET",
-        null,
-        {
-          Authorization: "Bearer " + auth.token,
-        }
-      );
-      let manufacturersList = response.manufacturers;
-      setLoadedManufacturers(manufacturersList);
-      setPerPageM(newPerPage);
-    } catch (err) {}
-  };
-
-  const handlePageChangeManufacturer = (page: number) => {
-    fetchManufacturers(page);
-    setCurrentPageM(page);
-  };
 
   const handleDeleteManufacturerButtonClick = useCallback(
     async (data: any) => {
@@ -203,26 +166,6 @@ const DashboardAdminScreen = (props: any) => {
     renderAfterCalledFP.current = true;
   }, [fetchManufacturers]);
 
-  // if (loadedManufacturers && loadedManufacturers.length === 0) {
-  //   return (
-  //     <View style={s.center}>
-  //       <Card cardProduct>
-  //         <Text style={[s.navLinkbuttonActive,  s.defaultFont]}>No Manufacturers found.</Text>
-  //       </Card>
-  //     </View>
-  //   );
-  // }
-
-  // if (loadedTraders && loadedTraders.length === 0) {
-  //   return (
-  //     <View style={s.center}>
-  //       <Card cardProduct>
-  //         <Text style={[s.navLinkbuttonActive,  s.defaultFont]}>No Traders found.</Text>
-  //       </Card>
-  //     </View>
-  //   );
-  // }
-
   function handleCurrentTab(presentTab: string) {
     setCurrentTab(presentTab);
     if (presentTab === "manufacturers") {
@@ -253,108 +196,360 @@ const DashboardAdminScreen = (props: any) => {
       )}
       {!isLoading && (
         <View style={[s.rowContainer]}>
-          <View style={s.autoFlex}>
-            <ButtonComp
-              normal={true}
-              buttonfont={true}
-              maxwidth={true}
-              onClick={() => handleCurrentTab("manufacturers")}
-              title="Manufacturers"
-            ></ButtonComp>
-          </View>
-          <View style={s.autoFlex}>
-            <ButtonComp
-              normal={true}
-              buttonfont={true}
-              maxwidth={true}
-              onClick={() => handleCurrentTab("traders")}
-              title="Traders"
-            ></ButtonComp>
-          </View>
+          {loadedManufacturers && loadedManufacturers.length > 0 && (
+            <View style={s.autoFlex}>
+              <ButtonComp
+                normal={true}
+                buttonfont={true}
+                maxwidth={true}
+                onClick={() => handleCurrentTab("manufacturers")}
+                title="Manufacturers"
+              ></ButtonComp>
+            </View>
+          )}
+          {loadedTraders && loadedTraders.length > 0 && (
+            <View style={s.autoFlex}>
+              <ButtonComp
+                normal={true}
+                buttonfont={true}
+                maxwidth={true}
+                onClick={() => handleCurrentTab("traders")}
+                title="Traders"
+              ></ButtonComp>
+            </View>
+          )}
         </View>
       )}
-      {loadedManufacturers && !isLoading && currentTab === "manufacturers" && (
-        <>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>SN</DataTable.Title>
-              <DataTable.Title>Delete</DataTable.Title>
-              <DataTable.Title>Manufacturer</DataTable.Title>
-              <DataTable.Title>Description</DataTable.Title>
-              <DataTable.Title>Address</DataTable.Title>
-              <DataTable.Title>Listing</DataTable.Title>
-            </DataTable.Header>
-            {loadedManufacturers &&
-              loadedManufacturers.map((data: any, index: number) => (
-                <DataTable.Row key={index}>
-                  <DataTable.Cell>{data.serialNo}</DataTable.Cell>
-                  <DataTable.Cell
-                    onPress={() => handleDeleteTraderButtonClick(data)}
+      {loadedManufacturers &&
+        loadedManufacturers.length > 0 &&
+        !isLoading &&
+        currentTab === "manufacturers" && (
+          <>
+            <View style={{ flex: 1 }}>
+              <DataTable style={{ flex: 1 }}>
+                <ScrollView
+                  horizontal
+                  nestedScrollEnabled={true}
+                  contentContainerStyle={{
+                    flexDirection: "column",
+                  }}
+                >
+                  <DataTable.Header>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 40 }}
+                    >
+                      SN
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 50 }}
+                    >
+                      Delete
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 100 }}
+                    >
+                      Manufacturer
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 120 }}
+                    >
+                      Description
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 150 }}
+                    >
+                      Address
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 60 }}
+                    >
+                      Listing
+                    </DataTable.Title>
+                  </DataTable.Header>
+                  <ScrollView
+                    contentContainerStyle={{
+                      flexDirection: "column",
+                    }}
                   >
-                    Delete
-                  </DataTable.Cell>
-                  <DataTable.Cell>{data.title}</DataTable.Cell>
-                  <DataTable.Cell>{data.description}</DataTable.Cell>
-                  <DataTable.Cell>{data.address}</DataTable.Cell>
-                  <DataTable.Cell>{data.listing}</DataTable.Cell>
-                </DataTable.Row>
-              ))}
-            <DataTable.Pagination
-              page={currentPageT}
-              numberOfPages={Math.ceil(totalRowsTrader / itemsPerPageT)}
-              numberOfItemsPerPage={itemsPerPageT}
-              onPageChange={(page) => handlePageChangeT(page)}
-              numberOfItemsPerPageList={numberOfItemsPerPageListT}
-              onItemsPerPageChange={(numberOfItemsPerPage: number) => {
-                handlePerRowsChangeT(numberOfItemsPerPage);
-              }}
-              showFastPaginationControls
-              selectPageDropdownLabel={"Rows per page"}
-            />
-          </DataTable>
-        </>
-      )}
-      {loadedTraders && !isLoading && currentTab === "traders" && (
-        <>
-          <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>SN</DataTable.Title>
-              <DataTable.Title>Delete</DataTable.Title>
-              <DataTable.Title>Trader</DataTable.Title>
-              <DataTable.Title>Email</DataTable.Title>
-              <DataTable.Title>Address</DataTable.Title>
-              <DataTable.Title>Listing</DataTable.Title>
-            </DataTable.Header>
-            {loadedTraders &&
-              loadedTraders.map((data: any, index: number) => (
-                <DataTable.Row key={index}>
-                  <DataTable.Cell>{data.serialNo}</DataTable.Cell>
-                  <DataTable.Cell
-                    onPress={() => handleDeleteTraderButtonClick(data)}
+                    {loadedManufacturers &&
+                      loadedManufacturers.map((data: any, index: number) => (
+                        <DataTable.Row key={index}>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 40 }}
+                          >
+                            {data.serialNo}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            onPress={() =>
+                              handleDeleteManufacturerButtonClick(data)
+                            }
+                            style={{ width: 50 }}
+                          >
+                            Delete
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 100 }}
+                          >
+                            {data.title}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 120 }}
+                          >
+                            {data.description}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 150 }}
+                          >
+                            {data.address}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 60 }}
+                          >
+                            {data.listing}
+                          </DataTable.Cell>
+                        </DataTable.Row>
+                      ))}
+                  </ScrollView>
+                </ScrollView>
+              </DataTable>
+              <DataTable.Pagination
+                page={currentPageM}
+                numberOfPages={Math.ceil(totalRowsManufacturer / itemsPerPageM)}
+                numberOfItemsPerPage={itemsPerPageM}
+                onPageChange={(page) => handlePageChangeM(page)}
+                numberOfItemsPerPageList={numberOfItemsPerPageListM}
+                onItemsPerPageChange={(numberOfItemsPerPage: number) => {
+                  handlePerRowsChangeM(numberOfItemsPerPage);
+                }}
+                showFastPaginationControls
+              />
+            </View>
+          </>
+        )}
+      {loadedTraders &&
+        loadedTraders.length > 0 &&
+        !isLoading &&
+        currentTab === "traders" && (
+          <>
+            <View style={{ flex: 1 }}>
+              <DataTable style={{ flex: 1 }}>
+                <ScrollView
+                  horizontal
+                  nestedScrollEnabled={true}
+                  contentContainerStyle={{
+                    flexDirection: "column",
+                  }}
+                >
+                  <DataTable.Header>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 40 }}
+                    >
+                      SN
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 50 }}
+                    >
+                      Delete
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 100 }}
+                    >
+                      Trader
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 150 }}
+                    >
+                      Email
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 150 }}
+                    >
+                      Address
+                    </DataTable.Title>
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 60 }}
+                    >
+                      Listing
+                    </DataTable.Title>
+                  </DataTable.Header>
+                  <ScrollView
+                    contentContainerStyle={{
+                      flexDirection: "column",
+                    }}
                   >
-                    Delete
-                  </DataTable.Cell>
-                  <DataTable.Cell>{data.title}</DataTable.Cell>
-                  <DataTable.Cell>{data.email}</DataTable.Cell>
-                  <DataTable.Cell>{data.address}</DataTable.Cell>
-                  <DataTable.Cell>{data.listing}</DataTable.Cell>
-                </DataTable.Row>
-              ))}
-            <DataTable.Pagination
-              page={currentPageT}
-              numberOfPages={Math.ceil(totalRowsTrader / itemsPerPageT)}
-              numberOfItemsPerPage={itemsPerPageT}
-              onPageChange={(page) => handlePageChangeT(page)}
-              numberOfItemsPerPageList={numberOfItemsPerPageListT}
-              onItemsPerPageChange={(numberOfItemsPerPage: number) => {
-                handlePerRowsChangeT(numberOfItemsPerPage);
-              }}
-              showFastPaginationControls
-              selectPageDropdownLabel={"Rows per page"}
-            />
-          </DataTable>
-        </>
-      )}
+                    {loadedTraders &&
+                      loadedTraders.map((data: any, index: number) => (
+                        <DataTable.Row key={index}>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 40 }}
+                          >
+                            {data.serialNo}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            onPress={() => handleDeleteTraderButtonClick(data)}
+                            style={{ width: 50 }}
+                          >
+                            Delete
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 100 }}
+                          >
+                            {data.title}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 150 }}
+                          >
+                            {data.email}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 150 }}
+                          >
+                            {data.address}
+                          </DataTable.Cell>
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 60 }}
+                          >
+                            {data.listing}
+                          </DataTable.Cell>
+                        </DataTable.Row>
+                      ))}
+                  </ScrollView>
+                </ScrollView>
+              </DataTable>
+              <DataTable.Pagination
+                page={currentPageT}
+                numberOfPages={Math.ceil(totalRowsTrader / itemsPerPageT)}
+                numberOfItemsPerPage={itemsPerPageT}
+                onPageChange={(page) => handlePageChangeT(page)}
+                numberOfItemsPerPageList={numberOfItemsPerPageListT}
+                onItemsPerPageChange={(numberOfItemsPerPage: number) => {
+                  handlePerRowsChangeT(numberOfItemsPerPage);
+                }}
+                showFastPaginationControls
+              />
+            </View>
+          </>
+        )}
     </React.Fragment>
   );
 };

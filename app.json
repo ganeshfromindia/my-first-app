@@ -72,7 +72,6 @@
         }
       ]
     ],
-
     "splash": {
       "image": "./assets/images/splash.png",
       "backgroundColor": "#ffffff"

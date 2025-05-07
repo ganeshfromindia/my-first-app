@@ -16,22 +16,12 @@ import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
 
 import { MultiSelect, Dropdown } from "react-native-element-dropdown";
-import { MAIN_URL } from "@/util/config";
 import Modal from "../../../components/UIElements/Modal";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 import s from "@/assets/css/style";
 
-import { Dimensions } from "react-native";
-import { useHeaderHeight } from "@react-navigation/elements";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import globalStyle from "@/assets/css/style";
 
 enum pointerEvent {
@@ -48,17 +38,9 @@ const Trader = ({
   traderDataRecd: any;
   handleClose: any;
 }) => {
-  const [scrollViewMinHeight, setScrollViewMinHeight] = useState(0);
-  const renderAfterCalledMH = useRef(false);
-  let ScrollViewMinHeight;
-  const deviceHeight = Dimensions.get("window").height;
-  const headerHeight = useHeaderHeight();
   const [selected, setSelected] = useState<any>(null);
   const [isFocus, setIsFocus] = useState<any>(false);
-  const [isFocusMulti, setIsFocusMulti] = useState<any>(false);
-  const selectInputRef = useRef<any>();
   const renderAfterCalled = useRef(false);
-  const renderAfterCalledMD = useRef(false);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [loadedProducts, setLoadedProducts] = useState<any>();
   const [traders, setTraders] = useState([]);
@@ -162,7 +144,6 @@ const Trader = ({
               (data: any) => data.value
             );
             setDefaultProducts(valuesOfDefaultProducts);
-            //setLoading(false);
           }
         } catch (err) {
           console.log(err);
@@ -194,39 +175,6 @@ const Trader = ({
       }
     });
   }, [sendRequest, auth.token, auth.userId]);
-
-  // const handleTraderSelect = (options: any) => {
-  //   let defaultProductsArray;
-  //   setTraderData(options);
-  //   setIsDisabled(pointerEvent.none);
-  //   if (options && loadedProducts) {
-  //     let traderProductsArray = options &&
-  //       options.products &&
-  //       options.products.length > 0 && [
-  //         ...JSON.parse(JSON.stringify(options.products)),
-  //       ];
-  //     if (traderProductsArray.length > 0) {
-  //       defaultProductsArray = loadedProducts.filter((data: any) =>
-  //         data._id.includes(...traderProductsArray)
-  //       );
-  //     }
-  //     let flags = [];
-  //     let output = [];
-  //     let l = defaultProductsArray.length;
-  //     let i;
-  //     if (defaultProducts && defaultProducts.length > 0) {
-  //       for (i = 0; i < l; i++) {
-  //         if (flags[defaultProductsArray[i].id]) continue;
-  //         flags[defaultProductsArray[i].id] = true;
-  //         output.push(defaultProductsArray[i]);
-  //       }
-  //     }
-  //     let valuesOfDefaultProducts = mapOptions(output).map(
-  //       (data: any) => data.value
-  //     );
-  //     setDefaultProducts(valuesOfDefaultProducts);
-  //   }
-  // };
 
   const mapOptions = (options: any) => {
     if (options && options.length > 0) {
@@ -345,27 +293,15 @@ const Trader = ({
     formState.inputs.email.isValid = false;
     formState.inputs.address.isValid = false;
     formState.isValid = false;
-    // if (selectInputRef && selectInputRef.current) {
-    //   selectInputRef.current.select.clearValue();
-    // }
     setDefaultProducts([]);
     setIsDisabled(pointerEvent.auto);
     setIsEmailDisabled(pointerEvent.auto);
   };
 
-  useEffect(() => {
-    if (!renderAfterCalledMD.current) {
-      ScrollViewMinHeight = deviceHeight - headerHeight;
-      setScrollViewMinHeight(ScrollViewMinHeight);
-    }
-    renderAfterCalledMD.current = true;
-  }, []);
-
   return (
     <React.Fragment>
       <ErrorModal error={error} onClear={clearError} />
-      {/* {isLoading && <LoadingSpinner asOverlay />} */}
-
+      {isLoading && <LoadingSpinner asOverlay />}
       <View>
         {!isLoading && !traderDataRecd && (
           <View style={[s.formControl, s.placeForm, styles.searchTrader]}>
@@ -520,7 +456,6 @@ const Trader = ({
           </View>
         )}
       </View>
-
       <Modal
         show={open}
         onCancel={handleCloseInfo}

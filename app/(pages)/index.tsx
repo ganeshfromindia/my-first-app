@@ -1,9 +1,21 @@
-import { startTransition, useContext, useEffect, useState } from "react";
+import { startTransition, useContext, useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
 import AuthContext from "../../store/auth-context";
 
 import { Redirect } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface UserDataType {
+  token: string | null;
+  userId: number | null;
+  userName: string | null;
+  email: string | null;
+  mobileNo: number | null;
+  role: string | null;
+  image: string | null;
+  expiration: any | null;
+}
 
 function AuthStack() {
   return <Redirect href="/authScreen" />;
@@ -27,9 +39,50 @@ function AuthenticatedStack() {
   }
 }
 
-function Navigation() {
+const retrieveData = async () => {
+  const initialUserData: UserDataType = {
+    token: null,
+    userId: null,
+    userName: null,
+    email: null,
+    mobileNo: null,
+    role: null,
+    image: null,
+    expiration: null,
+  };
   const authCtx = useContext(AuthContext);
-  return !authCtx.isLoggedIn ? <AuthStack /> : <AuthenticatedStack />;
+  const storedData: UserDataType | string =
+    (await AsyncStorage.getItem("userData")) || initialUserData;
+  storedData != null ? JSON.parse(JSON.stringify(storedData)) : null;
+  if (
+    storedData !== null &&
+    typeof storedData === "object" &&
+    storedData.token
+    // &&  new Date(storedData.expiration) > new Date()
+  ) {
+    authCtx.login(
+      storedData.userId,
+      storedData.token,
+      storedData.userName,
+      storedData.mobileNo,
+      storedData.role,
+      storedData.email,
+      storedData.image,
+      true,
+      new Date(storedData.expiration)
+    );
+  }
+};
+
+function Navigation() {
+  async function callData() {
+    return await retrieveData();
+  }
+  callData().then(() => {
+    const authCtx = useContext(AuthContext);
+    return !authCtx.isLoggedIn ? <AuthStack /> : <AuthenticatedStack />;
+  });
+  return <AuthStack />;
 }
 
 function Root(): any {

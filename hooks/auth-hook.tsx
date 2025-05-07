@@ -43,6 +43,7 @@ const useAuth = () => {
       role: string | null,
       email: string | null,
       image: string | null,
+      isLoggedIn: boolean | null,
       expirationDate: any | null
     ) => {
       setToken(token);
@@ -120,6 +121,7 @@ const useAuth = () => {
         storedData.role,
         storedData.email,
         storedData.image,
+        true,
         new Date(storedData.expiration)
       );
     }

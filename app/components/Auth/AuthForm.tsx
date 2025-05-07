@@ -137,7 +137,8 @@ const AuthForm = () => {
           responseData.mobileNo,
           responseData.role,
           responseData.email,
-          responseData.image
+          responseData.image,
+          true
         );
         if (responseData.role === "Manufacturer") {
           router.navigate(
@@ -180,8 +181,18 @@ const AuthForm = () => {
           responseData.mobileNo,
           responseData.role,
           responseData.email,
-          responseData.image
+          responseData.image,
+          true
         );
+        if (responseData.role === "Manufacturer") {
+          router.navigate(
+            "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
+          );
+        } else if (responseData.role === "Admin") {
+          router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
+        } else if (responseData.role === "Trader") {
+          router.navigate("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
+        }
       } catch (err) {
         console.log(err);
       }
@@ -199,7 +210,7 @@ const AuthForm = () => {
   return (
     <React.Fragment>
       {error && <ErrorModal error={error} onClear={clearError} />}
-      {/* {isLoading && <LoadingSpinner asOverlay />} */}
+      {isLoading && <LoadingSpinner asOverlay />}
       {!isLoading && (
         <View>
           <ScrollView

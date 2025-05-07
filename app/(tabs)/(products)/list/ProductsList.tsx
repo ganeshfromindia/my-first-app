@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  useContext,
-  useEffect,
-} from "react";
+import React, { useState, useCallback, useContext, useEffect } from "react";
 import globalStyle from "@/assets/css/style";
 import IconButton from "../../../components/ui/IconButton";
 import * as MediaLibrary from "expo-media-library";
@@ -16,9 +10,8 @@ import {
   Text,
   ScrollView,
   StyleSheet,
-  PermissionsAndroid,
-  Alert,
   Platform,
+  TouchableOpacity,
 } from "react-native";
 import { DataTable } from "react-native-paper";
 import Card from "../../../components/UIElements/Card";
@@ -82,19 +75,19 @@ const ProductsList = () => {
   const auth = useContext(AuthContext);
   const [downloadProgress, setDownloadProgress] = useState<any>();
   const [currentPageP, setCurrentPageP] = useState(0);
-  const [perPageP, setPerPageP] = useState(10);
+  const [perPageP, setPerPageP] = useState<number>(10);
   const [totalRowsP, setTotalRowsP] = useState(0);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [open, setOpen] = useState(false);
   const [loadedProducts, setLoadedProducts] = useState([]);
   const [productData, setProductData] = useState<any>();
-  const [loading, setLoading] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
-  const [perPage, setPerPage] = useState(10);
-  const [currentPage, setCurrentPage] = useState(1);
   const [allowAddProduct, setAllowAddProduct] = useState(false);
-  const [isDownloaded, setisdownloaded] = useState<any>();
-  const subHeader = true;
+
+  const [currentIndex, setCurrentIndex] = useState(-1);
+
+  const expandTabHandler = (et: any, index: number) => {
+    setCurrentIndex(index);
+  };
 
   const fetchManufacturerDashboardData = useCallback(async () => {
     if (auth.token && auth.userId) {
@@ -121,26 +114,22 @@ const ProductsList = () => {
       if (auth.userId && auth.role) {
         let url;
         if (auth.role === "Manufacturer") {
-          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPage}&delay=1`;
+          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
         } else if (auth.role === "Trader") {
-          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/id?uid=${auth.userId}&page=${page}&size=${perPage}&delay=1`;
+          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
         }
-        setLoading(true);
         try {
           const response = await sendRequest(url, "GET", null, {
             Authorization: "Bearer " + auth.token,
           });
-          setLoadedProducts((prev) => {
-            return response.products;
-          });
+          setLoadedProducts(response.products);
           setTotalRowsP(response.total);
-          setLoading(false);
         } catch (err) {
           console.log(err);
         }
       }
     },
-    [perPage, sendRequest, auth]
+    [perPageP, sendRequest, auth]
   );
 
   const handleDeleteButtonClick = useCallback(
@@ -168,31 +157,6 @@ const ProductsList = () => {
   const handleEditButtonClick = (data: any) => {
     setOpen(true);
     setProductData(data);
-  };
-
-  const handlePageChange = (page: number) => {
-    fetchProducts(page);
-    setCurrentPage(page);
-  };
-
-  const handlePerRowsChange = async (newPerPage: number, page: number) => {
-    let userData = sessionStorage.getItem("userData");
-    let userId = JSON.parse(userData || "").userId;
-    setLoading(true);
-    try {
-      let url;
-      if (auth.role === "Manufacturer") {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${userId}&page=${page}&size=${newPerPage}&delay=1`;
-      } else if (auth.role === "Trader") {
-        url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/id?uid=${userId}&page=${page}&size=${newPerPage}&delay=1`;
-      }
-      const response = await sendRequest(url, "GET", null, {
-        Authorization: "Bearer " + auth.token,
-      });
-      setLoadedProducts(response.products);
-      setPerPage(newPerPage);
-      setLoading(false);
-    } catch (err) {}
   };
 
   const handleOpen = (product: any, e: any) => {
@@ -237,12 +201,15 @@ const ProductsList = () => {
 
   const handlePerRowsChangeP = async (newPerPageP: number) => {
     setPerPageP(newPerPageP);
+    setCurrentPageP(0);
+    fetchProducts(1);
+    onItemsPerPageChangeP(newPerPageP);
   };
 
   const handlePageChangeP = (page: number) => {
-    fetchProducts(page);
+    setCurrentPageP(page);
+    fetchProducts(page + 1);
   };
-
   const handleDownloadButtonClick = async (data: any, e: any) => {
     let fileNameArray = data.split("/");
     let fileName = fileNameArray[fileNameArray.length - 1];
@@ -332,7 +299,8 @@ const ProductsList = () => {
   if (!allowAddProduct && auth.role === "Manufacturer") {
     return (
       <React.Fragment>
-        <ErrorModal error={error} onClear={clearError} />
+        {error && <ErrorModal error={error} onClear={clearError} />}
+        {isLoading && <LoadingSpinner asOverlay />}
         <View style={globalStyle.center}>
           <Card style={styles.cardProduct}>
             <ThemedText>
@@ -348,7 +316,8 @@ const ProductsList = () => {
   if (loadedProducts?.length === 0 && auth.role === "Manufacturer") {
     return (
       <React.Fragment>
-        <ErrorModal error={error} onClear={clearError} />
+        {error && <ErrorModal error={error} onClear={clearError} />}
+        {isLoading && <LoadingSpinner asOverlay />}
         <View style={globalStyle.center}>
           <Card style={styles.cardProduct}>
             <ThemedText>No products found</ThemedText>
@@ -406,162 +375,358 @@ const ProductsList = () => {
       )}
       {loadedProducts && !isLoading && (
         <>
-          <>
-            <DataTable>
+          <View style={{ flex: 1 }}>
+            <DataTable style={{ flex: 1 }}>
               <ScrollView
                 horizontal
-                contentContainerStyle={{ flexDirection: "column" }}
+                nestedScrollEnabled={true}
+                contentContainerStyle={{
+                  flexDirection: "column",
+                }}
               >
                 <DataTable.Header>
-                  <DataTable.Title style={{ width: 30 }}>SN</DataTable.Title>
-                  <DataTable.Title style={{ width: 50 }}>Edit</DataTable.Title>
-                  <DataTable.Title style={{ width: 100 }}>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    SN
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 50 }}
+                  >
+                    Edit
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 100 }}
+                  >
                     Product
                   </DataTable.Title>
-                  <DataTable.Title style={{ width: 120 }}>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 120 }}
+                  >
                     Description
                   </DataTable.Title>
-                  <DataTable.Title style={{ width: 60 }}>Price</DataTable.Title>
                   <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 60 }}
+                  >
+                    Price
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
                     style={{ width: 60, justifyContent: "center" }}
                   >
                     COA
                   </DataTable.Title>
                   <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
                     style={{ width: 60, justifyContent: "center" }}
                   >
                     MSDS
                   </DataTable.Title>
                   <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
                     style={{ width: 60, justifyContent: "center" }}
                   >
                     CEP
                   </DataTable.Title>
                   <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
                     style={{ width: 60, justifyContent: "center" }}
                   >
                     QOS
                   </DataTable.Title>
-                  <DataTable.Title style={{ width: 120 }}>DMF</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>IP</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>BP</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>EP</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>JP</DataTable.Title>
-                  <DataTable.Title style={{ width: 30 }}>USP</DataTable.Title>
-                  <DataTable.Title style={{ width: 60 }}>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 120 }}
+                  >
+                    DMF
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    IP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    BP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    EP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    JP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 30 }}
+                  >
+                    USP
+                  </DataTable.Title>
+                  <DataTable.Title
+                    textStyle={{
+                      fontFamily: "Work Sans",
+                      fontWeight: 400,
+                      fontStyle: "normal",
+                    }}
+                    style={{ width: 60 }}
+                  >
                     In House
                   </DataTable.Title>
                 </DataTable.Header>
-                {loadedProducts &&
-                  loadedProducts.map((data: any, index: number) => (
-                    <DataTable.Row key={index}>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {data.serialNo}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 50 }}>
-                        <IconButton
-                          icon="pencil"
-                          size={20}
-                          color={colorIcon}
-                          onPress={() => handleEditButtonClick(data)}
-                        />
-                        {/* <ThemedText style={[styles.editDeleteBtn]} type="outline">
-                                              Edit
-                                            </ThemedText> */}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 100 }}>
-                        {data.title}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 120 }}>
-                        {data.description}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 60 }}>
-                        {data.price}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={{
-                          width: 60,
-                          justifyContent: "center",
-                        }}
-                      >
-                        {data.coa ? (
+                <ScrollView
+                  nestedScrollEnabled={true}
+                  contentContainerStyle={{
+                    flexDirection: "column",
+                  }}
+                >
+                  {loadedProducts &&
+                    loadedProducts.map((data: any, index: number) => (
+                      <DataTable.Row key={index}>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 30 }}
+                        >
+                          {data.serialNo}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 50 }}
+                        >
                           <IconButton
-                            icon="cloud-download"
+                            icon="pencil"
                             size={20}
                             color={colorIcon}
-                            onPress={($event: any) =>
-                              handleDownloadButtonClick(data.coa, $event)
-                            }
+                            onPress={() => handleEditButtonClick(data)}
                           />
-                        ) : (
-                          "NA"
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={{
-                          width: 60,
-                          justifyContent: "center",
-                        }}
-                      >
-                        {data.msds ? (
-                          <IconButton
-                            icon="cloud-download"
-                            size={20}
-                            color={colorIcon}
-                            onPress={($event: any) =>
-                              handleDownloadButtonClick(data.msds, $event)
-                            }
-                          />
-                        ) : (
-                          "NA"
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={{
-                          width: 60,
-                          justifyContent: "center",
-                        }}
-                      >
-                        {data.cep ? (
-                          <IconButton
-                            icon="cloud-download"
-                            size={20}
-                            color={colorIcon}
-                            onPress={($event: any) =>
-                              handleDownloadButtonClick(data.cep, $event)
-                            }
-                          />
-                        ) : (
-                          "NA"
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell
-                        style={{
-                          width: 60,
-                          justifyContent: "center",
-                        }}
-                      >
-                        {data.qos ? (
-                          <IconButton
-                            icon="cloud-download"
-                            size={20}
-                            color={colorIcon}
-                            onPress={($event: any) =>
-                              handleDownloadButtonClick(data.qos, $event)
-                            }
-                          />
-                        ) : (
-                          "NA"
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 120 }}>
-                        <View
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 100 }}
+                        >
+                          {data.title}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 120 }}
+                        >
+                          {data.description}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 60 }}
+                        >
+                          {data.price}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
                           style={{
-                            flexDirection: "column",
+                            width: 60,
+                            justifyContent: "center",
                           }}
                         >
-                          <ScrollView>
-                            {
+                          {data.coa ? (
+                            <IconButton
+                              icon="cloud-download"
+                              size={20}
+                              color={colorIcon}
+                              onPress={($event: any) =>
+                                handleDownloadButtonClick(data.coa, $event)
+                              }
+                            />
+                          ) : (
+                            "NA"
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{
+                            width: 60,
+                            justifyContent: "center",
+                          }}
+                        >
+                          {data.msds ? (
+                            <IconButton
+                              icon="cloud-download"
+                              size={20}
+                              color={colorIcon}
+                              onPress={($event: any) =>
+                                handleDownloadButtonClick(data.msds, $event)
+                              }
+                            />
+                          ) : (
+                            "NA"
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{
+                            width: 60,
+                            justifyContent: "center",
+                          }}
+                        >
+                          {data.cep ? (
+                            <IconButton
+                              icon="cloud-download"
+                              size={20}
+                              color={colorIcon}
+                              onPress={($event: any) =>
+                                handleDownloadButtonClick(data.cep, $event)
+                              }
+                            />
+                          ) : (
+                            "NA"
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{
+                            width: 60,
+                            justifyContent: "center",
+                          }}
+                        >
+                          {data.qos ? (
+                            <IconButton
+                              icon="cloud-download"
+                              size={20}
+                              color={colorIcon}
+                              onPress={($event: any) =>
+                                handleDownloadButtonClick(data.qos, $event)
+                              }
+                            />
+                          ) : (
+                            "NA"
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell
+                          textStyle={{
+                            fontFamily: "Work Sans",
+                            fontWeight: 400,
+                            fontStyle: "normal",
+                          }}
+                          style={{ width: 120 }}
+                        >
+                          <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => expandTabHandler(true, index)}
+                          >
+                            {currentIndex !== index && (
+                              <Text
+                                style={[globalStyle.defaultFont, { color }]}
+                              >
+                                {" "}
+                                Details
+                              </Text>
+                            )}
+                            {currentIndex == index &&
                               (dmfHTML =
                                 data && data.dmf && data.dmf.length > 0 ? (
                                   JSON.parse(data.dmf)
@@ -581,211 +746,156 @@ const ProductsList = () => {
                                       )
                                     )
                                 ) : (
-                                  <Text style={[globalStyle.defaultFont]}>
+                                  <Text style={globalStyle.defaultFont}>
                                     No
                                   </Text>
-                                ))
-                            }
-                          </ScrollView>
-                        </View>
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("IP") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("BP") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("EP") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("JP") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 30 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("USP") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                      <DataTable.Cell style={{ width: 60 }}>
-                        {JSON.parse(
-                          JSON.stringify(data.pharmacopoeias[0] || "")
-                        ).includes("InHouse") ? (
-                          <Text
-                            style={globalStyle.check}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#10004;{" "}
-                          </Text>
-                        ) : (
-                          <Text
-                            style={globalStyle.cross}
-                            role="img"
-                            aria-label="check"
-                          >
-                            {" "}
-                            &#x274C;{" "}
-                          </Text>
-                        )}
-                      </DataTable.Cell>
-                    </DataTable.Row>
-                  ))}
-                <DataTable.Pagination
-                  page={currentPageP}
-                  numberOfPages={Math.ceil(totalRowsP / itemsPerPageP)}
-                  numberOfItemsPerPage={itemsPerPageP}
-                  onPageChange={(pageP) => handlePageChangeP(pageP)}
-                  numberOfItemsPerPageList={numberOfItemsPerPageListP}
-                  onItemsPerPageChange={(numberOfItemsPerPageP: number) => {
-                    handlePerRowsChangeP(numberOfItemsPerPageP);
-                  }}
-                  showFastPaginationControls
-                  selectPageDropdownLabel={"Rows per page"}
-                />
+                                ))}
+                          </TouchableOpacity>
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 30 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("IP") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 30 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("BP") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 30 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("EP") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 30 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("JP") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 30 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("USP") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={{ width: 60 }}>
+                          {JSON.parse(
+                            JSON.stringify(data.pharmacopoeias[0] || "")
+                          ).includes("InHouse") ? (
+                            <Text
+                              style={globalStyle.check}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#10004;
+                            </Text>
+                          ) : (
+                            <Text
+                              style={globalStyle.cross}
+                              role="img"
+                              aria-label="check"
+                            >
+                              &#x274C;
+                            </Text>
+                          )}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    ))}
+                </ScrollView>
               </ScrollView>
             </DataTable>
-            {/* <Modal
-                show={open}
-                onCancel={handleClose}
-                header={(traderData && traderData.title) || "Add Trader"}
-                contentClass="place-item__modal-content"
-                footerClass="place-item__modal-actions"
-                footer={
-                <View style={{ width: 100, margin: "auto" }}>
-                  <ButtonComp
-                    type="button"
-                    onClick={handleClose}
-                    normal={true}
-                    buttonfont={true}
-                    maxwidth={true}
-                  >
-                    CLOSE
-                  </ButtonComp>
-                  </View>
-                }
-              >
-               
-                <View>
-                  <Trader
-                    traderDataRecd={traderData}
-                    handleClose={handleClose}
-                  ></Trader>
-                </View>
-              </Modal> */}
-          </>
-          {/* <DataTable
-            columns={columns}
-            data={loadedProducts}
-            progressPending={loading}
-            pagination
-            paginationServer
-            paginationTotalRows={totalRows}
-            onChangeRowsPerPage={handlePerRowsChange}
-            onChangePage={handlePageChange}
-            paginationDefaultPage={currentPage}
-            paginationPerPage={perPage}
-            subHeaderComponent={subHeaderComponent}
-            subHeader={subHeader}
-          ></DataTable> */}
+            <DataTable.Pagination
+              page={currentPageP}
+              numberOfPages={Math.ceil(totalRowsP / itemsPerPageP)}
+              onPageChange={(page) => handlePageChangeP(page)}
+              showFastPaginationControls
+              numberOfItemsPerPageList={numberOfItemsPerPageListP}
+              numberOfItemsPerPage={itemsPerPageP}
+              onItemsPerPageChange={(numberOfItemsPerPage: number) => {
+                handlePerRowsChangeP(numberOfItemsPerPage);
+              }}
+            />
+          </View>
+
           <Modal
             show={open}
             onCancel={handleClose}

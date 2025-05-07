@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { MultiSelect, Dropdown } from "react-native-element-dropdown";
+import { MultiSelect } from "react-native-element-dropdown";
 
 import Input from "../../../components/FormElements/Input";
 import ButtonComp from "../../../components/FormElements/Button";
@@ -404,11 +404,9 @@ const Product = ({
             )}
           />
 
-          <View className="height25"></View>
-
           <MultiSelect
             mode="modal"
-            style={styles.dropdown}
+            style={[styles.dropdown, { marginTop: 25 }]}
             placeholderStyle={styles.placeholderStyle}
             selectedTextStyle={styles.selectedTextStyle}
             inputSearchStyle={styles.inputSearchStyle}

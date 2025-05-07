@@ -7,10 +7,9 @@ import { VALIDATOR_REQUIRE } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 import AuthContext from "@/store/auth-context";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import s from "@/assets/css/style";
-import { Tabs } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+
 import Card from "../../../components/UIElements/Card";
 
 const DashboardManufacturerScreen = (props: any) => {

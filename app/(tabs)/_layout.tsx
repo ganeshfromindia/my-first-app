@@ -28,6 +28,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(dashboard)/admin/dashboardAdminScreen"
           options={{
+            headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
@@ -45,6 +46,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(dashboard)/manufacturer/dashboardManufacturerScreen"
           options={{
+            headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
@@ -62,6 +64,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(dashboard)/trader/dashboardTraderScreen"
           options={{
+            headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           }}
@@ -79,6 +82,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(products)/list/ProductsList"
           options={{
+            headerShown: true,
             title: "Products",
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="product-hunt" color={color} />
@@ -98,6 +102,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="(traders)/list/TradersList"
           options={{
+            headerShown: true,
             title: "Traders",
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="user-plus" color={color} />
