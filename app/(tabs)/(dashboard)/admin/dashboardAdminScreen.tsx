@@ -42,26 +42,26 @@ const DashboardAdminScreen = () => {
   );
 
   const handlePerRowsChangeT = async (newPerPage: number) => {
+    setPerPageT(newPerPage);
     setCurrentPageT(0);
     fetchTraders(1);
-    setPerPageT(newPerPage);
     onItemsPerPageChangeT(newPerPage);
   };
 
   const handlePageChangeT = (page: number) => {
-    fetchTraders(page + 1);
     setCurrentPageT(page);
+    fetchTraders(page + 1);
   };
   const handlePerRowsChangeM = async (newPerPage: number) => {
+    setPerPageM(newPerPage);
     setCurrentPageM(0);
     fetchManufacturers(1);
-    setPerPageM(newPerPage);
     onItemsPerPageChangeM(newPerPage);
   };
 
   const handlePageChangeM = (page: number) => {
-    fetchManufacturers(page);
     setCurrentPageM(page);
+    fetchManufacturers(page + 1);
   };
 
   const fetchTraders = useCallback(

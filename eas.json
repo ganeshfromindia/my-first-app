@@ -8,7 +8,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://3055-115-98-235-190.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://e980-60-254-0-97.ngrok-free.app"
       }
     },
     "preview": {
@@ -28,7 +28,7 @@
     "production": {
       "node": "20.15.1",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://3055-115-98-235-190.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://e980-60-254-0-97.ngrok-free.app"
       },
       "android": {
         "buildType": "apk"
@@ -36,7 +36,7 @@
     },
     "test": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://3055-115-98-235-190.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://e980-60-254-0-97.ngrok-free.app"
       }
     }
   },
