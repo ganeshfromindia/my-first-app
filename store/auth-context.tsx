@@ -1,5 +1,17 @@
 import { createContext } from "react";
 
+interface Logindatatype {
+  userId: number | null;
+  token: string | null;
+  username: string | null;
+  mobileNo: number | null;
+  role: string | null;
+  email: string | null;
+  image: string | null;
+  isLoggedIn: boolean | null;
+  expirationDate: any | null;
+}
+
 interface UserDataType {
   isLoggedIn: boolean;
   userId: number | any;
@@ -8,12 +20,22 @@ interface UserDataType {
   role: string | any;
   email: string | any;
   mobileNo: number | any;
-  login: (userData: any | null) => void;
+  login: (
+    userId: number | null,
+    token: string | null,
+    username: string | null,
+    mobileNo: number | null,
+    role: string | null,
+    email: string | null,
+    image: string | null,
+    isLoggedIn: boolean | null,
+    expirationDate: any | null
+  ) => void;
   logout: () => void;
   image: string | any;
 }
 
-const AuthContext = createContext<any>({
+export const AuthContext = createContext<UserDataType>({
   isLoggedIn: false,
   userId: null,
   userName: null,
@@ -25,5 +47,3 @@ const AuthContext = createContext<any>({
   logout: () => {},
   image: null,
 });
-
-export default AuthContext;

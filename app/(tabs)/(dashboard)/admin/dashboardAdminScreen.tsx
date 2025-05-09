@@ -9,7 +9,7 @@ import { DataTable } from "react-native-paper";
 
 import Card from "../../../components/UIElements/Card";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import ButtonComp from "../../../components/FormElements/Button";
 import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import ErrorModal from "../../../components/UIElements/ErrorModal";

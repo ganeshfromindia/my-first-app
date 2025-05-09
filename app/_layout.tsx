@@ -6,12 +6,13 @@ import {
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { StatusBar } from "expo-status-bar";
 import { Stack } from "expo-router";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import useAuth from "@/hooks/auth-hook";
 import { useContext, useEffect } from "react";
 import { PaperProvider } from "react-native-paper";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { Text } from "react-native";
 
 export default function RootLayout() {
   SplashScreen.preventAutoHideAsync();
@@ -32,11 +33,16 @@ export default function RootLayout() {
     "Work Sans": require("../assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"),
   });
 
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
+  if (error) {
+    return <Text>Error loading fonts</Text>;
+  }
+
+  if (!loaded) {
+    return <Text>Loading fonts...</Text>;
+  }
+  if (loaded) {
+    SplashScreen.hideAsync();
+  }
 
   if (!loaded && !error) {
     return null;

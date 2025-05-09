@@ -15,13 +15,15 @@ import useHttpClient from "@/hooks/http-hook";
 
 import { StyleSheet, Text, View, ScrollView, StatusBar } from "react-native";
 import ButtonComp from "../FormElements/Button";
-import AuthContext from "@/store/auth-context";
-import { useRouter } from "expo-router";
+import { AuthContext } from "@/store/auth-context";
+import { useRouter, useNavigation } from "expo-router";
 import globalStyle from "@/assets/css/style";
 import { Dimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { CommonActions } from "@react-navigation/native";
 
 const AuthForm = () => {
+  const navigation = useNavigation();
   const router = useRouter();
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -138,16 +140,27 @@ const AuthForm = () => {
           responseData.role,
           responseData.email,
           responseData.image,
-          true
+          true,
+          new Date(responseData.expiration)
+        );
+        navigation.dispatch(
+          CommonActions.reset({
+            routes: [
+              {
+                key: "(tabs)",
+                name: "(tabs)",
+              },
+            ],
+          })
         );
         if (responseData.role === "Manufacturer") {
-          router.navigate(
+          router.replace(
             "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
           );
         } else if (responseData.role === "Admin") {
-          router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
+          router.replace("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
         } else if (responseData.role === "Trader") {
-          router.navigate("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
+          router.replace("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
         }
       } catch (err) {
         console.log(err);
@@ -182,7 +195,8 @@ const AuthForm = () => {
           responseData.role,
           responseData.email,
           responseData.image,
-          true
+          true,
+          new Date(responseData.expiration)
         );
         if (responseData.role === "Manufacturer") {
           router.navigate(

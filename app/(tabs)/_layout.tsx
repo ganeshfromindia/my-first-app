@@ -5,7 +5,8 @@ import { Colors } from "@/constants/Colors";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { FontAwesome } from "@expo/vector-icons";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
+import LogoutButton from "../(pages)/logout";
 
 export default function TabLayout() {
   const colorIcon = useThemeColor(
@@ -31,6 +32,7 @@ export default function TabLayout() {
             headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            headerRight: () => <LogoutButton />,
           }}
         />
       )}
@@ -49,6 +51,7 @@ export default function TabLayout() {
             headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            headerRight: () => <LogoutButton />,
           }}
         />
       )}
@@ -67,6 +70,7 @@ export default function TabLayout() {
             headerShown: true,
             title: "Dashboard",
             tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+            headerRight: () => <LogoutButton />,
           }}
         />
       )}
@@ -87,6 +91,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="product-hunt" color={color} />
             ),
+            headerRight: () => <LogoutButton />,
           }}
         />
       )}
@@ -107,6 +112,7 @@ export default function TabLayout() {
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="user-plus" color={color} />
             ),
+            headerRight: () => <LogoutButton />,
           }}
         />
       )}

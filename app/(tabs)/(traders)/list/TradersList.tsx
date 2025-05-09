@@ -11,7 +11,7 @@ import ButtonComp from "../../../components/FormElements/Button";
 import Modal from "../../../components/UIElements/Modal";
 import Trader from "../item/Trader";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import ErrorModal from "../../../components/UIElements/ErrorModal";
 import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 

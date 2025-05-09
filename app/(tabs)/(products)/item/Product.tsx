@@ -9,7 +9,7 @@ import ImageUpload from "../../../components/FormElements/ImageUpload";
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import { AntDesign } from "@expo/vector-icons";
 import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
 import globalStyle from "@/assets/css/style";

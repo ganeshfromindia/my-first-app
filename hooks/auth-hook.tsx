@@ -33,10 +33,11 @@ const useAuth = () => {
   const [mobileNo, setMobileNo] = useState<number | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [image, setImage] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(false);
 
   const login = useCallback(
     async (
-      uid: number | null,
+      userId: number | null,
       token: string | null,
       username: string | null,
       mobileNo: number | null,
@@ -47,12 +48,14 @@ const useAuth = () => {
       expirationDate: any | null
     ) => {
       setToken(token);
-      setUserId(uid);
+      setUserId(userId);
       setUserName(username);
       setMobileNo(mobileNo);
       setEmail(email);
       setRole(role);
       setImage(image);
+      setTokenExpirationDate(expirationDate);
+      setIsLoggedIn(isLoggedIn);
       // const tokenExpirationDate =
       //   expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
       // setTokenExpirationDate(tokenExpirationDate);
@@ -60,7 +63,7 @@ const useAuth = () => {
         await AsyncStorage.setItem(
           "userData",
           JSON.stringify({
-            userId: uid,
+            userId: userId,
             token: token,
             userName: username,
             mobileNo: mobileNo,
@@ -141,6 +144,8 @@ const useAuth = () => {
     mobileNo,
     role,
     image,
+    tokenExpirationDate,
+    isLoggedIn,
   };
 };
 

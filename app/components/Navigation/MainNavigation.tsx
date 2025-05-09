@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import { StyleSheet, View } from "react-native";
 
 const MainNavigation = (props: any) => {

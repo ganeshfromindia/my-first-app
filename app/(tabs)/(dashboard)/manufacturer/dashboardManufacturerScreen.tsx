@@ -6,7 +6,7 @@ import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { VALIDATOR_REQUIRE } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import { View } from "react-native";
 import s from "@/assets/css/style";
 

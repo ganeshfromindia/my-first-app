@@ -13,7 +13,7 @@ import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { VALIDATOR_REQUIRE, VALIDATOR_EMAIL } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 
 import { MultiSelect, Dropdown } from "react-native-element-dropdown";
 import Modal from "../../../components/UIElements/Modal";

@@ -19,7 +19,7 @@ import ButtonComp from "../../../components/FormElements/Button";
 import Modal from "../../../components/UIElements/Modal";
 import Product from "../item/Product";
 import useHttpClient from "@/hooks/http-hook";
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import ErrorModal from "../../../components/UIElements/ErrorModal";
 import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import { useThemeColor } from "@/hooks/useThemeColor";

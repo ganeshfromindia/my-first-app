@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "expo-router";
 
-import AuthContext from "@/store/auth-context";
+import { AuthContext } from "@/store/auth-context";
 import { View, Text, StyleSheet } from "react-native";
 
 import globalStyle from "@/assets/css/style";

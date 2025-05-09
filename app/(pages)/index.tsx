@@ -1,46 +1,65 @@
 import { startTransition, useContext, useEffect } from "react";
 import * as SplashScreen from "expo-splash-screen";
 
-import AuthContext from "../../store/auth-context";
+import { AuthContext } from "../../store/auth-context";
 
-import { Redirect } from "expo-router";
+import { useRouter, useFocusEffect, useNavigation } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-interface UserDataType {
-  token: string | null;
-  userId: number | null;
-  userName: string | null;
-  email: string | null;
-  mobileNo: number | null;
-  role: string | null;
-  image: string | null;
-  expiration: any | null;
-}
+import { CommonActions } from "@react-navigation/native";
 
 function AuthStack() {
-  return <Redirect href="/authScreen" />;
+  const router = useRouter();
+
+  useFocusEffect(() => {
+    // Redirect to /about
+    router.replace("/authScreen");
+  });
+
+  return null;
+  //return <Redirect href="/authScreen" />;
 }
 
 function AuthenticatedStack() {
   const auth = useContext(AuthContext);
+  const router = useRouter();
+  const navigation = useNavigation();
+  useFocusEffect(() => {
+    if (auth && auth.token) {
+      console.log("auth.token");
+      console.log(auth.token);
+      navigation.dispatch(
+        CommonActions.reset({
+          routes: [
+            {
+              key: "(tabs)",
+              name: "(tabs)",
+            },
+          ],
+        })
+      );
+      if (auth.role == "Manufacturer") {
+        router.replace(
+          "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
+        );
 
-  if (auth && auth.token) {
-    if (auth.role == "Manufacturer") {
-      return (
-        <Redirect href="/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen" />
-      );
-    } else if (auth.role == "Trader") {
-      return (
-        <Redirect href="/(tabs)/(dashboard)/trader/dashboardTraderScreen" />
-      );
-    } else if (auth.role == "Admin") {
-      <Redirect href="/(tabs)/(dashboard)/admin/dashboardAdminScreen" />;
+        // return (
+        //   <Redirect href="/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen" />
+        // );
+      }
+      // else if (auth.role == "Trader") {
+      //   return (
+      //     <Redirect href="/(tabs)/(dashboard)/trader/dashboardTraderScreen" />
+      //   );
+      // } else if (auth.role == "Admin") {
+      //   return <Redirect href="/(tabs)/(dashboard)/admin/dashboardAdminScreen" />;
+      // }
     }
-  }
+  });
+  return null;
 }
 
 const retrieveData = async () => {
-  const initialUserData: UserDataType = {
+  const initialUserData: any = {
     token: null,
     userId: null,
     userName: null,
@@ -50,17 +69,18 @@ const retrieveData = async () => {
     image: null,
     expiration: null,
   };
-  const authCtx = useContext(AuthContext);
-  const storedData: UserDataType | string =
+  const auth = useContext(AuthContext);
+  let storedData: any =
     (await AsyncStorage.getItem("userData")) || initialUserData;
-  storedData != null ? JSON.parse(JSON.stringify(storedData)) : null;
+  storedData != null ? JSON.parse(storedData) : null;
+  storedData = JSON.parse(storedData);
   if (
     storedData !== null &&
     typeof storedData === "object" &&
     storedData.token
     // &&  new Date(storedData.expiration) > new Date()
   ) {
-    authCtx.login(
+    auth.login(
       storedData.userId,
       storedData.token,
       storedData.userName,
@@ -75,39 +95,12 @@ const retrieveData = async () => {
 };
 
 function Navigation() {
-  async function callData() {
-    return await retrieveData();
-  }
-  callData().then(() => {
-    const authCtx = useContext(AuthContext);
-    return !authCtx.isLoggedIn ? <AuthStack /> : <AuthenticatedStack />;
-  });
-  return <AuthStack />;
+  retrieveData();
+  let authCtx = useContext(AuthContext);
+  return !authCtx.isLoggedIn ? <AuthStack /> : <AuthenticatedStack />;
 }
 
 function Root(): any {
-  SplashScreen.preventAutoHideAsync();
-
-  const authCtx = useContext(AuthContext);
-
-  useEffect(() => {
-    async function fetchToken() {
-      const storedToken = authCtx.token;
-
-      if (storedToken) {
-        authCtx.isLoggedIn = true;
-      }
-    }
-
-    fetchToken();
-  }, []);
-
-  if (authCtx.isLoggedIn) {
-    return startTransition(() => {
-      SplashScreen.hideAsync();
-    });
-  }
-
   return <Navigation />;
 }
 
