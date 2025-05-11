@@ -77,6 +77,11 @@
         }
       ]
     ],
+    "splash": {
+      "image": "./assets/images/splash-icon-main.png",
+      "backgroundColor": "#ffffff",
+      "imageWidth": 100
+    },
     "experiments": {
       "typedRoutes": true
     },
