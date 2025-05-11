@@ -56,7 +56,7 @@
           "backgroundColor": "#ffffff",
           "image": "./assets/images/splash-icon-main.png",
           "dark": {
-            "image": "./assets/images/splash-icon-main.png",
+            "image": "./assets/images/favicon.png",
             "backgroundColor": "#000000"
           },
           "imageWidth": 200
