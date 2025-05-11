@@ -1,5 +1,4 @@
 import { startTransition, useContext, useEffect } from "react";
-import * as SplashScreen from "expo-splash-screen";
 
 import { AuthContext } from "../../store/auth-context";
 
