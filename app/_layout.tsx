@@ -27,6 +27,10 @@ export default function RootLayout() {
     role,
     image,
   } = useAuth();
+  SplashScreen.setOptions({
+    duration: 1000,
+    fade: true,
+  });
   const auth = useContext(AuthContext);
   const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({

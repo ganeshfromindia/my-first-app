@@ -41,6 +41,10 @@ const TradersList = () => {
     { light: "#ffffff", dark: "#000000" },
     "background"
   );
+  const backgroundBD = useThemeColor(
+    { light: "#000000", dark: "#ffffff" },
+    "background"
+  );
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const renderAfterCalled = useRef(false);
@@ -552,7 +556,18 @@ const TradersList = () => {
       <Nmodal
         visible={openP}
         onDismiss={handleCloseP}
-        style={{ backgroundColor: background }}
+        style={{
+          backgroundColor: background,
+          width: "96%",
+          marginBottom: 25,
+          marginHorizontal: "2%",
+          height: "94%",
+        }}
+        theme={{
+          colors: {
+            backdrop: backgroundBD,
+          },
+        }}
       >
         {loadedProducts.length == 0 && !isLoading && (
           <>
