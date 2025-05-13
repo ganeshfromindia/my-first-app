@@ -28,8 +28,8 @@ const DashboardAdminScreen = () => {
   const [totalRowsManufacturer, setTotalRowsManufacturer] = useState(0);
   const [perPageM, setPerPageM] = useState(10);
   const [perPageT, setPerPageT] = useState(10);
-  const [currentPageT, setCurrentPageT] = useState(1);
-  const [currentPageM, setCurrentPageM] = useState(1);
+  const [currentPageT, setCurrentPageT] = useState(0);
+  const [currentPageM, setCurrentPageM] = useState(0);
   const [currentTab, setCurrentTab] = useState("traders");
 
   const [numberOfItemsPerPageListT] = useState([10, 20, 40]);
