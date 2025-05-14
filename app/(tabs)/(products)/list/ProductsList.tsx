@@ -921,9 +921,8 @@ const ProductsList = () => {
                 normal={true}
                 buttonfont={true}
                 maxwidth={true}
-              >
-                CLOSE
-              </ButtonComp>
+                title="CLOSE"
+              ></ButtonComp>
             }
           >
             <View>
