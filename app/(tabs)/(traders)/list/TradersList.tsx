@@ -73,7 +73,7 @@ const TradersList = () => {
 
   const [currentIndex, setCurrentIndex] = useState(-1);
 
-  const expandTabHandler = (et: any, index: number) => {
+  const expandTabHandler = (index: number) => {
     setCurrentIndex(index);
   };
 
@@ -690,15 +690,31 @@ const TradersList = () => {
                             <DataTable.Cell style={{ width: 120 }}>
                               <TouchableOpacity
                                 activeOpacity={1}
-                                onPress={() => expandTabHandler(true, index)}
+                                onPress={() => expandTabHandler(index)}
                               >
                                 {currentIndex !== index && (
-                                  <Text
-                                    style={[globalStyle.defaultFont, { color }]}
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      justifyContent: "center",
+                                      alignItems: "center",
+                                    }}
                                   >
-                                    {" "}
-                                    Details
-                                  </Text>
+                                    <Text
+                                      style={[
+                                        globalStyle.defaultFont,
+                                        { color },
+                                      ]}
+                                    >
+                                      Details
+                                    </Text>
+                                    <IconButton
+                                      icon="caret-back-circle-outline"
+                                      size={20}
+                                      color={colorIcon}
+                                      onPress={() => expandTabHandler(index)}
+                                    />
+                                  </View>
                                 )}
                                 {currentIndex == index &&
                                   (dmfHTML =

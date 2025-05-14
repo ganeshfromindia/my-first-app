@@ -8,7 +8,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://9d0c-115-98-232-227.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://api-infoportal-backend.onrender.com"
       }
     },
     "preview": {
@@ -28,7 +28,7 @@
     "production": {
       "node": "20.15.1",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://9d0c-115-98-232-227.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://api-infoportal-backend.onrender.com"
       },
       "android": {
         "buildType": "apk"
@@ -36,7 +36,7 @@
     },
     "test": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://9d0c-115-98-232-227.ngrok-free.app"
+        "EXPO_PUBLIC_API_URL": "https://api-infoportal-backend.onrender.com"
       }
     }
   },
