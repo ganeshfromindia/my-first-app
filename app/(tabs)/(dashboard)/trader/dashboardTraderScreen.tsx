@@ -87,7 +87,6 @@ const DashboardTraderScreen = (props: any) => {
         isValid: true,
       },
     },
-    false,
     false
   );
 

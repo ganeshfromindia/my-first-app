@@ -41,56 +41,27 @@ const AuthForm = () => {
     {
       email: {
         value: "",
-        isValid: true,
-        isTouched: false,
+        isValid: false,
       },
       password: {
         value: "",
-        isValid: true,
-        isTouched: false,
-      },
-      name: {
-        value: "",
-        isValid: true,
-        isTouched: false,
-      },
-      image: {
-        value: "",
-        isValid: true,
-        isTouched: false,
-      },
-      mobileNo: {
-        value: "",
-        isValid: true,
-        isTouched: false,
+        isValid: false,
       },
     },
-    false,
-    true
+    false
   );
 
   const switchModeHandler = () => {
-    setIsLoginMode((prevMode) => !prevMode);
-  };
-
-  useEffect(() => {
     if (!isLoginMode) {
       setFormData(
         {
           ...formState.inputs,
-          email: {
-            value: "",
-            isValid: true,
-            isTouched: false,
-          },
-          password: {
-            value: "",
-            isValid: true,
-            isTouched: false,
-          },
+          name: undefined,
+          image: undefined,
+          mobileNo: undefined,
         },
-        // formState.inputs.email.isValid && formState.inputs.password.isValid
-        true
+
+        formState.inputs.email.isValid && formState.inputs.password.isValid
       );
     } else {
       setFormData(
@@ -99,23 +70,21 @@ const AuthForm = () => {
           name: {
             value: "",
             isValid: true,
-            isTouched: false,
           },
           image: {
             value: "",
             isValid: true,
-            isTouched: false,
           },
           mobileNo: {
             value: "",
             isValid: true,
-            isTouched: false,
           },
         },
-        true
+        false
       );
     }
-  }, [isLoginMode]);
+    setIsLoginMode((prevMode) => !prevMode);
+  };
 
   const authSubmitHandler = async (event: any) => {
     event.preventDefault();

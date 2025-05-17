@@ -112,6 +112,7 @@ const ProductsList = () => {
   const fetchProducts = useCallback(
     async (page: number) => {
       if (auth.userId && auth.role) {
+        console.log(perPageP);
         let url;
         if (auth.role === "Manufacturer") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
@@ -327,9 +328,8 @@ const ProductsList = () => {
               normal={true}
               buttonfont={true}
               maxwidth={true}
-            >
-              Add Product
-            </ButtonComp>
+              title="Add Product"
+            ></ButtonComp>
             <Modal
               show={open}
               onCancel={handleClose}
@@ -395,16 +395,31 @@ const ProductsList = () => {
                   >
                     SN
                   </DataTable.Title>
-                  <DataTable.Title
-                    textStyle={{
-                      fontFamily: "Work Sans",
-                      fontWeight: 400,
-                      fontStyle: "normal",
-                    }}
-                    style={{ width: 50 }}
-                  >
-                    Edit
-                  </DataTable.Title>
+
+                  {auth && auth.role == "Manufacturer" && (
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 50 }}
+                    >
+                      Edit
+                    </DataTable.Title>
+                  )}
+                  {auth && auth.role == "Trader" && (
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Work Sans",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 200 }}
+                    >
+                      Manufacturer
+                    </DataTable.Title>
+                  )}
                   <DataTable.Title
                     textStyle={{
                       fontFamily: "Work Sans",
@@ -565,21 +580,35 @@ const ProductsList = () => {
                         >
                           {data.serialNo}
                         </DataTable.Cell>
-                        <DataTable.Cell
-                          textStyle={{
-                            fontFamily: "Work Sans",
-                            fontWeight: 400,
-                            fontStyle: "normal",
-                          }}
-                          style={{ width: 50 }}
-                        >
-                          <IconButton
-                            icon="pencil"
-                            size={20}
-                            color={colorIcon}
-                            onPress={() => handleEditButtonClick(data)}
-                          />
-                        </DataTable.Cell>
+                        {auth && auth.role == "Manufacturer" && (
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 50 }}
+                          >
+                            <IconButton
+                              icon="pencil"
+                              size={20}
+                              color={colorIcon}
+                              onPress={() => handleEditButtonClick(data)}
+                            />
+                          </DataTable.Cell>
+                        )}
+                        {auth && auth.role == "Trader" && (
+                          <DataTable.Cell
+                            textStyle={{
+                              fontFamily: "Work Sans",
+                              fontWeight: 400,
+                              fontStyle: "normal",
+                            }}
+                            style={{ width: 200 }}
+                          >
+                            {data.manufacturer.title}
+                          </DataTable.Cell>
+                        )}
                         <DataTable.Cell
                           textStyle={{
                             fontFamily: "Work Sans",

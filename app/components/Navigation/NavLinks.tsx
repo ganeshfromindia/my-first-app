@@ -39,7 +39,7 @@ const NavLinks = (props: any) => {
           ]}
         >
           <Link href="/(tabs)/(dashboard)/trader/dashboardTraderScreen">
-            <ButtonComp inverse={true}>Traders</ButtonComp>
+            <ButtonComp inverse={true} title="Traders"></ButtonComp>
           </Link>
         </View>
       )}
@@ -55,9 +55,11 @@ const NavLinks = (props: any) => {
             globalStyle.navLink,
           ]}
         >
-          <ButtonComp onClick={auth.logout} inverse={true}>
-            Logout
-          </ButtonComp>
+          <ButtonComp
+            onClick={auth.logout}
+            inverse={true}
+            title="Logout"
+          ></ButtonComp>
         </View>
       )}
     </View>

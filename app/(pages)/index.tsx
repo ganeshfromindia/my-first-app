@@ -24,8 +24,6 @@ function AuthenticatedStack() {
   const navigation = useNavigation();
   useFocusEffect(() => {
     if (auth && auth.token) {
-      console.log("auth.token");
-      console.log(auth.token);
       navigation.dispatch(
         CommonActions.reset({
           routes: [

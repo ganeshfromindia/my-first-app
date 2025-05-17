@@ -28,7 +28,7 @@ export default function RootLayout() {
     image,
   } = useAuth();
   SplashScreen.setOptions({
-    duration: 1000,
+    duration: 4000,
     fade: true,
   });
   const auth = useContext(AuthContext);

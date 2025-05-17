@@ -260,7 +260,6 @@ const Trader = ({
         isValid: true,
       },
     },
-    null,
     null
   );
 
@@ -279,6 +278,14 @@ const Trader = ({
 
   const handleNewTrader = () => {
     setNewTrader(true);
+    formState.inputs.title.isValid = false;
+    formState.inputs.email.isValid = false;
+    formState.inputs.address.isValid = false;
+    formState.isValid = false;
+    setDefaultProducts([]);
+    setIsDisabled(pointerEvent.auto);
+    setIsEmailDisabled(pointerEvent.auto);
+
     setTraderData({
       address: "",
       email: "",
@@ -289,13 +296,6 @@ const Trader = ({
       title: "",
       value: "",
     });
-    formState.inputs.title.isValid = false;
-    formState.inputs.email.isValid = false;
-    formState.inputs.address.isValid = false;
-    formState.isValid = false;
-    setDefaultProducts([]);
-    setIsDisabled(pointerEvent.auto);
-    setIsEmailDisabled(pointerEvent.auto);
   };
 
   return (

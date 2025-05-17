@@ -21,7 +21,6 @@ const formReducer = (state: any, action: any) => {
           [action.inputId]: {
             value: action.value,
             isValid: action.isValid,
-            isTouched: action.isTouched,
           },
         },
         isValid: formIsValid,
@@ -36,29 +35,20 @@ const formReducer = (state: any, action: any) => {
   }
 };
 
-const useForm = (
-  initialInputs: any,
-  initialFormValidity: any,
-  intitialTouched: any
-) => {
+const useForm = (initialInputs: any, initialFormValidity: any) => {
   const [formState, dispatch] = useReducer(formReducer, {
     inputs: initialInputs,
     isValid: initialFormValidity,
-    isTouched: intitialTouched,
   });
 
-  const inputHandler = useCallback(
-    (id: any, value: any, isValid: any, isTouched: any) => {
-      dispatch({
-        type: "INPUT_CHANGE",
-        value: value,
-        isValid: isValid,
-        inputId: id,
-        isTouched: isTouched,
-      });
-    },
-    []
-  );
+  const inputHandler = useCallback((id: any, value: any, isValid: any) => {
+    dispatch({
+      type: "INPUT_CHANGE",
+      value: value,
+      isValid: isValid,
+      inputId: id,
+    });
+  }, []);
 
   const setFormData = useCallback((inputData: any, formValidity: any) => {
     dispatch({

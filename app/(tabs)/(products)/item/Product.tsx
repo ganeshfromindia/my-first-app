@@ -232,7 +232,6 @@ const Product = ({
         isValid: true,
       },
     },
-    null,
     null
   );
 

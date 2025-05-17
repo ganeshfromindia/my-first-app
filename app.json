@@ -32,7 +32,7 @@
         }
       ],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/splash-icon-main.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.ganeshghate.mysecondapp"

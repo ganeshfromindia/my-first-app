@@ -26,11 +26,12 @@ const inputReducer = (state: any, action: any) => {
 };
 
 const Input: any = (props: any) => {
-  const [primaryValue, setPrimaryValue] = useState(props.initialValue);
-  const [passedValue, setPassedValue] = useState(props.initialValue);
+  const [primaryValue, setPrimaryValue] = useState("");
+  // const [passedValue, setPassedValue] = useState(props.initialValue || "");
 
   useEffect(() => {
-    setPassedValue(props.initialValue);
+    // setPassedValue(props.initialValue);
+    setPrimaryValue(props.initialValue);
     changeHandler(props.initialValue);
   }, [props.initialValue]);
 
@@ -57,12 +58,12 @@ const Input: any = (props: any) => {
   const { value, isValid, isTouched } = inputState;
 
   useEffect(() => {
-    onInput(id, value, isValid, isTouched);
-  }, [id, value, isValid, onInput, isTouched]);
+    onInput(id, value, isValid);
+  }, [id, value, isValid, onInput]);
 
   useEffect(() => {
     if (props.initialValue) {
-      onInput(props.id, props.initialValue, true, false);
+      onInput(props.id, props.initialValue, true);
     }
   }, [props.id, props.initialValue, onInput]);
 
@@ -89,9 +90,10 @@ const Input: any = (props: any) => {
       <TextInput
         multiline={true}
         id={props.id}
-        onChangeText={setPrimaryValue}
+        onChangeText={(text) => setPrimaryValue(text)}
+        value={primaryValue}
         onEndEditing={(e) => onEndEditing(e)}
-        defaultValue={passedValue}
+        // defaultValue={passedValue}
         style={[
           globalStyle.defaultFont,
           globalStyle.authenticationFormControlnput,
@@ -110,8 +112,9 @@ const Input: any = (props: any) => {
         secureTextEntry={props.secure}
         placeholder={props.placeholder}
         onChangeText={setPrimaryValue}
+        value={primaryValue}
         onEndEditing={(e) => onEndEditing(e)}
-        defaultValue={passedValue}
+        // defaultValue={passedValue}
         style={[
           globalStyle.defaultFont,
           globalStyle.authenticationFormControlnput,
@@ -130,6 +133,7 @@ const Input: any = (props: any) => {
         secureTextEntry={props.secure}
         placeholder={props.placeholder}
         onChangeText={setPrimaryValue}
+        value={primaryValue}
         onEndEditing={(e) => onEndEditing(e)}
         style={[
           globalStyle.defaultFont,
@@ -149,8 +153,9 @@ const Input: any = (props: any) => {
         secureTextEntry={props.secure}
         placeholder={props.placeholder}
         onChangeText={setPrimaryValue}
+        value={primaryValue}
         onEndEditing={(e) => onEndEditing(e)}
-        defaultValue={passedValue}
+        // defaultValue={passedValue}
         style={[
           globalStyle.defaultFont,
           globalStyle.authenticationFormControlnput,

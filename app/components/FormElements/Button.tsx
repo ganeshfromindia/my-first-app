@@ -60,6 +60,7 @@ const ButtonComp = (props: any) => {
       <ThemedView
         style={[
           styles.button,
+          props.currentTab && styles.currentTab,
           props.inverse && styles.buttonInverse,
           props.danger && styles.buttonDanger,
           props.normal && styles.buttonNormal,
@@ -201,5 +202,8 @@ const styles = StyleSheet.create({
   },
   maxWidthFitCont: {
     maxWidth: "auto",
+  },
+  currentTab: {
+    backgroundColor: "#ffc131",
   },
 });

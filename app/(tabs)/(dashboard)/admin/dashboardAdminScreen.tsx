@@ -26,8 +26,8 @@ const DashboardAdminScreen = () => {
   const [loadedManufacturers, setLoadedManufacturers] = useState([]);
   const [totalRowsTrader, setTotalRowsTrader] = useState(0);
   const [totalRowsManufacturer, setTotalRowsManufacturer] = useState(0);
-  const [perPageM, setPerPageM] = useState(10);
-  const [perPageT, setPerPageT] = useState(10);
+  const [perPageM, setPerPageM] = useState<number>(10);
+  const [perPageT, setPerPageT] = useState<number>(10);
   const [currentPageT, setCurrentPageT] = useState(0);
   const [currentPageM, setCurrentPageM] = useState(0);
   const [currentTab, setCurrentTab] = useState("traders");
@@ -41,32 +41,9 @@ const DashboardAdminScreen = () => {
     numberOfItemsPerPageListM[0]
   );
 
-  const handlePerRowsChangeT = async (newPerPage: number) => {
-    setPerPageT(newPerPage);
-    setCurrentPageT(0);
-    fetchTraders(1);
-    onItemsPerPageChangeT(newPerPage);
-  };
-
-  const handlePageChangeT = (page: number) => {
-    setCurrentPageT(page);
-    fetchTraders(page + 1);
-  };
-  const handlePerRowsChangeM = async (newPerPage: number) => {
-    setPerPageM(newPerPage);
-    setCurrentPageM(0);
-    fetchManufacturers(1);
-    onItemsPerPageChangeM(newPerPage);
-  };
-
-  const handlePageChangeM = (page: number) => {
-    setCurrentPageM(page);
-    fetchManufacturers(page + 1);
-  };
-
   const fetchTraders = useCallback(
     async (page: number) => {
-      if (auth) {
+      if (perPageT) {
         try {
           const response = await sendRequest(
             `${process.env.EXPO_PUBLIC_API_URL}/api/users/traderslist?page=${page}&size=${perPageT}&delay=1`,
@@ -88,8 +65,10 @@ const DashboardAdminScreen = () => {
 
   const fetchManufacturers = useCallback(
     async (page: number) => {
-      if (auth) {
+      if (perPageM) {
         try {
+          console.log("perPageM");
+          console.log(perPageM);
           const response = await sendRequest(
             `${process.env.EXPO_PUBLIC_API_URL}/api/users/manufacturerslist?page=${page}&size=${perPageM}&delay=1`,
             "GET",
@@ -174,6 +153,32 @@ const DashboardAdminScreen = () => {
       fetchTraders(1);
     }
   }
+  const handlePerRowsChangeT = async (newPerPageT: number) => {
+    setPerPageT(newPerPageT);
+    setCurrentPageT(0);
+    onItemsPerPageChangeT(newPerPageT);
+  };
+  useEffect(() => {
+    fetchTraders(1);
+  }, [perPageT]);
+
+  const handlePageChangeT = (page: number) => {
+    setCurrentPageT(page);
+    fetchTraders(page + 1);
+  };
+  const handlePerRowsChangeM = async (newPerPageM: number) => {
+    setPerPageM(newPerPageM);
+    setCurrentPageM(0);
+    onItemsPerPageChangeM(newPerPageM);
+  };
+  useEffect(() => {
+    fetchManufacturers(1);
+  }, [perPageM]);
+
+  const handlePageChangeM = (page: number) => {
+    setCurrentPageM(page);
+    fetchManufacturers(page + 1);
+  };
 
   return (
     <React.Fragment>
@@ -200,6 +205,7 @@ const DashboardAdminScreen = () => {
             <View style={s.autoFlex}>
               <ButtonComp
                 normal={true}
+                currentTab={currentTab == "manufacturers" && true}
                 buttonfont={true}
                 maxwidth={true}
                 onClick={() => handleCurrentTab("manufacturers")}
@@ -211,6 +217,7 @@ const DashboardAdminScreen = () => {
             <View style={s.autoFlex}>
               <ButtonComp
                 normal={true}
+                currentTab={currentTab == "traders" && true}
                 buttonfont={true}
                 maxwidth={true}
                 onClick={() => handleCurrentTab("traders")}

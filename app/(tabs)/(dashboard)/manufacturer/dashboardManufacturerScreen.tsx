@@ -91,7 +91,6 @@ const DashboardManufacturerScreen = (props: any) => {
         isValid: true,
       },
     },
-    null,
     null
   );
 
