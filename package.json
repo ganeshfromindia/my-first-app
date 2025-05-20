@@ -1,5 +1,5 @@
 {
-  "name": "my-second-app",
+  "name": "Goods Info API",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {

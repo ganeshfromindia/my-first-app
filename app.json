@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-second-app",
-    "slug": "my-second-app",
+    "name": "Goods Info API",
+    "slug": "Goods Info API",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "myapp",
