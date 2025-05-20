@@ -1,5 +1,5 @@
 {
-  "name": "Goods Info API",
+  "name": "goods-info-api",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
