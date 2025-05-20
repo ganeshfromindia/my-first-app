@@ -10,7 +10,10 @@
     "ios": {
       "supportsTablet": true,
       "usesIcloudStorage": true,
-      "bundleIdentifier": "com.ganeshghate.goodsinfoapi"
+      "bundleIdentifier": "com.ganeshghate.goodsinfoapi",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "permissions": [
