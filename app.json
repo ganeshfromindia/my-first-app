@@ -23,12 +23,17 @@
       "intentFilters": [
         {
           "autoVerify": true,
-          "action": ["MAIN", "DOWNLOAD_COMPLETE"],
+          "action": [
+            "MAIN",
+            "DOWNLOAD_COMPLETE"
+          ],
           "data": {
             "scheme": "https",
             "host": "*.example.com"
           },
-          "category": ["LAUNCHER"]
+          "category": [
+            "LAUNCHER"
+          ]
         }
       ],
       "adaptiveIcon": {
@@ -73,7 +78,9 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"]
+          "fonts": [
+            "./assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"
+          ]
         }
       ]
     ],
@@ -84,6 +91,14 @@
     },
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "06b18898-ed32-4cf9-a3a0-88b0a0b7e7bc"
+      }
     }
   }
 }
