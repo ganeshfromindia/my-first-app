@@ -10,7 +10,7 @@
     "ios": {
       "supportsTablet": true,
       "usesIcloudStorage": true,
-      "bundleIdentifier": "com.ganeshghate.mysecondapp"
+      "bundleIdentifier": "com.ganeshghate.goodsinfoapi"
     },
     "android": {
       "permissions": [
@@ -35,7 +35,7 @@
         "foregroundImage": "./assets/images/splash-icon-main.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.ganeshghate.mysecondapp"
+      "package": "com.ganeshghate.goodsinfoapi"
     },
     "web": {
       "bundler": "metro",
@@ -90,7 +90,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "83ecde07-6208-4c32-a202-5b1c336f44f8"
+        "projectId": ""
       }
     }
   }
