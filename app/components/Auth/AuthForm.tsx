@@ -213,7 +213,8 @@ const AuthForm = () => {
                       styles.authenticationFormH3,
                     ]}
                   >
-                    {isLoginMode ? "Login here" : "Please SignUp"}
+                    {/* {isLoginMode ? "Login here" : "Please SignUp"} */}
+                    "Login here"
                   </Text>
                   {!isLoginMode && (
                     <Input
@@ -260,6 +261,7 @@ const AuthForm = () => {
                     authInput={true}
                     authLabel={true}
                     authGeneral={true}
+                    secure={true}
                   />
                   {!isLoginMode && (
                     <Input
@@ -287,7 +289,8 @@ const AuthForm = () => {
                       submit
                       disabled={!formState.isValid}
                       onClick={authSubmitHandler}
-                      title={isLoginMode ? "Login" : "Sign Up"}
+                      // title={isLoginMode ? "Login" : "Sign Up"}
+                      title="Login"
                     ></ButtonComp>
                   </View>
                 </View>
@@ -298,8 +301,9 @@ const AuthForm = () => {
                     buttonfont={true}
                     maxwidth={true}
                     inverse
-                    onClick={switchModeHandler}
-                    title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
+                    // onClick={switchModeHandler}
+                    // title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
+                    title=""
                   ></ButtonComp>
                 </View>
               </Card>
