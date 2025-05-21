@@ -31,7 +31,7 @@
         "EXPO_PUBLIC_API_URL": "https://api-infoportal-backend.onrender.com"
       },
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     },
     "test": {
