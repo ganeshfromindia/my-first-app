@@ -11,8 +11,18 @@ import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 import { AuthContext } from "@/store/auth-context";
 import { AntDesign } from "@expo/vector-icons";
-import { View, TouchableOpacity, StyleSheet, Text } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  Platform,
+} from "react-native";
 import globalStyle from "@/assets/css/style";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
+import * as mime from "react-native-mime-types";
+import * as Sharing from "expo-sharing";
 
 const Product = ({
   productdata,
@@ -21,6 +31,24 @@ const Product = ({
   productdata: any;
   handleClose: any;
 }) => {
+  const FileExts = [
+    "jpg",
+    "png",
+    "gif",
+    "heic",
+    "webp",
+    "bmp",
+    "doc",
+    "docx",
+    "xls",
+    "xlsx",
+    "pdf",
+    "jpeg",
+  ];
+  const { StorageAccessFramework } = FileSystem;
+  const downloadPath =
+    FileSystem.documentDirectory + (Platform.OS == "android" ? "" : "");
+  const [downloadProgress, setDownloadProgress] = useState<any>();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const auth = useContext(AuthContext);
   const [pharmacopoeiaData, setPharmacopoeiaData] = useState<string[]>([]);
@@ -150,36 +178,106 @@ const Product = ({
     }
   };
 
-  const handleDownloadButtonClick = useCallback(
-    (event: any) => {
-      const fileReader = new FileReader();
-      let userData = sessionStorage.getItem("userData");
-      let fileWithPath = event.target.value;
-      sendRequest(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/download?file=${fileWithPath}`,
-        "GET",
-        null,
-        {
-          Authorization: "Bearer " + JSON.parse(userData || "").token,
-          responseType: "blob",
-        }
-      )
-        .then((res: any) => {
-          fileReader.readAsDataURL(new Blob([res]));
-        })
-        .catch((err: any) => console.log(err));
-      let currentFilename = fileWithPath.split("/").pop();
-      fileReader.addEventListener("loadend", () => {
-        const blobString = fileReader.result;
-        const link: any = document.createElement("a");
-        link.href = blobString;
-        link.setAttribute("download", currentFilename);
-        document.body.appendChild(link);
-        link.click();
+  const handleDownloadButtonClick = async (data: any, e: any) => {
+    let fileNameArray = data.split("/");
+    let fileName = fileNameArray[fileNameArray.length - 1];
+    if (Platform.OS == "android") {
+      const dir = ensureDirAsync(downloadPath);
+    }
+
+    //alert(fileName)
+    const downloadResumable: any = FileSystem.createDownloadResumable(
+      `${process.env.EXPO_PUBLIC_API_URL}/${data}`,
+      downloadPath + fileName,
+      {},
+      downloadCallback
+    );
+
+    try {
+      const { uri } = await downloadResumable.downloadAsync();
+      if (Platform.OS == "android") saveAndroidFile(uri, fileName);
+      else saveIosFile(uri);
+    } catch (e) {
+      console.error("download error:", e);
+    }
+  };
+
+  const saveAndroidFile = async (fileUri: any, fileName = "File") => {
+    let savedName = fileName;
+    try {
+      const fileString = await FileSystem.readAsStringAsync(fileUri, {
+        encoding: FileSystem.EncodingType.Base64,
       });
-    },
-    [sendRequest]
-  );
+
+      const permissions =
+        await StorageAccessFramework.requestDirectoryPermissionsAsync();
+      if (!permissions.granted) {
+        return;
+      }
+
+      try {
+        let type = mime.lookup(fileName) || "";
+        await StorageAccessFramework.createFileAsync(
+          permissions.directoryUri,
+          fileName,
+          type
+        )
+          .then(async (uri) => {
+            const bracketPart = extractTextBetweenBrackets(uri);
+            let splitedName = savedName.split(".");
+            bracketPart
+              ? (savedName =
+                  splitedName[0] + "(" + bracketPart + ")" + splitedName[1])
+              : savedName;
+            await FileSystem.writeAsStringAsync(uri, fileString, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+            alert("File Downloaded Successfully as " + savedName);
+          })
+          .catch((e) => {});
+      } catch (e: any) {
+        throw new Error(e);
+      }
+    } catch (err) {}
+  };
+
+  const extractTextBetweenBrackets = (str: any) => {
+    const matches = str.match(/\(([^)]+)\)/);
+    if (matches) {
+      return matches[1];
+    }
+    return null;
+  };
+
+  const saveIosFile = async (fileUri: any) => {
+    if (FileExts.every((x) => !fileUri.endsWith(x))) {
+      const UTI = "public.item";
+      const shareResult = await Sharing.shareAsync(fileUri, { UTI });
+    }
+    // your ios code
+    // i use expo share module to save ios file
+  };
+
+  const downloadCallback = (downloadProgress: any) => {
+    const progress =
+      downloadProgress.totalBytesWritten /
+      downloadProgress.totalBytesExpectedToWrite;
+    setDownloadProgress(progress);
+  };
+
+  const ensureDirAsync = async (dir: any, intermediates = true) => {
+    const props = await FileSystem.getInfoAsync(dir);
+    if (props.exists && props.isDirectory) {
+      return props;
+    }
+    let _ = await FileSystem.makeDirectoryAsync(dir, { intermediates });
+    return await ensureDirAsync(dir, intermediates);
+  };
+
+  const saveFile = async (fileUri: string) => {
+    const asset = await MediaLibrary.createAssetAsync(fileUri);
+    await MediaLibrary.createAlbumAsync("Download", asset, false);
+  };
 
   const [formState, inputHandler] = useForm(
     {
@@ -280,7 +378,7 @@ const Product = ({
             <ButtonComp
               type="ButtonComp"
               value={pageData.image}
-              onClick={(e: any) => handleDownloadButtonClick(e)}
+              onClick={(e: any) => handleDownloadButtonClick(pageData.image, e)}
               title="Download Product Image"
             ></ButtonComp>
           ) : null}
@@ -294,7 +392,7 @@ const Product = ({
             <ButtonComp
               type="ButtonComp"
               value={pageData.coa}
-              onClick={(e: any) => handleDownloadButtonClick(e)}
+              onClick={(e: any) => handleDownloadButtonClick(pageData.coa, e)}
               title="Download COA"
             ></ButtonComp>
           ) : null}
@@ -309,7 +407,7 @@ const Product = ({
             <ButtonComp
               type="ButtonComp"
               value={pageData.msds}
-              onClick={(e: any) => handleDownloadButtonClick(e)}
+              onClick={(e: any) => handleDownloadButtonClick(pageData.msds, e)}
               title="Download MSDS"
             ></ButtonComp>
           ) : null}
@@ -323,7 +421,7 @@ const Product = ({
             <ButtonComp
               type="ButtonComp"
               value={pageData.cep}
-              onClick={(e: any) => handleDownloadButtonClick(e)}
+              onClick={(e: any) => handleDownloadButtonClick(pageData.cep, e)}
               title="Download Certificate of Suitability"
             ></ButtonComp>
           ) : null}
@@ -337,7 +435,7 @@ const Product = ({
             <ButtonComp
               type="button"
               value={pageData.qos}
-              onClick={(e: any) => handleDownloadButtonClick(e)}
+              onClick={(e: any) => handleDownloadButtonClick(pageData.qos, e)}
               title="Download Quality Overall Summary"
             ></ButtonComp>
           ) : null}

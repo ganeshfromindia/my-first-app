@@ -101,11 +101,14 @@ const TradersList = () => {
   );
 
   const handlePerRowsChange = async (newPerPage: number) => {
-    setCurrentPage(0);
-    fetchTraders(1);
     setPerPage(newPerPage);
+    setCurrentPage(0);
     onItemsPerPageChange(newPerPage);
   };
+
+  useEffect(() => {
+    fetchTraders(1);
+  }, [perPage]);
 
   const handlePageChange = (page: number) => {
     fetchTraders(page + 1);
@@ -182,11 +185,14 @@ const TradersList = () => {
   );
 
   const handlePerRowsChangeP = async (newPerPageP: number) => {
-    setCurrentPageP(0);
-    fetchProducts(1);
     setPerPageP(newPerPageP);
+    setCurrentPageP(0);
     onItemsPerPageChangeP(newPerPageP);
   };
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, [perPageP]);
 
   const handlePageChangeP = (page: number) => {
     setCurrentPageP(page);
@@ -204,13 +210,13 @@ const TradersList = () => {
     setOpen(true);
   };
 
-  const handleOpenP = useCallback(
-    async (trader: any) => {
-      setTraderId(trader.id);
-      fetchProducts(1);
-    },
-    [fetchProducts]
-  );
+  const handleOpenP = useCallback(async (trader: any) => {
+    setTraderId(trader.id);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, [traderId]);
 
   const handleClose = () => {
     setOpen(false);

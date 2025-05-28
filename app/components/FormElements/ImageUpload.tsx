@@ -16,7 +16,9 @@ const ImageUpload: any = memo((props: any) => {
   useEffect(() => {
     if (props && props.data) {
       setPreviewUrl(
-        "http://localhost:5000/" + props.data + `?${new Date().getTime()}`
+        `${process.env.EXPO_PUBLIC_API_URL}/` +
+          props.data +
+          `?${new Date().getTime()}`
         // "http://api.infoportal.co.in/" + props.data + `?${new Date().getTime()}`
       );
       props.onInput(props.id, props.data, true, true);
@@ -95,7 +97,13 @@ const ImageUpload: any = memo((props: any) => {
       <View style={props.center && styles.center}>
         {previewUrl && (
           <View style={styles.imageUpload__preview}>
-            <Image style={styles.img} src={previewUrl} alt="Preview" />
+            <Image
+              style={styles.img}
+              source={{
+                uri: `${previewUrl}`,
+              }}
+              alt="Preview"
+            />
           </View>
         )}
         <ButtonComp
@@ -134,6 +142,6 @@ const styles = StyleSheet.create({
   img: {
     width: 100,
     height: 100,
-    objectFit: "cover",
+    objectFit: "contain",
   },
 });

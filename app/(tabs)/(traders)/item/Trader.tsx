@@ -471,6 +471,21 @@ const Trader = ({
             {traderInfo && traderInfo.password}
           </Text>
         </View>
+        <View
+          style={{
+            width: 100,
+            marginTop: 25,
+            marginHorizontal: "auto",
+          }}
+        >
+          <ButtonComp
+            onClick={handleCloseInfo}
+            normal={true}
+            buttonfont={true}
+            maxwidth={true}
+            title="CLOSE"
+          ></ButtonComp>
+        </View>
       </Modal>
     </React.Fragment>
   );

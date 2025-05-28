@@ -112,7 +112,6 @@ const ProductsList = () => {
   const fetchProducts = useCallback(
     async (page: number) => {
       if (auth.userId && auth.role) {
-        console.log(perPageP);
         let url;
         if (auth.role === "Manufacturer") {
           url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
@@ -203,9 +202,12 @@ const ProductsList = () => {
   const handlePerRowsChangeP = async (newPerPageP: number) => {
     setPerPageP(newPerPageP);
     setCurrentPageP(0);
-    fetchProducts(1);
     onItemsPerPageChangeP(newPerPageP);
   };
+
+  useEffect(() => {
+    fetchProducts(1);
+  }, [perPageP]);
 
   const handlePageChangeP = (page: number) => {
     setCurrentPageP(page);
@@ -236,6 +238,7 @@ const ProductsList = () => {
   };
 
   const saveAndroidFile = async (fileUri: any, fileName = "File") => {
+    let savedName = fileName;
     try {
       const fileString = await FileSystem.readAsStringAsync(fileUri, {
         encoding: FileSystem.EncodingType.Base64,
@@ -255,16 +258,29 @@ const ProductsList = () => {
           type
         )
           .then(async (uri) => {
+            const bracketPart = extractTextBetweenBrackets(uri);
+            let splitedName = savedName.split(".");
+            bracketPart
+              ? (savedName =
+                  splitedName[0] + "(" + bracketPart + ")" + splitedName[1])
+              : savedName;
             await FileSystem.writeAsStringAsync(uri, fileString, {
               encoding: FileSystem.EncodingType.Base64,
             });
-            alert("Report Downloaded Successfully");
+            alert("File Downloaded Successfully as " + savedName);
           })
           .catch((e) => {});
       } catch (e: any) {
         throw new Error(e);
       }
     } catch (err) {}
+  };
+  const extractTextBetweenBrackets = (str: any) => {
+    const matches = str.match(/\(([^)]+)\)/);
+    if (matches) {
+      return matches[1];
+    }
+    return null;
   };
 
   const saveIosFile = async (fileUri: any) => {
