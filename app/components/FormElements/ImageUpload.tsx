@@ -18,6 +18,7 @@ const ImageUpload: any = memo((props: any) => {
   const [open, setOpen] = useState(false);
   const [docType, setDocType] = useState("");
   const [docCategory, setDocCategory] = useState("");
+  const [source, setSource] = useState({});
   const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.light.tint },
     "text"
@@ -105,6 +106,11 @@ const ImageUpload: any = memo((props: any) => {
   };
 
   const loadDoc = (doc: any) => {
+    const source = {
+      uri: doc,
+      cache: true,
+    };
+    setSource(source);
     let fileNameArray = doc.split("/");
     let fileName = fileNameArray[fileNameArray.length - 1];
     if (fileName.includes("pdf")) {
@@ -201,8 +207,19 @@ const ImageUpload: any = memo((props: any) => {
         <View>
           {docType == "pdf" && (
             <Pdf
-              source={{ uri: previewUrl }}
-              onError={(error) => console.error("PDF Error:", error)}
+              source={source}
+              onLoadComplete={(numberOfPages, filePath) => {
+                console.log(`Number of pages: ${numberOfPages}`);
+              }}
+              onPageChanged={(page, numberOfPages) => {
+                console.log(`Current page: ${page}`);
+              }}
+              onError={(error) => {
+                console.log(error);
+              }}
+              onPressLink={(uri) => {
+                console.log(`Link pressed: ${uri}`);
+              }}
             />
           )}
           {docType == "image" && (
