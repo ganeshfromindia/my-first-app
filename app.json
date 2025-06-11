@@ -21,7 +21,8 @@
         "SYSTEM_ALERT_WINDOW",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE",
-        "DOWNLOAD_WITHOUT_NOTIFICATION"
+        "DOWNLOAD_WITHOUT_NOTIFICATION",
+        "ACCESS_MEDIA_LOCATION"
       ],
       "intentFilters": [
         {
@@ -46,6 +47,8 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@config-plugins/react-native-blob-util",
+      "@config-plugins/react-native-pdf",
       "expo-router",
       [
         "expo-document-picker",

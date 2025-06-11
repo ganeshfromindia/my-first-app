@@ -8,8 +8,20 @@ import ButtonComp from "./Button";
 import * as DocumentPicker from "expo-document-picker";
 
 import * as mime from "react-native-mime-types";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
+import IconButton from "@/app/components/ui/IconButton";
+import Modal from "../UIElements/Modal";
+import Pdf from "react-native-pdf";
 
 const ImageUpload: any = memo((props: any) => {
+  const [open, setOpen] = useState(false);
+  const [docType, setDocType] = useState("");
+  const [docCategory, setDocCategory] = useState("");
+  const colorIcon = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.light.tint },
+    "text"
+  );
   const [previewUrl, setPreviewUrl] = useState<any>();
   const [isValid, setIsValid] = useState<any>(false);
 
@@ -52,7 +64,7 @@ const ImageUpload: any = memo((props: any) => {
         //   uri = `file://${uri}`;
         //   uri = uri.replace(/%/g, "%25");
         // }
-        if (size > 1 * 1024 * 1024) {
+        if (size > 5 * 1024 * 1024) {
           fileIsValid = false;
           setIsValid(false);
           Alert.alert("File Too Large", "Max file size 5MB", [
@@ -92,11 +104,108 @@ const ImageUpload: any = memo((props: any) => {
     });
   };
 
+  const loadDoc = (doc: any) => {
+    let fileNameArray = doc.split("/");
+    let fileName = fileNameArray[fileNameArray.length - 1];
+    if (fileName.includes("pdf")) {
+      setDocType("pdf");
+    } else {
+      setDocType("image");
+    }
+    let documentCat = fileName.split(".")[0];
+    setDocCategory(docCategory);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
   return (
-    <View style={globalStyle.formControl}>
-      <View style={props.center && styles.center}>
-        {previewUrl && (
-          <View style={styles.imageUpload__preview}>
+    <React.Fragment>
+      <View style={globalStyle.formControl}>
+        <View style={props.center && styles.center}>
+          {/* {!isValid && props.data == null && (
+          <Text style={globalStyle.defaultFont}>{props.errorText}</Text>
+        )} */}
+          <View style={{ width: "100%" }}>
+            <View style={{ flexDirection: "row" }}>
+              <View
+                style={{
+                  flexGrow: 1,
+                  alignItems: "center",
+                }}
+              >
+                {previewUrl ? (
+                  <IconButton
+                    icon="search-outline"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) => loadDoc(previewUrl)}
+                  />
+                ) : (
+                  // <View style={styles.imageUpload__preview}>
+                  //   <Image
+                  //     style={styles.img}
+                  //     source={{
+                  //       uri: `${previewUrl}`,
+                  //     }}
+                  //     alt="Preview"
+                  //   />
+                  // </View>
+
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
+              <View
+                style={{
+                  flexGrow: 1,
+                  alignItems: "center",
+                }}
+              >
+                <IconButton
+                  icon="cloud-upload"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) => pickDocHandler()}
+                />
+              </View>
+            </View>
+          </View>
+          {/* <ButtonComp
+          mode={true}
+          normal={true}
+          buttonfont={true}
+          maxwidth={true}
+          onClick={pickDocHandler}
+          title="Pick File"
+        ></ButtonComp> */}
+        </View>
+      </View>
+      <Modal
+        show={open}
+        onCancel={handleClose}
+        header={docCategory}
+        contentClass="place-item__modal-content"
+        footerClass="place-item__modal-actions"
+        footer={
+          <ButtonComp
+            onClick={handleClose}
+            normal={true}
+            buttonfont={true}
+            maxwidth={true}
+            title="CLOSE"
+          ></ButtonComp>
+        }
+      >
+        <View>
+          {docType == "pdf" && (
+            <Pdf
+              source={{ uri: previewUrl }}
+              onError={(error) => console.error("PDF Error:", error)}
+            />
+          )}
+          {docType == "image" && (
             <Image
               style={styles.img}
               source={{
@@ -104,21 +213,10 @@ const ImageUpload: any = memo((props: any) => {
               }}
               alt="Preview"
             />
-          </View>
-        )}
-        <ButtonComp
-          mode={true}
-          normal={true}
-          buttonfont={true}
-          maxwidth={true}
-          onClick={pickDocHandler}
-          title="Pick File"
-        ></ButtonComp>
-      </View>
-      {!isValid && props.data == null && (
-        <Text style={globalStyle.defaultFont}>{props.errorText}</Text>
-      )}
-    </View>
+          )}
+        </View>
+      </Modal>
+    </React.Fragment>
   );
 });
 

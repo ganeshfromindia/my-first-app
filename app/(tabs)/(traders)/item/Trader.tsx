@@ -296,6 +296,7 @@ const Trader = ({
       title: "",
       value: "",
     });
+    setSelected(null)
   };
 
   return (

@@ -209,6 +209,10 @@ const globalStyle = StyleSheet.create({
     fontWeight: 400,
     fontStyle: "normal",
   },
+  iconWrapper: {
+    margin: 8,
+    borderRadius: 20,
+  },
 });
 
 export default globalStyle;

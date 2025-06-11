@@ -23,6 +23,9 @@ import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as mime from "react-native-mime-types";
 import * as Sharing from "expo-sharing";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
+import IconButton from "@/app/components/ui/IconButton";
 
 const Product = ({
   productdata,
@@ -31,6 +34,10 @@ const Product = ({
   productdata: any;
   handleClose: any;
 }) => {
+  const colorIcon = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.light.tint },
+    "text"
+  );
   const FileExts = [
     "jpg",
     "png",
@@ -368,38 +375,68 @@ const Product = ({
             onInput={inputHandler}
             initialValue={pageData && pageData.price}
           />
-          <ImageUpload
-            id="image"
-            onInput={inputHandler}
-            errorText="Please provide an product image."
-            data={(pageData && pageData.image) || null}
-          />
-          {pageData && pageData.image ? (
-            <ButtonComp
-              type="ButtonComp"
-              value={pageData.image}
-              onClick={(e: any) => handleDownloadButtonClick(pageData.image, e)}
-              title="Download Product Image"
-            ></ButtonComp>
-          ) : null}
-          <ImageUpload
-            id="coa"
-            onInput={inputHandler}
-            errorText="Please provide sample COA."
-            data={(pageData && pageData.coa) || null}
-          />
-          {pageData && pageData.coa ? (
-            <ButtonComp
-              type="ButtonComp"
-              value={pageData.coa}
-              onClick={(e: any) => handleDownloadButtonClick(pageData.coa, e)}
-              title="Download COA"
-            ></ButtonComp>
-          ) : null}
+          <Text>Product Image</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-start",
+            }}
+          >
+            <View style={{ flexGrow: 2 }}>
+              <ImageUpload
+                id="image"
+                onInput={inputHandler}
+                // errorText="Please provide an product image."
+                data={(pageData && pageData.image) || null}
+              />
+            </View>
+            <View style={{ flexGrow: 1, alignItems: "center" }}>
+              {pageData && pageData.image ? (
+                <IconButton
+                  icon="cloud-download"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) =>
+                    handleDownloadButtonClick(pageData.image, $event)
+                  }
+                />
+              ) : (
+                <View style={globalStyle.iconWrapper}>
+                  <Text>{"     "}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Text>COA</Text>
+          <View style={{ flexDirection: "row", width: "100%" }}>
+            <View style={{ flexGrow: 2 }}>
+              <ImageUpload
+                id="coa"
+                onInput={inputHandler}
+                // errorText="Please provide sample COA."
+                data={(pageData && pageData.coa) || null}
+              />
+            </View>
+            <View style={{ flexGrow: 1, alignItems: "center" }}>
+              {pageData && pageData.coa ? (
+                <IconButton
+                  icon="cloud-download"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) =>
+                    handleDownloadButtonClick(pageData.coa, $event)
+                  }
+                />
+              ) : (
+                <Text>&nbsp;</Text>
+              )}
+            </View>
+          </View>
           <ImageUpload
             id="msds"
             onInput={inputHandler}
-            errorText="Please provide an MSDS."
+            // errorText="Please provide an MSDS."
             data={(pageData && pageData.msds) || null}
           />
 
@@ -414,7 +451,7 @@ const Product = ({
           <ImageUpload
             id="cep"
             onInput={inputHandler}
-            errorText="Please provide a Certificate of Suitability."
+            // errorText="Please provide a Certificate of Suitability."
             data={(pageData && pageData.cep) || null}
           />
           {pageData && pageData.cep ? (
@@ -428,7 +465,7 @@ const Product = ({
           <ImageUpload
             id="qos"
             onInput={inputHandler}
-            errorText="Please provide an Quality Overall Summary."
+            // errorText="Please provide an Quality Overall Summary."
             data={(pageData && pageData.qos) || null}
           />
           {pageData && pageData.qos ? (

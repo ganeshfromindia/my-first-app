@@ -13,7 +13,15 @@ import {
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 
-import { StyleSheet, Text, View, ScrollView, StatusBar } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  StatusBar,
+  Alert,
+  Button,
+} from "react-native";
 import ButtonComp from "../FormElements/Button";
 import { AuthContext } from "@/store/auth-context";
 import { useRouter, useNavigation } from "expo-router";
@@ -21,6 +29,9 @@ import globalStyle from "@/assets/css/style";
 import { Dimensions } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { CommonActions } from "@react-navigation/native";
+import Modal from "../UIElements/Modal";
+import { TouchableOpacity } from "react-native";
+import { ThemedText } from "../ThemedText";
 
 const AuthForm = () => {
   const navigation = useNavigation();
@@ -29,6 +40,8 @@ const AuthForm = () => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [scrollViewMinHeight, setScrollViewMinHeight] = useState(0);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [open, setOpen] = useState(false);
+  const [traderInfo, setTraderInfo] = useState<any>();
 
   const image = { uri: "../../images/bkg.jpeg" };
 
@@ -190,6 +203,43 @@ const AuthForm = () => {
     renderAfterCalled.current = true;
   }, []);
 
+  const forgotPwdHandler = async () => {
+    let email = formState.inputs.email.value;
+    if (!email || email == null) {
+      Alert.alert(
+        "Forgot Password",
+        "Please enter email address",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: true }
+      );
+      return;
+    }
+    try {
+      const formData = { email: email };
+      console.log(process.env.EXPO_PUBLIC_API_URL);
+      const responseData = await sendRequest(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/users/forgotPassword`,
+        "POST",
+        JSON.stringify(formData),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      setOpen(true);
+      setTraderInfo({
+        password:
+          "Password is reset as: " +
+          responseData.password +
+          "Please change it in Profile page",
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleCloseInfo = () => {
+    setOpen(false);
+  };
   return (
     <React.Fragment>
       {error && <ErrorModal error={error} onClear={clearError} />}
@@ -293,6 +343,21 @@ const AuthForm = () => {
                       title="Login"
                     ></ButtonComp>
                   </View>
+
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      justifyContent: "flex-end",
+                      alignItems: "flex-end",
+                      width: "100%",
+                      paddingEnd: 7,
+                      paddingTop: 15,
+                    }}
+                  >
+                    <TouchableOpacity onPress={forgotPwdHandler}>
+                      <ThemedText>Forgot Password</ThemedText>
+                    </TouchableOpacity>
+                  </View>
                 </View>
                 <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
@@ -323,6 +388,37 @@ const AuthForm = () => {
           </ScrollView>
         </View>
       )}
+      <Modal
+        show={open}
+        onCancel={handleCloseInfo}
+        header={"Trader Login Details"}
+        contentClass="place-item__modal-content"
+        footerClass="place-item__modal-actions"
+      >
+        <View style={styles.messageContainer}>
+          <Text style={globalStyle.defaultFont}>
+            {traderInfo && traderInfo.username}
+          </Text>
+          <Text style={globalStyle.defaultFont}>
+            {traderInfo && traderInfo.password}
+          </Text>
+        </View>
+        <View
+          style={{
+            width: 100,
+            marginTop: 25,
+            marginHorizontal: "auto",
+          }}
+        >
+          <ButtonComp
+            onClick={handleCloseInfo}
+            normal={true}
+            buttonfont={true}
+            maxwidth={true}
+            title="CLOSE"
+          ></ButtonComp>
+        </View>
+      </Modal>
     </React.Fragment>
   );
 };
@@ -408,5 +504,10 @@ const styles = StyleSheet.create({
     top: 0,
     left: "26.5%",
     width: 150,
+  },
+  messageContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

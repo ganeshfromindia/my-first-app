@@ -16,6 +16,8 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "@config-plugins/react-native-blob-util": "^11.0.0",
+    "@config-plugins/react-native-pdf": "^11.0.0",
     "@expo/vector-icons": "^14.0.4",
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/cli": "^18.0.0",
@@ -47,12 +49,14 @@
     "react-dom": "18.3.1",
     "react-native": "0.76.9",
     "react-native-asset": "^2.1.1",
+    "react-native-blob-util": "^0.22.2",
     "react-native-element-dropdown": "^2.12.4",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-mime-types": "^2.5.0",
     "react-native-modal": "^14.0.0-rc.1",
     "react-native-paper": "^5.13.1",
+    "react-native-pdf": "^6.7.7",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "4.12.0",
     "react-native-screens": "~4.4.0",
