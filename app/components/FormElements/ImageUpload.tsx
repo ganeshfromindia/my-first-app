@@ -12,13 +12,14 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import IconButton from "@/app/components/ui/IconButton";
 import Modal from "../UIElements/Modal";
-import Pdf from "react-native-pdf";
+import { WebView } from "react-native-webview";
+import * as FileSystem from "expo-file-system";
 
 const ImageUpload: any = memo((props: any) => {
+  const [pdfUri, setPdfUri] = useState("");
   const [open, setOpen] = useState(false);
   const [docType, setDocType] = useState("");
   const [docCategory, setDocCategory] = useState("");
-  const [source, setSource] = useState({});
   const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.light.tint },
     "text"
@@ -29,9 +30,7 @@ const ImageUpload: any = memo((props: any) => {
   useEffect(() => {
     if (props && props.data) {
       setPreviewUrl(
-        `${process.env.EXPO_PUBLIC_API_URL}/` +
-          props.data +
-          `?${new Date().getTime()}`
+        `${process.env.EXPO_PUBLIC_API_URL}/` + props.data
         // "http://api.infoportal.co.in/" + props.data + `?${new Date().getTime()}`
       );
       props.onInput(props.id, props.data, true, true);
@@ -106,15 +105,24 @@ const ImageUpload: any = memo((props: any) => {
   };
 
   const loadDoc = (doc: any) => {
-    const source = {
-      uri: doc,
-      cache: true,
-    };
-    setSource(source);
+    console.log(doc);
+    setOpen(true);
     let fileNameArray = doc.split("/");
     let fileName = fileNameArray[fileNameArray.length - 1];
     if (fileName.includes("pdf")) {
       setDocType("pdf");
+      const pdfToBase64 = async (fileUri: any) => {
+        try {
+          const base64Data = await FileSystem.readAsStringAsync(fileUri, {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          setPdfUri(base64Data);
+        } catch (error) {
+          console.error("Error converting PDF to base64:", error);
+          return null;
+        }
+      };
+      pdfToBase64(doc);
     } else {
       setDocType("image");
     }
@@ -205,22 +213,17 @@ const ImageUpload: any = memo((props: any) => {
         }
       >
         <View>
+          <>{console.log(docType)}</>
           {docType == "pdf" && (
-            <Pdf
-              source={source}
-              onLoadComplete={(numberOfPages, filePath) => {
-                console.log(`Number of pages: ${numberOfPages}`);
-              }}
-              onPageChanged={(page, numberOfPages) => {
-                console.log(`Current page: ${page}`);
-              }}
-              onError={(error) => {
-                console.log(error);
-              }}
-              onPressLink={(uri) => {
-                console.log(`Link pressed: ${uri}`);
-              }}
-            />
+            <View style={styles.container}>
+              <WebView
+                source={{ uri: pdfUri }}
+                style={styles.pdf}
+                allowFileAccess={true}
+                allowContentAccess={true}
+                allowUniversalAccessFromFileURLs={true}
+              />
+            </View>
           )}
           {docType == "image" && (
             <Image
@@ -258,5 +261,11 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     objectFit: "contain",
+  },
+  container: {
+    flex: 1,
+  },
+  pdf: {
+    flex: 1,
   },
 });

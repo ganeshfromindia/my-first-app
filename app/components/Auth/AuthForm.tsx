@@ -359,7 +359,7 @@ const AuthForm = () => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <View style={[styles.authenticationButton, styles.top]}>
+                {/* <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
                     mode={true}
                     normal={true}
@@ -370,7 +370,7 @@ const AuthForm = () => {
                     // title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
                     title=""
                   ></ButtonComp>
-                </View>
+                </View> */}
               </Card>
             </View>
             <View style={globalStyle.rowContainer}>
