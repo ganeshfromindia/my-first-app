@@ -42,6 +42,7 @@ const AuthForm = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [open, setOpen] = useState(false);
   const [traderInfo, setTraderInfo] = useState<any>();
+  const [aadhaarField, setAadhaarField] = useState<boolean>(false);
 
   const image = { uri: "../../images/bkg.jpeg" };
 
@@ -59,6 +60,10 @@ const AuthForm = () => {
       password: {
         value: "",
         isValid: false,
+      },
+      aadhaar: {
+        value: "",
+        isValid: true,
       },
     },
     false
@@ -203,19 +208,41 @@ const AuthForm = () => {
     renderAfterCalled.current = true;
   }, []);
 
+  const forgotPwdPreHandler = async () => {
+    let toggle = !aadhaarField;
+    if (toggle) {
+      setFormData({
+        password: {
+          value: "",
+          isValid: true,
+        },
+      });
+    } else {
+      setFormData({
+        aadhaar: {
+          value: "",
+          isValid: true,
+        },
+      });
+    }
+
+    setAadhaarField(toggle);
+  };
   const forgotPwdHandler = async () => {
     let email = formState.inputs.email.value;
-    if (!email || email == null) {
+    let aadhaar = formState.inputs.aadhaar.value;
+    if (!email || email == null || !aadhaar || aadhaar == null) {
       Alert.alert(
         "Forgot Password",
-        "Please enter email address",
+        "Please enter Email and Aadhaar number",
         [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         { cancelable: true }
       );
       return;
     }
+    if (!aadhaarField) return;
     try {
-      const formData = { email: email };
+      const formData = { email: email, aadhaar: aadhaar };
       console.log(process.env.EXPO_PUBLIC_API_URL);
       const responseData = await sendRequest(
         `${process.env.EXPO_PUBLIC_API_URL}/api/users/forgotPassword`,
@@ -300,19 +327,36 @@ const AuthForm = () => {
                     authLabel={true}
                     authGeneral={true}
                   />
-                  <Input
-                    element="input"
-                    id="password"
-                    type="password"
-                    label="Password"
-                    validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(6)]}
-                    errorText="Please enter a valid password, at least 6 characters."
-                    onInput={inputHandler}
-                    authInput={true}
-                    authLabel={true}
-                    authGeneral={true}
-                    secure={true}
-                  />
+                  {!aadhaarField && (
+                    <Input
+                      element="input"
+                      id="password"
+                      type="password"
+                      label="Password"
+                      validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(6)]}
+                      errorText="Please enter a valid password, at least 6 characters."
+                      onInput={inputHandler}
+                      authInput={true}
+                      authLabel={true}
+                      authGeneral={true}
+                      secure={true}
+                    />
+                  )}
+                  {aadhaarField && (
+                    <Input
+                      key={"aadhaar"}
+                      id="aadhaar"
+                      element="aadhaar"
+                      label="Aadhaar"
+                      errorText="Please enter a aadhaar."
+                      onInput={inputHandler}
+                      validators={[VALIDATOR_REQUIRE()]}
+                      authInput={true}
+                      authLabel={true}
+                      authGeneral={true}
+                      secure={true}
+                    />
+                  )}
                   {!isLoginMode && (
                     <Input
                       element="input"
@@ -330,34 +374,68 @@ const AuthForm = () => {
                       authGeneral={true}
                     />
                   )}
-                  <View style={styles.authenticationButton}>
-                    <ButtonComp
-                      mode={true}
-                      normal={true}
-                      buttonfont={true}
-                      maxwidth={true}
-                      submit
-                      disabled={!formState.isValid}
-                      onClick={authSubmitHandler}
-                      // title={isLoginMode ? "Login" : "Sign Up"}
-                      title="Login"
-                    ></ButtonComp>
-                  </View>
-
-                  <View
-                    style={{
-                      flexDirection: "column",
-                      justifyContent: "flex-end",
-                      alignItems: "flex-end",
-                      width: "100%",
-                      paddingEnd: 7,
-                      paddingTop: 15,
-                    }}
-                  >
-                    <TouchableOpacity onPress={forgotPwdHandler}>
-                      <ThemedText>Forgot Password</ThemedText>
-                    </TouchableOpacity>
-                  </View>
+                  {!aadhaarField && (
+                    <View style={styles.authenticationButton}>
+                      <ButtonComp
+                        mode={true}
+                        normal={true}
+                        buttonfont={true}
+                        maxwidth={true}
+                        submit
+                        disabled={!formState.isValid}
+                        onClick={authSubmitHandler}
+                        // title={isLoginMode ? "Login" : "Sign Up"}
+                        title="Login"
+                      ></ButtonComp>
+                    </View>
+                  )}
+                  {aadhaarField && (
+                    <View style={styles.authenticationButton}>
+                      <ButtonComp
+                        mode={true}
+                        normal={true}
+                        buttonfont={true}
+                        maxwidth={true}
+                        submit
+                        disabled={!formState.isValid}
+                        onClick={forgotPwdHandler}
+                        // title={isLoginMode ? "Login" : "Sign Up"}
+                        title="Submit"
+                      ></ButtonComp>
+                    </View>
+                  )}
+                  {!aadhaarField && (
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "flex-end",
+                        alignItems: "flex-end",
+                        width: "100%",
+                        paddingEnd: 7,
+                        paddingTop: 15,
+                      }}
+                    >
+                      <TouchableOpacity onPress={forgotPwdPreHandler}>
+                        <ThemedText>Forgot Password</ThemedText>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                  {aadhaarField && (
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "flex-end",
+                        alignItems: "flex-end",
+                        width: "100%",
+                        paddingEnd: 7,
+                        paddingTop: 15,
+                      }}
+                    >
+                      <TouchableOpacity onPress={forgotPwdPreHandler}>
+                        <ThemedText>Switch to Login</ThemedText>
+                      </TouchableOpacity>
+                    </View>
+                  )}
                 </View>
                 {/* <View style={[styles.authenticationButton, styles.top]}>
                   <ButtonComp
@@ -472,7 +550,9 @@ const styles = StyleSheet.create({
   },
   authenticationButton: {
     marginTop: 50,
-    width: "100%",
+    width: "auto",
+    marginLeft: -5,
+    marginRight: -5,
   },
   authenticationContainerImageUploadCenter: {
     borderColor: "#465f66",

@@ -29,6 +29,14 @@ const ImageUpload: any = memo((props: any) => {
 
   useEffect(() => {
     if (props && props.data) {
+      let fileNameArray = props.data.split("/");
+      let fileName = fileNameArray[fileNameArray.length - 1];
+      if (fileName.includes("pdf")) {
+        setDocType("pdf");
+      } else {
+        setDocType("image");
+      }
+
       setPreviewUrl(
         `${process.env.EXPO_PUBLIC_API_URL}/` + props.data
         // "http://api.infoportal.co.in/" + props.data + `?${new Date().getTime()}`
@@ -86,6 +94,11 @@ const ImageUpload: any = memo((props: any) => {
         };
         setIsValid(true);
         setPreviewUrl(fileUpload.uri);
+        if (fileUpload.type == "application/pdf") {
+          setDocType("pdf");
+        } else {
+          setDocType("image");
+        }
         fileIsValid = true;
         props.onInput(props.id, fileUpload, fileIsValid, true);
       } else {
@@ -105,29 +118,11 @@ const ImageUpload: any = memo((props: any) => {
   };
 
   const loadDoc = (doc: any) => {
-    console.log(doc);
     setOpen(true);
     let fileNameArray = doc.split("/");
     let fileName = fileNameArray[fileNameArray.length - 1];
-    if (fileName.includes("pdf")) {
-      setDocType("pdf");
-      const pdfToBase64 = async (fileUri: any) => {
-        try {
-          const base64Data = await FileSystem.readAsStringAsync(fileUri, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          setPdfUri(base64Data);
-        } catch (error) {
-          console.error("Error converting PDF to base64:", error);
-          return null;
-        }
-      };
-      pdfToBase64(doc);
-    } else {
-      setDocType("image");
-    }
     let documentCat = fileName.split(".")[0];
-    setDocCategory(docCategory);
+    setDocCategory(documentCat);
   };
 
   const handleClose = () => {
@@ -148,7 +143,14 @@ const ImageUpload: any = memo((props: any) => {
                   alignItems: "center",
                 }}
               >
-                {previewUrl ? (
+                {docType == "pdf" ? (
+                  <IconButton
+                    icon="document-outline"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) => {}}
+                  />
+                ) : docType == "image" ? (
                   <IconButton
                     icon="search-outline"
                     size={20}
@@ -213,18 +215,6 @@ const ImageUpload: any = memo((props: any) => {
         }
       >
         <View>
-          <>{console.log(docType)}</>
-          {docType == "pdf" && (
-            <View style={styles.container}>
-              <WebView
-                source={{ uri: pdfUri }}
-                style={styles.pdf}
-                allowFileAccess={true}
-                allowContentAccess={true}
-                allowUniversalAccessFromFileURLs={true}
-              />
-            </View>
-          )}
           {docType == "image" && (
             <Image
               style={styles.img}

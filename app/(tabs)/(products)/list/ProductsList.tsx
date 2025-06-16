@@ -82,6 +82,7 @@ const ProductsList = () => {
   const [loadedProducts, setLoadedProducts] = useState([]);
   const [productData, setProductData] = useState<any>();
   const [allowAddProduct, setAllowAddProduct] = useState(false);
+  const [allowViewProduct, setAllowViewProduct] = useState(false);
 
   const [currentIndex, setCurrentIndex] = useState(-1);
 
@@ -100,10 +101,36 @@ const ProductsList = () => {
             Authorization: "Bearer " + auth.token,
           }
         );
-        if (response.manufacturer && response.manufacturer.length > 0) {
+        if (
+          (response.manufacturer && response.manufacturer[0].aadhaar) ||
+          response.manufacturer[0].aadhaar != null
+        ) {
           setAllowAddProduct(true);
         } else {
           setAllowAddProduct(false);
+        }
+      } catch (err) {}
+    }
+  }, [auth.token, auth.userId, sendRequest]);
+
+  const fetchTraderDashboardData = useCallback(async () => {
+    if (auth.token && auth.userId) {
+      try {
+        const response = await sendRequest(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/traders/traderDashboardData/${auth.userId}`,
+          "GET",
+          null,
+          {
+            Authorization: "Bearer " + auth.token,
+          }
+        );
+        if (
+          response.trader &&
+          (response.trader[0].aadhaar || response.trader[0].aadhaar != null)
+        ) {
+          setAllowViewProduct(true);
+        } else {
+          setAllowViewProduct(false);
         }
       } catch (err) {}
     }
@@ -180,22 +207,16 @@ const ProductsList = () => {
     }
   }, [open, fetchProducts]);
 
-  useEffect(() => {
-    if (auth.userId) {
-      fetchManufacturerDashboardData();
-    }
-  }, [fetchManufacturerDashboardData, auth.userId]);
-
   useFocusEffect(
     useCallback(() => {
       // Fetch data or perform initialization logic when the screen is focused
-      if (auth.userId) {
+      if (auth.userId && auth.role == "Manufacturer") {
         fetchManufacturerDashboardData();
-        fetchProducts(1);
+      } else if (auth.userId && auth.role == "Trader") {
+        fetchTraderDashboardData();
       }
-      return () => {
-        // Optional: Clean up resources when the screen is unfocused
-      };
+
+      fetchProducts(1);
     }, [])
   );
 
@@ -369,6 +390,22 @@ const ProductsList = () => {
                 ></Product>
               </View>
             </Modal>
+          </Card>
+        </View>
+      </React.Fragment>
+    );
+  }
+  if (!allowViewProduct && auth.role == "Trader") {
+    return (
+      <React.Fragment>
+        {error && <ErrorModal error={error} onClear={clearError} />}
+        {isLoading && <LoadingSpinner asOverlay />}
+        <View style={globalStyle.center}>
+          <Card style={styles.cardProduct}>
+            <ThemedText>
+              Please fill the Trader's details in dashboard. So as to view
+              products
+            </ThemedText>
           </Card>
         </View>
       </React.Fragment>

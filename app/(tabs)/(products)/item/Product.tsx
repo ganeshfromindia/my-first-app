@@ -429,53 +429,111 @@ const Product = ({
                   }
                 />
               ) : (
-                <Text>&nbsp;</Text>
+                <View style={globalStyle.iconWrapper}>
+                  <Text>{"     "}</Text>
+                </View>
               )}
             </View>
           </View>
-          <ImageUpload
-            id="msds"
-            onInput={inputHandler}
-            // errorText="Please provide an MSDS."
-            data={(pageData && pageData.msds) || null}
-          />
-
-          {pageData && pageData.msds ? (
-            <ButtonComp
-              type="ButtonComp"
-              value={pageData.msds}
-              onClick={(e: any) => handleDownloadButtonClick(pageData.msds, e)}
-              title="Download MSDS"
-            ></ButtonComp>
-          ) : null}
-          <ImageUpload
-            id="cep"
-            onInput={inputHandler}
-            // errorText="Please provide a Certificate of Suitability."
-            data={(pageData && pageData.cep) || null}
-          />
-          {pageData && pageData.cep ? (
-            <ButtonComp
-              type="ButtonComp"
-              value={pageData.cep}
-              onClick={(e: any) => handleDownloadButtonClick(pageData.cep, e)}
-              title="Download Certificate of Suitability"
-            ></ButtonComp>
-          ) : null}
-          <ImageUpload
-            id="qos"
-            onInput={inputHandler}
-            // errorText="Please provide an Quality Overall Summary."
-            data={(pageData && pageData.qos) || null}
-          />
-          {pageData && pageData.qos ? (
-            <ButtonComp
-              type="button"
-              value={pageData.qos}
-              onClick={(e: any) => handleDownloadButtonClick(pageData.qos, e)}
-              title="Download Quality Overall Summary"
-            ></ButtonComp>
-          ) : null}
+          <Text>MSDS</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-start",
+            }}
+          >
+            <View style={{ flexGrow: 2 }}>
+              <ImageUpload
+                id="msds"
+                onInput={inputHandler}
+                // errorText="Please provide an MSDS."
+                data={(pageData && pageData.msds) || null}
+              />
+            </View>
+            <View style={{ flexGrow: 1, alignItems: "center" }}>
+              {pageData && pageData.msds ? (
+                <IconButton
+                  icon="cloud-download"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) =>
+                    handleDownloadButtonClick(pageData.msds, $event)
+                  }
+                />
+              ) : (
+                <View style={globalStyle.iconWrapper}>
+                  <Text>{"     "}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Text>Certificate of Suitability</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-start",
+            }}
+          >
+            <View style={{ flexGrow: 2 }}>
+              <ImageUpload
+                id="cep"
+                onInput={inputHandler}
+                // errorText="Please provide a Certificate of Suitability."
+                data={(pageData && pageData.cep) || null}
+              />
+            </View>
+            <View style={{ flexGrow: 1, alignItems: "center" }}>
+              {pageData && pageData.cep ? (
+                <IconButton
+                  icon="cloud-download"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) =>
+                    handleDownloadButtonClick(pageData.cep, $event)
+                  }
+                />
+              ) : (
+                <View style={globalStyle.iconWrapper}>
+                  <Text>{"     "}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Text>Quality Overall Summary</Text>
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              justifyContent: "flex-start",
+            }}
+          >
+            <View style={{ flexGrow: 2 }}>
+              <ImageUpload
+                id="qos"
+                onInput={inputHandler}
+                // errorText="Please provide an Quality Overall Summary."
+                data={(pageData && pageData.qos) || null}
+              />
+            </View>
+            <View style={{ flexGrow: 1, alignItems: "center" }}>
+              {pageData && pageData.qos ? (
+                <IconButton
+                  icon="cloud-download"
+                  size={20}
+                  color={colorIcon}
+                  onPress={($event: any) =>
+                    handleDownloadButtonClick(pageData.qos, $event)
+                  }
+                />
+              ) : (
+                <View style={globalStyle.iconWrapper}>
+                  <Text>{"     "}</Text>
+                </View>
+              )}
+            </View>
+          </View>
           <Input
             id="impurities"
             element="textarea"

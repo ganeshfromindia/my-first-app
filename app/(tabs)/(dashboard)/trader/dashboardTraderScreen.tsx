@@ -8,7 +8,8 @@ import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 import { AuthContext } from "@/store/auth-context";
 import s from "@/assets/css/style";
-import { View } from "react-native";
+import { Text, View } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 
 const DashboardTraderScreen = (props: any) => {
   const [traderData, setTraderData] = useState<any>();
@@ -21,17 +22,20 @@ const DashboardTraderScreen = (props: any) => {
         title: formState.inputs.title.value,
         description: formState.inputs.description.value,
         address: formState.inputs.address.value,
+        aadhaar: formState.inputs.aadhaar.value,
       };
       if (traderData && traderData.id) {
         await sendRequest(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/traders/updateTraderDetails//${traderData.id}`,
+          `${process.env.EXPO_PUBLIC_API_URL}/api/traders/updateTraderDetails/${traderData.id}`,
           "PATCH",
           JSON.stringify(formData),
           {
             Authorization: "Bearer " + auth.token,
             "Content-Type": "application/json",
           }
-        );
+        ).then((data: any) => {
+          setTraderData(data.traderDashboard);
+        });
       } else {
         await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/traders/createTraderDetails`,
@@ -66,11 +70,11 @@ const DashboardTraderScreen = (props: any) => {
     }
   }, [auth.token, auth.userId, sendRequest]);
 
-  useEffect(() => {
-    if (auth.userId) {
+  useFocusEffect(
+    useCallback(() => {
       fetchTraderDashboardData();
-    }
-  }, [fetchTraderDashboardData, auth.userId]);
+    }, [])
+  );
 
   const [formState, inputHandler] = useForm(
     {
@@ -83,6 +87,10 @@ const DashboardTraderScreen = (props: any) => {
         isValid: false,
       },
       address: {
+        value: null,
+        isValid: true,
+      },
+      aadhaar: {
         value: null,
         isValid: true,
       },
@@ -126,6 +134,19 @@ const DashboardTraderScreen = (props: any) => {
             onInput={inputHandler}
             validators={[VALIDATOR_REQUIRE()]}
             initialValue={traderData && traderData.address}
+          />
+          <Text>
+            Please enter Aadhaar number needed in case of forgot password
+          </Text>
+          <Input
+            key={traderData && traderData.aadhaar + "aadhaar"}
+            id="aadhaar"
+            element="aadhaar"
+            label="Aadhaar"
+            errorText="Please enter a aadhaar."
+            onInput={inputHandler}
+            validators={[VALIDATOR_REQUIRE()]}
+            initialValue={traderData && traderData.aadhaar}
           />
 
           <View style={s.height25}></View>

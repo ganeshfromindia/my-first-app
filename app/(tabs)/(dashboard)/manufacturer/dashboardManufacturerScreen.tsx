@@ -7,10 +7,11 @@ import { VALIDATOR_REQUIRE } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
 import { AuthContext } from "@/store/auth-context";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import s from "@/assets/css/style";
 
 import Card from "../../../components/UIElements/Card";
+import { useFocusEffect } from "@react-navigation/native";
 
 const DashboardManufacturerScreen = (props: any) => {
   const [manufacturerData, setManufacturerData] = useState<any>();
@@ -23,6 +24,7 @@ const DashboardManufacturerScreen = (props: any) => {
         title: formState.inputs.title.value,
         description: formState.inputs.description.value,
         address: formState.inputs.address.value,
+        aadhaar: formState.inputs.aadhaar.value,
       };
       if (manufacturerData && manufacturerData.id) {
         await sendRequest(
@@ -70,11 +72,11 @@ const DashboardManufacturerScreen = (props: any) => {
     }
   }, [auth.token, auth.userId, sendRequest]);
 
-  useEffect(() => {
-    if (auth.userId) {
+  useFocusEffect(
+    useCallback(() => {
       fetchManufacturerDashboardData();
-    }
-  }, [fetchManufacturerDashboardData, auth.userId]);
+    }, [])
+  );
 
   const [formState, inputHandler] = useForm(
     {
@@ -87,6 +89,10 @@ const DashboardManufacturerScreen = (props: any) => {
         isValid: false,
       },
       address: {
+        value: null,
+        isValid: true,
+      },
+      aadhaar: {
         value: null,
         isValid: true,
       },
@@ -128,6 +134,19 @@ const DashboardManufacturerScreen = (props: any) => {
               onInput={inputHandler}
               validators={[VALIDATOR_REQUIRE()]}
               initialValue={manufacturerData && manufacturerData.address}
+            />
+            <Text>
+              Please enter Aadhaar number needed in case of forgot password
+            </Text>
+            <Input
+              key={manufacturerData && manufacturerData.aadhaar + "aadhaar"}
+              id="aadhaar"
+              element="aadhaar"
+              label="Aadhaar"
+              errorText="Please enter a aadhaar."
+              onInput={inputHandler}
+              validators={[VALIDATOR_REQUIRE()]}
+              initialValue={manufacturerData && manufacturerData.aadhaar}
             />
 
             <View style={s.height25}></View>
