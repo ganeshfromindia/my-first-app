@@ -204,6 +204,6 @@ const styles = StyleSheet.create({
     maxWidth: "auto",
   },
   currentTab: {
-    backgroundColor: "#ffc131",
+    backgroundColor: "#a67017",
   },
 });

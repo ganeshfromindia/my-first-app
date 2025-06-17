@@ -67,8 +67,6 @@ const DashboardAdminScreen = () => {
     async (page: number) => {
       if (perPageM) {
         try {
-          console.log("perPageM");
-          console.log(perPageM);
           const response = await sendRequest(
             `${process.env.EXPO_PUBLIC_API_URL}/api/users/manufacturerslist?page=${page}&size=${perPageM}&delay=1`,
             "GET",
