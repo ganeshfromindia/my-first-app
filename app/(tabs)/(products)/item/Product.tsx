@@ -345,310 +345,318 @@ const Product = ({
       <ErrorModal error={error} onClear={clearError} />
       {isLoading && <LoadingSpinner asOverlay />}
       {!isLoading && pageData && (
-        <View style={globalStyle.placeForm}>
-          {isLoading && <LoadingSpinner asOverlay />}
-          <Input
-            id="title"
-            element="input"
-            type="text"
-            label="Title"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a valid title."
-            onInput={inputHandler}
-            initialValue={pageData && pageData.title}
-          />
-          <Input
-            id="description"
-            element="textarea"
-            label="Description"
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
-            errorText="Please enter a valid description (at least 5 characters)."
-            onInput={inputHandler}
-            initialValue={pageData && pageData.description}
-          />
-          <Input
-            id="price"
-            element="input"
-            label="Price"
-            validators={[VALIDATOR_REQUIRE(), VALIDATOR_REQUIRE()]}
-            errorText="Please enter a price."
-            onInput={inputHandler}
-            initialValue={pageData && pageData.price}
-          />
-          <Text>Product Image</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-start",
-            }}
-          >
-            <View style={{ flexGrow: 2 }}>
-              <ImageUpload
-                id="image"
-                onInput={inputHandler}
-                // errorText="Please provide an product image."
-                data={(pageData && pageData.image) || null}
-              />
-            </View>
-            <View style={{ flexGrow: 1, alignItems: "center" }}>
-              {pageData && pageData.image ? (
-                <IconButton
-                  icon="cloud-download"
-                  size={20}
-                  color={colorIcon}
-                  onPress={($event: any) =>
-                    handleDownloadButtonClick(pageData.image, $event)
-                  }
+        <View
+          style={[
+            globalStyle.formControl,
+            globalStyle.placeForm,
+            styles.searchTrader,
+          ]}
+        >
+          <View style={styles.containerdd}>
+            {isLoading && <LoadingSpinner asOverlay />}
+            <Input
+              id="title"
+              element="input"
+              type="text"
+              label="Title"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a valid title."
+              onInput={inputHandler}
+              initialValue={pageData && pageData.title}
+            />
+            <Input
+              id="description"
+              element="textarea"
+              label="Description"
+              validators={[VALIDATOR_REQUIRE(), VALIDATOR_MINLENGTH(5)]}
+              errorText="Please enter a valid description (at least 5 characters)."
+              onInput={inputHandler}
+              initialValue={pageData && pageData.description}
+            />
+            <Input
+              id="price"
+              element="input"
+              label="Price"
+              validators={[VALIDATOR_REQUIRE(), VALIDATOR_REQUIRE()]}
+              errorText="Please enter a price."
+              onInput={inputHandler}
+              initialValue={pageData && pageData.price}
+            />
+            <Text>Product Image</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+            >
+              <View style={{ flexGrow: 2 }}>
+                <ImageUpload
+                  id="image"
+                  onInput={inputHandler}
+                  // errorText="Please provide an product image."
+                  data={(pageData && pageData.image) || null}
                 />
-              ) : (
-                <View style={globalStyle.iconWrapper}>
-                  <Text>{"     "}</Text>
-                </View>
-              )}
+              </View>
+              <View style={{ flexGrow: 1, alignItems: "center" }}>
+                {pageData && pageData.image ? (
+                  <IconButton
+                    icon="cloud-download"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) =>
+                      handleDownloadButtonClick(pageData.image, $event)
+                    }
+                  />
+                ) : (
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-          <Text>COA</Text>
-          <View style={{ flexDirection: "row", width: "100%" }}>
-            <View style={{ flexGrow: 2 }}>
-              <ImageUpload
-                id="coa"
-                onInput={inputHandler}
-                // errorText="Please provide sample COA."
-                data={(pageData && pageData.coa) || null}
-              />
-            </View>
-            <View style={{ flexGrow: 1, alignItems: "center" }}>
-              {pageData && pageData.coa ? (
-                <IconButton
-                  icon="cloud-download"
-                  size={20}
-                  color={colorIcon}
-                  onPress={($event: any) =>
-                    handleDownloadButtonClick(pageData.coa, $event)
-                  }
+            <Text>COA</Text>
+            <View style={{ flexDirection: "row", width: "100%" }}>
+              <View style={{ flexGrow: 2 }}>
+                <ImageUpload
+                  id="coa"
+                  onInput={inputHandler}
+                  // errorText="Please provide sample COA."
+                  data={(pageData && pageData.coa) || null}
                 />
-              ) : (
-                <View style={globalStyle.iconWrapper}>
-                  <Text>{"     "}</Text>
-                </View>
-              )}
+              </View>
+              <View style={{ flexGrow: 1, alignItems: "center" }}>
+                {pageData && pageData.coa ? (
+                  <IconButton
+                    icon="cloud-download"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) =>
+                      handleDownloadButtonClick(pageData.coa, $event)
+                    }
+                  />
+                ) : (
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-          <Text>MSDS</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-start",
-            }}
-          >
-            <View style={{ flexGrow: 2 }}>
-              <ImageUpload
-                id="msds"
-                onInput={inputHandler}
-                // errorText="Please provide an MSDS."
-                data={(pageData && pageData.msds) || null}
-              />
-            </View>
-            <View style={{ flexGrow: 1, alignItems: "center" }}>
-              {pageData && pageData.msds ? (
-                <IconButton
-                  icon="cloud-download"
-                  size={20}
-                  color={colorIcon}
-                  onPress={($event: any) =>
-                    handleDownloadButtonClick(pageData.msds, $event)
-                  }
+            <Text>MSDS</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+            >
+              <View style={{ flexGrow: 2 }}>
+                <ImageUpload
+                  id="msds"
+                  onInput={inputHandler}
+                  // errorText="Please provide an MSDS."
+                  data={(pageData && pageData.msds) || null}
                 />
-              ) : (
-                <View style={globalStyle.iconWrapper}>
-                  <Text>{"     "}</Text>
-                </View>
-              )}
+              </View>
+              <View style={{ flexGrow: 1, alignItems: "center" }}>
+                {pageData && pageData.msds ? (
+                  <IconButton
+                    icon="cloud-download"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) =>
+                      handleDownloadButtonClick(pageData.msds, $event)
+                    }
+                  />
+                ) : (
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-          <Text>Certificate of Suitability</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-start",
-            }}
-          >
-            <View style={{ flexGrow: 2 }}>
-              <ImageUpload
-                id="cep"
-                onInput={inputHandler}
-                // errorText="Please provide a Certificate of Suitability."
-                data={(pageData && pageData.cep) || null}
-              />
-            </View>
-            <View style={{ flexGrow: 1, alignItems: "center" }}>
-              {pageData && pageData.cep ? (
-                <IconButton
-                  icon="cloud-download"
-                  size={20}
-                  color={colorIcon}
-                  onPress={($event: any) =>
-                    handleDownloadButtonClick(pageData.cep, $event)
-                  }
+            <Text>Certificate of Suitability</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+            >
+              <View style={{ flexGrow: 2 }}>
+                <ImageUpload
+                  id="cep"
+                  onInput={inputHandler}
+                  // errorText="Please provide a Certificate of Suitability."
+                  data={(pageData && pageData.cep) || null}
                 />
-              ) : (
-                <View style={globalStyle.iconWrapper}>
-                  <Text>{"     "}</Text>
-                </View>
-              )}
+              </View>
+              <View style={{ flexGrow: 1, alignItems: "center" }}>
+                {pageData && pageData.cep ? (
+                  <IconButton
+                    icon="cloud-download"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) =>
+                      handleDownloadButtonClick(pageData.cep, $event)
+                    }
+                  />
+                ) : (
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-          <Text>Quality Overall Summary</Text>
-          <View
-            style={{
-              flexDirection: "row",
-              width: "100%",
-              justifyContent: "flex-start",
-            }}
-          >
-            <View style={{ flexGrow: 2 }}>
-              <ImageUpload
-                id="qos"
-                onInput={inputHandler}
-                // errorText="Please provide an Quality Overall Summary."
-                data={(pageData && pageData.qos) || null}
-              />
-            </View>
-            <View style={{ flexGrow: 1, alignItems: "center" }}>
-              {pageData && pageData.qos ? (
-                <IconButton
-                  icon="cloud-download"
-                  size={20}
-                  color={colorIcon}
-                  onPress={($event: any) =>
-                    handleDownloadButtonClick(pageData.qos, $event)
-                  }
+            <Text>Quality Overall Summary</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                width: "100%",
+                justifyContent: "flex-start",
+              }}
+            >
+              <View style={{ flexGrow: 2 }}>
+                <ImageUpload
+                  id="qos"
+                  onInput={inputHandler}
+                  // errorText="Please provide an Quality Overall Summary."
+                  data={(pageData && pageData.qos) || null}
                 />
-              ) : (
-                <View style={globalStyle.iconWrapper}>
-                  <Text>{"     "}</Text>
-                </View>
-              )}
+              </View>
+              <View style={{ flexGrow: 1, alignItems: "center" }}>
+                {pageData && pageData.qos ? (
+                  <IconButton
+                    icon="cloud-download"
+                    size={20}
+                    color={colorIcon}
+                    onPress={($event: any) =>
+                      handleDownloadButtonClick(pageData.qos, $event)
+                    }
+                  />
+                ) : (
+                  <View style={globalStyle.iconWrapper}>
+                    <Text>{"     "}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-          <Input
-            id="impurities"
-            element="textarea"
-            label="Impurities"
-            validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText="Please enter Impurities separated by comma."
-            onInput={inputHandler}
-            initialValue={pageData && pageData.impurities}
-          />
-          <Input
-            id="refStandards"
-            element="textarea"
-            label="Reference Standards"
-            validators={[VALIDATOR_MINLENGTH(5)]}
-            errorText="Please enter Reference Standards separated by comma."
-            onInput={inputHandler}
-            initialValue={pageData && pageData.refStandards}
-          />
-          <MultiSelect
-            mode="modal"
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            search
-            data={optionsDMF}
-            labelField="label"
-            valueField="value"
-            placeholder="Select DMF"
-            value={dmfData}
-            searchPlaceholder="Search..."
-            onChange={(item) => {
-              setDMFData(item);
-            }}
-            renderLeftIcon={() => (
-              <AntDesign
-                style={styles.icon}
-                color="black"
-                name="Safety"
-                size={20}
-              />
-            )}
-            renderItem={renderItem}
-            renderSelectedItem={(item, unSelect) => (
-              <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                <View style={styles.selectedStyle}>
-                  <Text
-                    style={[
-                      styles.textSelectedStyle,
-                      globalStyle.defaultFont,
-                      { color: "#000000" },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  <AntDesign color="black" name="delete" size={17} />
-                </View>
-              </TouchableOpacity>
-            )}
-          />
+            <Input
+              id="impurities"
+              element="textarea"
+              label="Impurities"
+              validators={[VALIDATOR_MINLENGTH(5)]}
+              errorText="Please enter Impurities separated by comma."
+              onInput={inputHandler}
+              initialValue={pageData && pageData.impurities}
+            />
+            <Input
+              id="refStandards"
+              element="textarea"
+              label="Reference Standards"
+              validators={[VALIDATOR_MINLENGTH(5)]}
+              errorText="Please enter Reference Standards separated by comma."
+              onInput={inputHandler}
+              initialValue={pageData && pageData.refStandards}
+            />
+            <MultiSelect
+              mode="modal"
+              style={styles.dropdown}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              search
+              data={optionsDMF}
+              labelField="label"
+              valueField="value"
+              placeholder="Select DMF"
+              value={dmfData}
+              searchPlaceholder="Search..."
+              onChange={(item) => {
+                setDMFData(item);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={styles.icon}
+                  color="black"
+                  name="Safety"
+                  size={20}
+                />
+              )}
+              renderItem={renderItem}
+              renderSelectedItem={(item, unSelect) => (
+                <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                  <View style={styles.selectedStyle}>
+                    <Text
+                      style={[
+                        styles.textSelectedStyle,
+                        globalStyle.defaultFont,
+                        { color: "#000000" },
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                    <AntDesign color="black" name="delete" size={17} />
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
 
-          <MultiSelect
-            mode="modal"
-            style={[styles.dropdown, { marginTop: 25 }]}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            inputSearchStyle={styles.inputSearchStyle}
-            iconStyle={styles.iconStyle}
-            search
-            data={optionsPharamacopoeia}
-            labelField="label"
-            valueField="value"
-            placeholder="Select"
-            value={pharmacopoeiaData}
-            searchPlaceholder="Search..."
-            onChange={(item) => {
-              setPharmacopoeiaData(item);
-            }}
-            renderLeftIcon={() => (
-              <AntDesign
-                style={styles.icon}
-                color="black"
-                name="Safety"
-                size={20}
-              />
-            )}
-            renderItem={renderItem}
-            renderSelectedItem={(item, unSelect) => (
-              <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
-                <View style={styles.selectedStyle}>
-                  <Text
-                    style={[
-                      styles.textSelectedStyle,
-                      globalStyle.defaultFont,
-                      { color: "#000000" },
-                    ]}
-                  >
-                    {item.label}
-                  </Text>
-                  <AntDesign color="black" name="delete" size={17} />
-                </View>
-              </TouchableOpacity>
-            )}
-          />
+            <MultiSelect
+              mode="modal"
+              style={[styles.dropdown, { marginTop: 25 }]}
+              placeholderStyle={styles.placeholderStyle}
+              selectedTextStyle={styles.selectedTextStyle}
+              inputSearchStyle={styles.inputSearchStyle}
+              iconStyle={styles.iconStyle}
+              search
+              data={optionsPharamacopoeia}
+              labelField="label"
+              valueField="value"
+              placeholder="Select"
+              value={pharmacopoeiaData}
+              searchPlaceholder="Search..."
+              onChange={(item) => {
+                setPharmacopoeiaData(item);
+              }}
+              renderLeftIcon={() => (
+                <AntDesign
+                  style={styles.icon}
+                  color="black"
+                  name="Safety"
+                  size={20}
+                />
+              )}
+              renderItem={renderItem}
+              renderSelectedItem={(item, unSelect) => (
+                <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+                  <View style={styles.selectedStyle}>
+                    <Text
+                      style={[
+                        styles.textSelectedStyle,
+                        globalStyle.defaultFont,
+                        { color: "#000000" },
+                      ]}
+                    >
+                      {item.label}
+                    </Text>
+                    <AntDesign color="black" name="delete" size={17} />
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
 
-          <View className="height25"></View>
-          <ButtonComp
-            onClick={productSubmitHandler}
-            normal={true}
-            buttonfont={true}
-            maxwidth={true}
-            disabled={!formState.isValid}
-            title="SAVE"
-          ></ButtonComp>
+            <View className="height25"></View>
+            <ButtonComp
+              onClick={productSubmitHandler}
+              normal={true}
+              buttonfont={true}
+              maxwidth={true}
+              disabled={!formState.isValid}
+              title="SAVE"
+            ></ButtonComp>
+          </View>
         </View>
       )}
     </React.Fragment>

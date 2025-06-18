@@ -173,6 +173,7 @@ const Input: any = (props: any) => {
     <View style={globalStyle.formControl}>
       <Text
         style={[
+          globalStyle.labelGeneral,
           globalStyle.defaultFont,
           !inputState.isValid &&
             inputState.isTouched &&

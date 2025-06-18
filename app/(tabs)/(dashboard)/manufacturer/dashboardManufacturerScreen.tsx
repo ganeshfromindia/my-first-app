@@ -12,6 +12,7 @@ import s from "@/assets/css/style";
 
 import Card from "../../../components/UIElements/Card";
 import { useFocusEffect } from "@react-navigation/native";
+import globalStyle from "@/assets/css/style";
 
 const DashboardManufacturerScreen = (props: any) => {
   const [manufacturerData, setManufacturerData] = useState<any>();
@@ -135,7 +136,7 @@ const DashboardManufacturerScreen = (props: any) => {
               validators={[VALIDATOR_REQUIRE()]}
               initialValue={manufacturerData && manufacturerData.address}
             />
-            <Text>
+            <Text style={globalStyle.labelNormal}>
               Please enter Aadhaar number needed in case of forgot password
             </Text>
             <Input

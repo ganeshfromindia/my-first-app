@@ -126,7 +126,7 @@ const globalStyle = StyleSheet.create({
     position: "relative",
     marginHorizontal: "auto",
     marginVertical: 0,
-    padding: 1,
+    paddingHorizontal: 10,
     width: "90%",
     // maxWidth: 40,
     maxWidth: "100%",
@@ -212,6 +212,12 @@ const globalStyle = StyleSheet.create({
   iconWrapper: {
     margin: 8,
     borderRadius: 20,
+  },
+  labelGeneral: {
+    paddingVertical: 5,
+  },
+  labelNormal: {
+    paddingTop: 5,
   },
 });
 

@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
   },
 
   modalContent: {
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 3,
   },
 
   modalFooter: {
