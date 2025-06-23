@@ -243,7 +243,6 @@ const AuthForm = () => {
     if (!aadhaarField) return;
     try {
       const formData = { email: email, aadhaar: aadhaar };
-      console.log(process.env.EXPO_PUBLIC_API_URL);
       const responseData = await sendRequest(
         `${process.env.EXPO_PUBLIC_API_URL}/api/users/forgotPassword`,
         "POST",
