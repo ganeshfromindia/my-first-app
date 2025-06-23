@@ -135,7 +135,7 @@ const DashboardTraderScreen = (props: any) => {
             validators={[VALIDATOR_REQUIRE()]}
             initialValue={traderData && traderData.address}
           />
-          <Text>
+          <Text style={[s.labelNormal, s.defaultFont]}>
             Please enter Aadhaar number needed in case of forgot password
           </Text>
           <Input

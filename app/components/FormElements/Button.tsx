@@ -13,6 +13,7 @@ import { Link } from "expo-router";
 import { ThemedText } from "../ThemedText";
 import { ThemedView } from "../ThemedView";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 const ButtonComp = (props: any) => {
   const borderColor = useThemeColor(
@@ -137,7 +138,7 @@ const styles = StyleSheet.create({
   },
 
   buttonInverse: {
-    color: "#ffb131",
+    color: Colors.light.tint,
   },
 
   buttonInverseHover: {

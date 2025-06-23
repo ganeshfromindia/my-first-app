@@ -5,7 +5,7 @@ exports[`renders correctly 1`] = `
   style={
     [
       {
-        "fontFamily": "Work Sans",
+        "fontFamily": "Monteserrat",
         "fontStyle": "normal",
         "fontWeight": 400,
       },

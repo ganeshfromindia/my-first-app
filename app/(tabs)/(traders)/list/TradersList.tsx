@@ -51,7 +51,7 @@ const TradersList = () => {
   const renderAfterCalledFP = useRef(false);
   const [open, setOpen] = useState(false);
   const [openP, setOpenP] = useState(false);
-  const [traderId, setTraderId] = useState();
+  const [traderId, setTraderId] = useState<any>();
   const [loadedTraders, setLoadedTraders] = useState([]);
   const [traderData, setTraderData] = useState<any>();
   const [totalRows, setTotalRows] = useState(0);
@@ -212,11 +212,8 @@ const TradersList = () => {
 
   const handleOpenP = useCallback(async (trader: any) => {
     setTraderId(trader.id);
-  }, []);
-
-  useEffect(() => {
     fetchProducts(1);
-  }, [traderId]);
+  }, []);
 
   const handleClose = () => {
     setOpen(false);
@@ -224,14 +221,12 @@ const TradersList = () => {
 
   const handleCloseP = () => {
     setOpenP(false);
+    setTraderId(null);
   };
 
-  const handleProductsDetailButtonClick = useCallback(
-    (data: any) => {
-      handleOpenP(data);
-    },
-    [handleOpenP]
-  );
+  const handleProductsDetailButtonClick = useCallback((data: any) => {
+    handleOpenP(data);
+  }, []);
 
   useEffect(() => {
     fetchTraders(1);
@@ -244,6 +239,7 @@ const TradersList = () => {
     }
   }, [open, fetchTraders]);
 
+  /*
   useEffect(() => {
     if (!renderAfterCalled.current) {
       fetchTraders(1);
@@ -257,16 +253,14 @@ const TradersList = () => {
     }
     renderAfterCalledFP.current = true;
   }, [fetchProductsManf]);
-
+*/
   useFocusEffect(
     useCallback(() => {
       // Fetch data or perform initialization logic when the screen is focused
       if (auth.userId) {
         fetchProductsManf();
       }
-      return () => {
-        // Optional: Clean up resources when the screen is unfocused
-      };
+      handlePerRowsChange(itemsPerPage);
     }, [])
   );
 
@@ -358,7 +352,7 @@ const TradersList = () => {
                 <DataTable.Header>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -368,7 +362,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -378,7 +372,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -388,7 +382,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -398,7 +392,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -408,7 +402,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -418,7 +412,7 @@ const TradersList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -437,7 +431,7 @@ const TradersList = () => {
                       <DataTable.Row key={index}>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -447,7 +441,7 @@ const TradersList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -470,7 +464,7 @@ const TradersList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -480,7 +474,7 @@ const TradersList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -490,7 +484,7 @@ const TradersList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -500,7 +494,7 @@ const TradersList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -934,7 +928,7 @@ export default TradersList;
 const styles = StyleSheet.create({
   editDeleteBtn: {
     position: "relative",
-    width: 75,
+    width: "100%",
     marginHorizontal: 5,
   },
   cardProduct: {

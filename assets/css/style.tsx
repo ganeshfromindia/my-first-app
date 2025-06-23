@@ -1,4 +1,5 @@
 import { StyleSheet, Platform } from "react-native";
+import { Colors } from "@/constants/Colors";
 
 const globalStyle = StyleSheet.create({
   formControl: {
@@ -82,12 +83,12 @@ const globalStyle = StyleSheet.create({
   },
 
   navLinkAHover: {
-    backgroundColor: "#ffb131",
+    backgroundColor: Colors.light.tint,
     borderColor: "transparent",
     color: "#292929",
   },
   navLinkAActive: {
-    backgroundColor: "#ffb131",
+    backgroundColor: Colors.light.tint,
     borderColor: "transparent",
     color: "#292929",
   },
@@ -97,7 +98,7 @@ const globalStyle = StyleSheet.create({
     borderColor: "#a68753",
     borderWidth: 1,
     backgroundColor: "transparent",
-    color: "#ffb131",
+    color: Colors.light.tint,
     padding: 0.5,
   },
 
@@ -111,11 +112,11 @@ const globalStyle = StyleSheet.create({
   },
 
   navLinkbuttonHover: {
-    backgroundColor: "#ffb131",
+    backgroundColor: Colors.light.tint,
     color: "#ffffff",
   },
   navLinkbuttonActive: {
-    backgroundColor: "#ffb131",
+    backgroundColor: Colors.light.tint,
   },
   center: {
     textAlign: "center",
@@ -205,7 +206,7 @@ const globalStyle = StyleSheet.create({
     color: "#00ff00",
   },
   defaultFont: {
-    fontFamily: "Work Sans",
+    fontFamily: "Monteserrat",
     fontWeight: 400,
     fontStyle: "normal",
   },

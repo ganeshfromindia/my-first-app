@@ -24,6 +24,8 @@ import s from "@/assets/css/style";
 
 import globalStyle from "@/assets/css/style";
 
+import { Colors } from "@/constants/Colors";
+
 enum pointerEvent {
   none = "none",
   auto = "auto",
@@ -68,7 +70,12 @@ const Trader = ({
         >
           {item.label}
         </Text>
-        <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+        <AntDesign
+          style={styles.icon}
+          color={Colors.light.tint}
+          name="Safety"
+          size={20}
+        />
       </View>
     );
   };
@@ -78,7 +85,7 @@ const Trader = ({
       setTraderData(traderDataRecd);
       setIsEmailDisabled(pointerEvent.none);
       const selectedProducts = traderDataRecd.products;
-      setDefaultProducts(selectedProducts);
+      setDefaultProducts(selectedProducts || []);
     }
   }, [traderDataRecd]);
 
@@ -133,17 +140,18 @@ const Trader = ({
             }
             let flags = [];
             let output = [];
-            let l = defaultProductsArray.length;
+            let l = defaultProductsArray && defaultProductsArray.length;
             let i;
             for (i = 0; i < l; i++) {
               if (flags[defaultProductsArray[i].id]) continue;
               flags[defaultProductsArray[i].id] = true;
               output.push(defaultProductsArray[i]);
             }
-            let valuesOfDefaultProducts = mapOptions(output).map(
-              (data: any) => data.value
-            );
-            setDefaultProducts(valuesOfDefaultProducts);
+            let valuesOfDefaultProducts =
+              output &&
+              mapOptions(output) &&
+              mapOptions(output).map((data: any) => data.value);
+            setDefaultProducts(valuesOfDefaultProducts || []);
           }
         } catch (err) {
           console.log(err);
@@ -296,7 +304,7 @@ const Trader = ({
       title: "",
       value: "",
     });
-    setSelected(null)
+    setSelected(null);
   };
 
   return (
@@ -310,12 +318,13 @@ const Trader = ({
               <Dropdown
                 style={[
                   styles.dropdown,
-                  isFocus && { borderColor: "#ffb131", borderWidth: 1 },
+                  isFocus && { borderColor: Colors.light.tint, borderWidth: 1 },
                 ]}
                 placeholderStyle={styles.placeholderStyle}
                 selectedTextStyle={styles.selectedTextStyle}
                 inputSearchStyle={styles.inputSearchStyle}
                 iconStyle={styles.iconStyle}
+                activeColor="#f3e3cc"
                 data={traders}
                 labelField="label"
                 valueField="value"
@@ -332,7 +341,7 @@ const Trader = ({
                 renderLeftIcon={() => (
                   <AntDesign
                     style={styles.icon}
-                    color="black"
+                    color={Colors.light.tint}
                     name="Safety"
                     size={20}
                   />
@@ -394,7 +403,7 @@ const Trader = ({
               />
             </View>
             <View>
-              {loadedProducts && defaultProducts && (
+              {loadedProducts && (
                 <View style={styles.containerMultiSelect}>
                   <MultiSelect
                     mode="modal"
@@ -403,6 +412,7 @@ const Trader = ({
                     selectedTextStyle={styles.selectedTextStyle}
                     inputSearchStyle={styles.inputSearchStyle}
                     iconStyle={styles.iconStyle}
+                    activeColor="#f3e3cc"
                     search
                     data={loadedProducts}
                     labelField="label"
@@ -416,7 +426,7 @@ const Trader = ({
                     renderLeftIcon={() => (
                       <AntDesign
                         style={styles.icon}
-                        color="black"
+                        color={Colors.light.tint}
                         name="Safety"
                         size={20}
                       />
@@ -427,16 +437,27 @@ const Trader = ({
                         onPress={() => unSelect && unSelect(item)}
                       >
                         <View style={styles.selectedStyle}>
-                          <Text
-                            style={[
-                              globalStyle.defaultFont,
-                              styles.textSelectedStyle,
-                              { color: "#000000" },
-                            ]}
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              alignItems: "center",
+                            }}
                           >
-                            {item.label}
-                          </Text>
-                          <AntDesign color="black" name="delete" size={17} />
+                            <Text
+                              style={[
+                                globalStyle.defaultFont,
+                                styles.textSelectedStyle,
+                                { color: "#000000" },
+                              ]}
+                            >
+                              {item.label}
+                            </Text>
+                            <AntDesign
+                              color={Colors.light.tint}
+                              name="delete"
+                              size={17}
+                            />
+                          </View>
                         </View>
                       </TouchableOpacity>
                     )}
@@ -506,25 +527,20 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     padding: 12,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.2,
-    shadowRadius: 1.41,
-
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.26)",
     elevation: 2,
   },
   placeholderStyle: {
     fontSize: 16,
   },
+
   selectedTextStyle: {
     fontSize: 14,
   },
   iconStyle: {
     width: 20,
     height: 20,
+    color: Colors.light.tint,
   },
   inputSearchStyle: {
     height: 40,
@@ -540,7 +556,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedStyle: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 14,
@@ -550,12 +566,15 @@ const styles = StyleSheet.create({
     marginRight: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    /*
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
+    */
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.26)",
     elevation: 2,
   },
   textSelectedStyle: {

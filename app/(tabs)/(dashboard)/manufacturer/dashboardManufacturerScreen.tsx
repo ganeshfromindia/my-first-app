@@ -136,7 +136,7 @@ const DashboardManufacturerScreen = (props: any) => {
               validators={[VALIDATOR_REQUIRE()]}
               initialValue={manufacturerData && manufacturerData.address}
             />
-            <Text style={globalStyle.labelNormal}>
+            <Text style={[globalStyle.labelNormal, globalStyle.defaultFont]}>
               Please enter Aadhaar number needed in case of forgot password
             </Text>
             <Input

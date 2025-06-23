@@ -34,7 +34,7 @@ export default function RootLayout() {
   const auth = useContext(AuthContext);
   const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
-    "Work Sans": require("../assets/fonts/Work_Sans/static/WorkSans-Regular.ttf"),
+    Monteserrat: require("../assets/fonts/Monteserrat/static/Montserrat-Medium.ttf"),
   });
 
   if (error) {

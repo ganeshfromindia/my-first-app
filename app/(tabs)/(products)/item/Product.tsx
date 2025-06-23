@@ -74,7 +74,12 @@ const Product = ({
         >
           {item.label}
         </Text>
-        <AntDesign style={styles.icon} color="black" name="Safety" size={20} />
+        <AntDesign
+          style={styles.icon}
+          color={Colors.light.tint}
+          name="Safety"
+          size={20}
+        />
       </View>
     );
   };
@@ -99,12 +104,12 @@ const Product = ({
   }, [productdata]);
 
   const optionsPharamacopoeia = [
-    { value: "IP", label: "Indian Pharmacopoeia", selectedLabel: "IP" },
-    { value: "BP", label: "British Pharmacopoeia", selectedLabel: "BP" },
-    { value: "USP", label: "US Pharmacopoeia", selectedLabel: "USP" },
-    { value: "JP", label: "Japanese Pharmacopoeia", selectedLabel: "JP" },
-    { value: "EP", label: "European Pharmacopoeia", selectedLabel: "EP" },
-    { value: "InHouse", label: "In House", selectedLabel: "In House" },
+    { value: "IP", label: "Indian Pharmacopoeia" },
+    { value: "BP", label: "British Pharmacopoeia" },
+    { value: "USP", label: "US Pharmacopoeia" },
+    { value: "JP", label: "Japanese Pharmacopoeia" },
+    { value: "EP", label: "European Pharmacopoeia" },
+    { value: "InHouse", label: "In House" },
   ];
 
   const optionsDMF = [
@@ -561,11 +566,12 @@ const Product = ({
             />
             <MultiSelect
               mode="modal"
-              style={styles.dropdown}
+              style={[styles.dropdown, { marginTop: 25 }]}
               placeholderStyle={styles.placeholderStyle}
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
+              activeColor="#f3e3cc"
               search
               data={optionsDMF}
               labelField="label"
@@ -579,7 +585,7 @@ const Product = ({
               renderLeftIcon={() => (
                 <AntDesign
                   style={styles.icon}
-                  color="black"
+                  color={Colors.light.tint}
                   name="Safety"
                   size={20}
                 />
@@ -597,7 +603,11 @@ const Product = ({
                     >
                       {item.label}
                     </Text>
-                    <AntDesign color="black" name="delete" size={17} />
+                    <AntDesign
+                      color={Colors.light.tint}
+                      name="delete"
+                      size={17}
+                    />
                   </View>
                 </TouchableOpacity>
               )}
@@ -610,11 +620,12 @@ const Product = ({
               selectedTextStyle={styles.selectedTextStyle}
               inputSearchStyle={styles.inputSearchStyle}
               iconStyle={styles.iconStyle}
+              activeColor="#f3e3cc"
               search
               data={optionsPharamacopoeia}
               labelField="label"
               valueField="value"
-              placeholder="Select"
+              placeholder="Select Pharamacopoeia"
               value={pharmacopoeiaData}
               searchPlaceholder="Search..."
               onChange={(item) => {
@@ -623,7 +634,7 @@ const Product = ({
               renderLeftIcon={() => (
                 <AntDesign
                   style={styles.icon}
-                  color="black"
+                  color={Colors.light.tint}
                   name="Safety"
                   size={20}
                 />
@@ -639,23 +650,29 @@ const Product = ({
                         { color: "#000000" },
                       ]}
                     >
-                      {item.label}
+                      {item.value}
                     </Text>
-                    <AntDesign color="black" name="delete" size={17} />
+                    <AntDesign
+                      color={Colors.light.tint}
+                      name="delete"
+                      size={17}
+                    />
                   </View>
                 </TouchableOpacity>
               )}
             />
 
             <View className="height25"></View>
-            <ButtonComp
-              onClick={productSubmitHandler}
-              normal={true}
-              buttonfont={true}
-              maxwidth={true}
-              disabled={!formState.isValid}
-              title="SAVE"
-            ></ButtonComp>
+            <View style={{ width: 100, margin: "auto" }}>
+              <ButtonComp
+                onClick={productSubmitHandler}
+                normal={true}
+                buttonfont={true}
+                maxwidth={true}
+                disabled={!formState.isValid}
+                title="SAVE"
+              ></ButtonComp>
+            </View>
           </View>
         </View>
       )}
@@ -677,6 +694,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 12,
     padding: 12,
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.26)",
+    /*
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -684,7 +703,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
-
+    */
     elevation: 2,
   },
   placeholderStyle: {
@@ -696,6 +715,7 @@ const styles = StyleSheet.create({
   iconStyle: {
     width: 20,
     height: 20,
+    color: Colors.light.tint,
   },
   inputSearchStyle: {
     height: 40,
@@ -721,12 +741,15 @@ const styles = StyleSheet.create({
     marginRight: 12,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.26)",
+    /*
     shadowOffset: {
       width: 0,
       height: 1,
     },
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
+    */
     elevation: 2,
   },
   textSelectedStyle: {

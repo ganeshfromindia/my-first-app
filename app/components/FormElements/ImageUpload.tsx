@@ -12,10 +12,10 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import IconButton from "@/app/components/ui/IconButton";
 import Modal from "../UIElements/Modal";
-import { WebView } from "react-native-webview";
-import * as FileSystem from "expo-file-system";
+import { useWindowDimensions } from "react-native";
 
 const ImageUpload: any = memo((props: any) => {
+  const { height } = useWindowDimensions();
   const [pdfUri, setPdfUri] = useState("");
   const [open, setOpen] = useState(false);
   const [docType, setDocType] = useState("");
@@ -214,7 +214,7 @@ const ImageUpload: any = memo((props: any) => {
           ></ButtonComp>
         }
       >
-        <View>
+        <View style={{ height: height }}>
           {docType == "image" && (
             <Image
               style={styles.img}
@@ -248,9 +248,8 @@ const styles = StyleSheet.create({
   },
 
   img: {
-    width: 100,
-    height: 100,
-    objectFit: "contain",
+    flex: 1,
+    resizeMode: "contain",
   },
   container: {
     flex: 1,

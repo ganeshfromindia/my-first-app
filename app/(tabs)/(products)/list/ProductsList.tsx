@@ -75,7 +75,7 @@ const ProductsList = () => {
   const auth = useContext(AuthContext);
   const [downloadProgress, setDownloadProgress] = useState<any>();
   const [currentPageP, setCurrentPageP] = useState(0);
-  const [perPageP, setPerPageP] = useState<number>(10);
+  const [perPageP, setPerPageP] = useState(10);
   const [totalRowsP, setTotalRowsP] = useState(0);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const [open, setOpen] = useState(false);
@@ -199,7 +199,7 @@ const ProductsList = () => {
 
   useEffect(() => {
     fetchProducts(1);
-  }, [fetchProducts]);
+  }, [auth]);
 
   useEffect(() => {
     if (!open) {
@@ -215,8 +215,7 @@ const ProductsList = () => {
       } else if (auth.userId && auth.role == "Trader") {
         fetchTraderDashboardData();
       }
-
-      fetchProducts(1);
+      handlePerRowsChangeP(itemsPerPageP);
     }, [])
   );
 
@@ -440,7 +439,7 @@ const ProductsList = () => {
                 <DataTable.Header>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -452,7 +451,7 @@ const ProductsList = () => {
                   {auth && auth.role == "Manufacturer" && (
                     <DataTable.Title
                       textStyle={{
-                        fontFamily: "Work Sans",
+                        fontFamily: "Monteserrat",
                         fontWeight: 400,
                         fontStyle: "normal",
                       }}
@@ -464,7 +463,7 @@ const ProductsList = () => {
                   {auth && auth.role == "Trader" && (
                     <DataTable.Title
                       textStyle={{
-                        fontFamily: "Work Sans",
+                        fontFamily: "Monteserrat",
                         fontWeight: 400,
                         fontStyle: "normal",
                       }}
@@ -475,7 +474,7 @@ const ProductsList = () => {
                   )}
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -485,7 +484,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -495,7 +494,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -505,7 +504,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -515,7 +514,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -525,7 +524,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -535,7 +534,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -545,7 +544,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -555,7 +554,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -565,7 +564,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -575,7 +574,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -585,7 +584,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -595,7 +594,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -605,7 +604,7 @@ const ProductsList = () => {
                   </DataTable.Title>
                   <DataTable.Title
                     textStyle={{
-                      fontFamily: "Work Sans",
+                      fontFamily: "Monteserrat",
                       fontWeight: 400,
                       fontStyle: "normal",
                     }}
@@ -625,7 +624,7 @@ const ProductsList = () => {
                       <DataTable.Row key={index}>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -636,7 +635,7 @@ const ProductsList = () => {
                         {auth && auth.role == "Manufacturer" && (
                           <DataTable.Cell
                             textStyle={{
-                              fontFamily: "Work Sans",
+                              fontFamily: "Monteserrat",
                               fontWeight: 400,
                               fontStyle: "normal",
                             }}
@@ -653,7 +652,7 @@ const ProductsList = () => {
                         {auth && auth.role == "Trader" && (
                           <DataTable.Cell
                             textStyle={{
-                              fontFamily: "Work Sans",
+                              fontFamily: "Monteserrat",
                               fontWeight: 400,
                               fontStyle: "normal",
                             }}
@@ -664,7 +663,7 @@ const ProductsList = () => {
                         )}
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -674,7 +673,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -684,7 +683,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -694,7 +693,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -718,7 +717,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -742,7 +741,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -766,7 +765,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -790,7 +789,7 @@ const ProductsList = () => {
                         </DataTable.Cell>
                         <DataTable.Cell
                           textStyle={{
-                            fontFamily: "Work Sans",
+                            fontFamily: "Monteserrat",
                             fontWeight: 400,
                             fontStyle: "normal",
                           }}
@@ -998,13 +997,15 @@ const ProductsList = () => {
             contentClass="place-item__modal-content"
             footerClass="place-item__modal-actions"
             footer={
-              <ButtonComp
-                onClick={handleClose}
-                normal={true}
-                buttonfont={true}
-                maxwidth={true}
-                title="CLOSE"
-              ></ButtonComp>
+              <View style={{ width: 100, margin: "auto" }}>
+                <ButtonComp
+                  onClick={handleClose}
+                  normal={true}
+                  buttonfont={true}
+                  maxwidth={true}
+                  title="CLOSE"
+                ></ButtonComp>
+              </View>
             }
           >
             <View>
