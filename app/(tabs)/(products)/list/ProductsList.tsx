@@ -12,6 +12,7 @@ import {
   StyleSheet,
   Platform,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { DataTable } from "react-native-paper";
 import Card from "../../../components/UIElements/Card";
@@ -159,9 +160,21 @@ const ProductsList = () => {
     [perPageP, sendRequest, auth]
   );
 
-  const handleDeleteButtonClick = useCallback(
+  const handleDeleteButtonClick = (data: any) => {
+    Alert.alert(
+      "Delete Product",
+      "Please confirm deletion",
+      [
+        { text: "OK", onPress: () => deleteProduct(data) },
+        { text: "Cancel", onPress: () => console.log("Cancel Pressed") },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const deleteProduct = useCallback(
     async (data: any) => {
-      let id = JSON.parse(data.target.value).id;
+      let id = data.id;
       if (auth) {
         try {
           if (id) {
@@ -460,6 +473,18 @@ const ProductsList = () => {
                       Edit
                     </DataTable.Title>
                   )}
+                  {auth && auth.role == "Manufacturer" && (
+                    <DataTable.Title
+                      textStyle={{
+                        fontFamily: "Monteserrat",
+                        fontWeight: 400,
+                        fontStyle: "normal",
+                      }}
+                      style={{ width: 50 }}
+                    >
+                      Delete
+                    </DataTable.Title>
+                  )}
                   {auth && auth.role == "Trader" && (
                     <DataTable.Title
                       textStyle={{
@@ -646,6 +671,16 @@ const ProductsList = () => {
                               size={20}
                               color={colorIcon}
                               onPress={() => handleEditButtonClick(data)}
+                            />
+                          </DataTable.Cell>
+                        )}
+                        {auth && auth.role == "Manufacturer" && (
+                          <DataTable.Cell style={{ width: 50 }}>
+                            <IconButton
+                              icon="trash-bin"
+                              size={20}
+                              color={colorIcon}
+                              onPress={() => handleDeleteButtonClick(data)}
                             />
                           </DataTable.Cell>
                         )}

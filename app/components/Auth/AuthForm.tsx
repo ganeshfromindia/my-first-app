@@ -443,9 +443,8 @@ const AuthForm = () => {
                     buttonfont={true}
                     maxwidth={true}
                     inverse
-                    // onClick={switchModeHandler}
-                    // title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
-                    title=""
+                    onClick={switchModeHandler}
+                    title={`Switch To ${isLoginMode ? "Sign Up" : "Login"}`}
                   ></ButtonComp>
                 </View> */}
               </Card>

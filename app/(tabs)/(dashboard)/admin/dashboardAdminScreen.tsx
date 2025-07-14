@@ -13,9 +13,13 @@ import { AuthContext } from "@/store/auth-context";
 import ButtonComp from "../../../components/FormElements/Button";
 import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
 import ErrorModal from "../../../components/UIElements/ErrorModal";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 
 import s from "@/assets/css/style";
+
+import IconButton from "../../../components/ui/IconButton";
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { Colors } from "@/constants/Colors";
 
 const DashboardAdminScreen = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
@@ -40,7 +44,10 @@ const DashboardAdminScreen = () => {
   const [itemsPerPageM, onItemsPerPageChangeM] = useState(
     numberOfItemsPerPageListM[0]
   );
-
+  const colorIcon = useThemeColor(
+    { light: Colors.light.tint, dark: Colors.dark.tint },
+    "text"
+  );
   const fetchTraders = useCallback(
     async (page: number) => {
       if (perPageT) {
@@ -85,31 +92,21 @@ const DashboardAdminScreen = () => {
     [perPageM, sendRequest, auth]
   );
 
-  const handleDeleteTraderButtonClick = useCallback(
-    async (data: any) => {
-      let id = JSON.parse(data.id);
-      if (auth) {
-        try {
-          if (id) {
-            await sendRequest(
-              `${process.env.EXPO_PUBLIC_API_URL}/api/traders/${id}`,
-              "DELETE",
-              null,
-              {
-                Authorization: "Bearer " + auth.token,
-              }
-            );
-            fetchTraders(1);
-          }
-        } catch (err) {}
-      }
-    },
-    [sendRequest, auth, fetchTraders]
-  );
+  const handleDeleteManufacturerButtonClick = async (data: any) => {
+    Alert.alert(
+      "Delete Manufacturer",
+      "Please confirm deletion",
+      [
+        { text: "OK", onPress: () => deleteManufacturer(data) },
+        { text: "Cancel", onPress: () => console.log("Cancel Pressed") },
+      ],
+      { cancelable: false }
+    );
+  };
 
-  const handleDeleteManufacturerButtonClick = useCallback(
+  const deleteManufacturer = useCallback(
     async (data: any) => {
-      let id = JSON.parse(data.target.value).id;
+      let id = data.id;
       if (auth) {
         try {
           if (id) {
@@ -127,6 +124,40 @@ const DashboardAdminScreen = () => {
       }
     },
     [sendRequest, auth, fetchManufacturers]
+  );
+  const handleDeleteTraderButtonClick = async (data: any) => {
+    Alert.alert(
+      "Delete Trader",
+      "Please confirm deletion",
+      [
+        { text: "OK", onPress: () => deleteTrader(data) },
+        { text: "Cancel", onPress: () => console.log("Cancel Pressed") },
+      ],
+      { cancelable: false }
+    );
+  };
+
+  const deleteTrader = useCallback(
+    async (data: any) => {
+      let id = data.id;
+      if (auth) {
+        try {
+          if (id) {
+            await sendRequest(
+              `${process.env.EXPO_PUBLIC_API_URL}/api/traders/${id}`,
+              "DELETE",
+              null,
+              {
+                Authorization: "Bearer " + auth.token,
+              }
+            );
+            fetchTraders(1);
+          }
+        } catch (err) {}
+      }
+    },
+
+    [sendRequest, auth, fetchTraders]
   );
 
   useEffect(() => {
@@ -319,18 +350,23 @@ const DashboardAdminScreen = () => {
                           >
                             {data.serialNo}
                           </DataTable.Cell>
+
                           <DataTable.Cell
                             textStyle={{
                               fontFamily: "Work Sans",
                               fontWeight: 400,
                               fontStyle: "normal",
                             }}
-                            onPress={() =>
-                              handleDeleteManufacturerButtonClick(data)
-                            }
                             style={{ width: 50 }}
                           >
-                            Delete
+                            <IconButton
+                              icon="trash-bin"
+                              size={20}
+                              color={colorIcon}
+                              onPress={() =>
+                                handleDeleteManufacturerButtonClick(data)
+                              }
+                            />
                           </DataTable.Cell>
                           <DataTable.Cell
                             textStyle={{
@@ -491,10 +527,16 @@ const DashboardAdminScreen = () => {
                               fontWeight: 400,
                               fontStyle: "normal",
                             }}
-                            onPress={() => handleDeleteTraderButtonClick(data)}
                             style={{ width: 50 }}
                           >
-                            Delete
+                            <IconButton
+                              icon="trash-bin"
+                              size={20}
+                              color={colorIcon}
+                              onPress={() =>
+                                handleDeleteTraderButtonClick(data)
+                              }
+                            />
                           </DataTable.Cell>
                           <DataTable.Cell
                             textStyle={{

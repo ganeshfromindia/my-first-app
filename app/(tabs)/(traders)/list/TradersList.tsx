@@ -30,6 +30,7 @@ import IconButton from "../../../components/ui/IconButton";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import { useFocusEffect } from "@react-navigation/native";
+import { Alert } from "react-native";
 
 const TradersList = () => {
   const color = useThemeColor({ light: "#000000", dark: "#ffffff" }, "text");
@@ -120,9 +121,20 @@ const TradersList = () => {
     setTraderData(data);
   }, []);
 
-  const handleDeleteButtonClick = useCallback(
+  const handleDeleteButtonClick = (data: any) => {
+    Alert.alert(
+      "Delete Product",
+      "Please confirm deletion",
+      [
+        { text: "OK", onPress: () => deleteTrader(data) },
+        { text: "Cancel", onPress: () => console.log("Cancel Pressed") },
+      ],
+      { cancelable: false }
+    );
+  };
+  const deleteTrader = useCallback(
     async (data: any) => {
-      let id = JSON.parse(data.id);
+      let id = data.id;
       try {
         if (id) {
           await sendRequest(
@@ -263,16 +275,15 @@ const TradersList = () => {
       handlePerRowsChange(itemsPerPage);
     }, [])
   );
-
   if (manfProducts.length == 0) {
     return (
       <React.Fragment>
         <ErrorModal error={error} onClear={clearError} />
         <View style={globalStyle.center}>
           <Card cardProduct={true}>
-            <Text style={globalStyle.defaultFont}>
+            <ThemedText>
               No Products found. Please add products first and then add Trader
-            </Text>
+            </ThemedText>
           </Card>
         </View>
       </React.Fragment>
@@ -284,7 +295,7 @@ const TradersList = () => {
         <ErrorModal error={error} onClear={clearError} />
         <View style={globalStyle.center}>
           <Card cardProduct={true}>
-            <Text style={globalStyle.defaultFont}>No traders found</Text>
+            <ThemedText>No traders found</ThemedText>
             <ButtonComp
               onClick={() => handleOpen(null)}
               normal={true}

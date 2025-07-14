@@ -209,7 +209,6 @@ const Trader = ({
           "/Traders/" +
           formState.inputs.title.value,
       };
-
       if (traderData && traderData.id) {
         await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/traders/${traderData.id}`,
@@ -328,7 +327,7 @@ const Trader = ({
                 data={traders}
                 labelField="label"
                 valueField="value"
-                placeholder={!isFocus ? "Select item" : "..."}
+                placeholder={!isFocus ? "Select Trader" : "..."}
                 value={selected}
                 search
                 onFocus={() => setIsFocus(true)}
@@ -357,7 +356,7 @@ const Trader = ({
             >
               Or Add New Trader
             </Text>
-            <View style={{ width: 150, margin: "auto" }}>
+            <View style={{ width: 200, margin: "auto" }}>
               <ButtonComp
                 onClick={handleNewTrader}
                 normal={true}
