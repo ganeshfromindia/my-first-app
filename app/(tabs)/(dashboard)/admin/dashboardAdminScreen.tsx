@@ -281,7 +281,7 @@ const DashboardAdminScreen = () => {
                     >
                       SN
                     </DataTable.Title>
-                    <DataTable.Title
+                    {/* <DataTable.Title
                       textStyle={{
                         fontFamily: "Work Sans",
                         fontWeight: 400,
@@ -290,7 +290,7 @@ const DashboardAdminScreen = () => {
                       style={{ width: 50 }}
                     >
                       Delete
-                    </DataTable.Title>
+                    </DataTable.Title> */}
                     <DataTable.Title
                       textStyle={{
                         fontFamily: "Work Sans",
@@ -351,7 +351,7 @@ const DashboardAdminScreen = () => {
                             {data.serialNo}
                           </DataTable.Cell>
 
-                          <DataTable.Cell
+                          {/* <DataTable.Cell
                             textStyle={{
                               fontFamily: "Work Sans",
                               fontWeight: 400,
@@ -367,7 +367,7 @@ const DashboardAdminScreen = () => {
                                 handleDeleteManufacturerButtonClick(data)
                               }
                             />
-                          </DataTable.Cell>
+                          </DataTable.Cell> */}
                           <DataTable.Cell
                             textStyle={{
                               fontFamily: "Work Sans",
@@ -452,7 +452,7 @@ const DashboardAdminScreen = () => {
                     >
                       SN
                     </DataTable.Title>
-                    <DataTable.Title
+                    {/* <DataTable.Title
                       textStyle={{
                         fontFamily: "Work Sans",
                         fontWeight: 400,
@@ -461,7 +461,7 @@ const DashboardAdminScreen = () => {
                       style={{ width: 50 }}
                     >
                       Delete
-                    </DataTable.Title>
+                    </DataTable.Title> */}
                     <DataTable.Title
                       textStyle={{
                         fontFamily: "Work Sans",
@@ -521,7 +521,7 @@ const DashboardAdminScreen = () => {
                           >
                             {data.serialNo}
                           </DataTable.Cell>
-                          <DataTable.Cell
+                          {/* <DataTable.Cell
                             textStyle={{
                               fontFamily: "Work Sans",
                               fontWeight: 400,
@@ -537,7 +537,7 @@ const DashboardAdminScreen = () => {
                                 handleDeleteTraderButtonClick(data)
                               }
                             />
-                          </DataTable.Cell>
+                          </DataTable.Cell> */}
                           <DataTable.Cell
                             textStyle={{
                               fontFamily: "Work Sans",
