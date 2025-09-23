@@ -1,4 +1,4 @@
-import { Tabs } from "expo-router";
+import { Tabs, useLocalSearchParams } from "expo-router";
 import React, { useContext } from "react";
 
 import { Colors } from "@/constants/Colors";
@@ -9,6 +9,7 @@ import { AuthContext } from "@/store/auth-context";
 import LogoutButton from "../(pages)/logout";
 
 export default function TabLayout() {
+  const { category } = useLocalSearchParams();
   const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
     "tint"
@@ -82,22 +83,53 @@ export default function TabLayout() {
           }}
         />
       )}
-      {(auth.role === "Manufacturer" || auth.role === "Trader") && (
+      {(auth.role === "Manufacturer" || auth.role === "Trader") &&
+        category == "api" && (
+          <Tabs.Screen
+            name="(products)/api/list/ProductsList"
+            options={{
+              headerShown: true,
+              title: "Products",
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name="product-hunt" color={color} />
+              ),
+              headerRight: () => <LogoutButton />,
+            }}
+          />
+        )}
+      {(auth.role === "Admin" ||
+        (auth.role === "Trader" && category == "pigments") ||
+        (auth.role === "Manufacturer" && category == "pigments")) && (
         <Tabs.Screen
-          name="(products)/list/ProductsList"
+          name="(products)/api/list/ProductsList"
           options={{
-            headerShown: true,
-            title: "Products",
+            title: "test",
+            href: null,
             tabBarIcon: ({ color }) => (
               <TabBarIcon name="product-hunt" color={color} />
             ),
-            headerRight: () => <LogoutButton />,
           }}
         />
       )}
-      {auth.role === "Admin" && (
+      {(auth.role === "Manufacturer" || auth.role === "Trader") &&
+        category == "pigments" && (
+          <Tabs.Screen
+            name="(products)/pigments/list/ProductsList"
+            options={{
+              headerShown: true,
+              title: "Products",
+              tabBarIcon: ({ color }) => (
+                <TabBarIcon name="product-hunt" color={color} />
+              ),
+              headerRight: () => <LogoutButton />,
+            }}
+          />
+        )}
+      {(auth.role === "Admin" ||
+        (auth.role === "Trader" && category == "api") ||
+        (auth.role === "Manufacturer" && category == "api")) && (
         <Tabs.Screen
-          name="(products)/list/ProductsList"
+          name="(products)/pigments/list/ProductsList"
           options={{
             href: null,
           }}
@@ -113,6 +145,10 @@ export default function TabLayout() {
               <TabBarIcon name="user-plus" color={color} />
             ),
             headerRight: () => <LogoutButton />,
+            href: {
+              pathname: "/(tabs)/(traders)/list/TradersList",
+              params: { category: category },
+            },
           }}
         />
       )}
@@ -131,7 +167,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="(products)/item/Product"
+        name="(products)/api/item/Product"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="(products)/pigments/item/Product"
         options={{
           href: null,
         }}

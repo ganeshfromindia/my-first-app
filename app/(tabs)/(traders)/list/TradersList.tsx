@@ -31,8 +31,10 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
 import { useFocusEffect } from "@react-navigation/native";
 import { Alert } from "react-native";
+import { useLocalSearchParams } from "expo-router";
 
 const TradersList = () => {
+  const { category } = useLocalSearchParams();
   const color = useThemeColor({ light: "#000000", dark: "#ffffff" }, "text");
   const colorIcon = useThemeColor(
     { light: Colors.light.tint, dark: Colors.dark.tint },
@@ -84,7 +86,7 @@ const TradersList = () => {
       if (auth.userId && auth.role) {
         try {
           const response = await sendRequest(
-            `${process.env.EXPO_PUBLIC_API_URL}/api/traders/manufacturer/${auth.userId}?page=${page}&size=${perPage}&delay=1`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/traders/manufacturer/${auth.userId}?category=${category}&page=${page}&size=${perPage}&delay=1`,
             "GET",
             null,
             { Authorization: "Bearer " + auth.token }
@@ -157,7 +159,7 @@ const TradersList = () => {
       if (traderId && auth.token) {
         try {
           const response = await sendRequest(
-            `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/manufacturer/id?uid=${traderId}&page=${page}&size=${perPageP}&delay=1`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/manufacturer/id?uid=${traderId}&category=${category}&page=${page}&size=${perPageP}&delay=1`,
             "GET",
             null,
             { Authorization: "Bearer " + auth.token }
@@ -178,7 +180,7 @@ const TradersList = () => {
       if (auth && auth.userId) {
         try {
           const response = await sendRequest(
-            `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPage}&delay=1`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&category=${category}&page=${page}&size=${perPage}&delay=1`,
             "GET",
             null,
             {
@@ -325,6 +327,7 @@ const TradersList = () => {
               <View className="map-container">
                 <Trader
                   traderDataRecd={null}
+                  category={category}
                   handleClose={handleClose}
                 ></Trader>
               </View>
@@ -558,6 +561,7 @@ const TradersList = () => {
             <View>
               <Trader
                 traderDataRecd={traderData}
+                category={category}
                 handleClose={handleClose}
               ></Trader>
             </View>

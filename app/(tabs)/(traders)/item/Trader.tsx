@@ -35,9 +35,11 @@ enum pointerEvent {
 
 const Trader = ({
   traderDataRecd,
+  category,
   handleClose,
 }: {
   traderDataRecd: any;
+  category: any;
   handleClose: any;
 }) => {
   const [selected, setSelected] = useState<any>(null);
@@ -111,7 +113,7 @@ const Trader = ({
               process.env.EXPO_PUBLIC_API_URL
             }/api/products/manufacturer/id?uid=${
               auth.userId
-            }&page=${page}&size=${1000}&delay=1`,
+            }&category=${category}&page=${page}&size=${1000}&delay=1`,
             "GET",
             null,
             {
@@ -221,6 +223,7 @@ const Trader = ({
         );
         handleClose();
       } else {
+        formData.category = category;
         const responseData = await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/traders/create`,
           "POST",

@@ -107,6 +107,7 @@ const useAuth = () => {
   // }, [token, logout, tokenExpirationDate]);
 
   const retrieveData = useCallback(async () => {
+    // AsyncStorage.removeItem("userData");
     const storedData: UserDataType | string =
       (await AsyncStorage.getItem("userData")) || initialUserData;
     storedData != null ? JSON.parse(JSON.stringify(storedData)) : null;

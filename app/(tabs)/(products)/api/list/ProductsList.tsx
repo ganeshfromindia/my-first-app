@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext, useEffect } from "react";
 import globalStyle from "@/assets/css/style";
-import IconButton from "../../../components/ui/IconButton";
+import IconButton from "../../../../components/ui/IconButton";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
 import * as mime from "react-native-mime-types";
@@ -15,17 +15,17 @@ import {
   Alert,
 } from "react-native";
 import { DataTable } from "react-native-paper";
-import Card from "../../../components/UIElements/Card";
-import ButtonComp from "../../../components/FormElements/Button";
-import Modal from "../../../components/UIElements/Modal";
+import Card from "../../../../components/UIElements/Card";
+import ButtonComp from "../../../../components/FormElements/Button";
+import Modal from "../../../../components/UIElements/Modal";
 import Product from "../item/Product";
 import useHttpClient from "@/hooks/http-hook";
 import { AuthContext } from "@/store/auth-context";
-import ErrorModal from "../../../components/UIElements/ErrorModal";
-import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
+import ErrorModal from "../../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../../components/UIElements/LoadingSpinner";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Colors } from "@/constants/Colors";
-import { ThemedText } from "../../../components/ThemedText";
+import { ThemedText } from "../../../../components/ThemedText";
 import { useFocusEffect } from "@react-navigation/native";
 
 const ProductsList = () => {
@@ -142,9 +142,9 @@ const ProductsList = () => {
       if (auth.userId && auth.role) {
         let url;
         if (auth.role === "Manufacturer") {
-          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
+          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/manufacturer/id?uid=${auth.userId}&category=api&page=${page}&size=${perPageP}&delay=1`;
         } else if (auth.role === "Trader") {
-          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/id?uid=${auth.userId}&page=${page}&size=${perPageP}&delay=1`;
+          url = `${process.env.EXPO_PUBLIC_API_URL}/api/products/trader/id?uid=${auth.userId}&category=api&page=${page}&size=${perPageP}&delay=1`;
         }
         try {
           const response = await sendRequest(url, "GET", null, {

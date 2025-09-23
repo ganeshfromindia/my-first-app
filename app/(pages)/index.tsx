@@ -2,7 +2,12 @@ import { startTransition, useContext, useEffect } from "react";
 
 import { AuthContext } from "../../store/auth-context";
 
-import { useRouter, useFocusEffect, useNavigation } from "expo-router";
+import {
+  useRouter,
+  useFocusEffect,
+  useNavigation,
+  useLocalSearchParams,
+} from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { CommonActions } from "@react-navigation/native";
 
@@ -34,27 +39,15 @@ function AuthenticatedStack() {
           ],
         })
       );
-      if (auth.role == "Manufacturer") {
-        router.replace(
-          "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
-        );
-
-        // return (
-        //   <Redirect href="/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen" />
-        // );
+      if (auth.role == "Manufacturer" || auth.role == "Trader") {
+        router.replace("/(pages)/categories");
+      } else if (auth.role == "Admin") {
+        router.replace("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
       }
-      // else if (auth.role == "Trader") {
-      //   return (
-      //     <Redirect href="/(tabs)/(dashboard)/trader/dashboardTraderScreen" />
-      //   );
-      // } else if (auth.role == "Admin") {
-      //   return <Redirect href="/(tabs)/(dashboard)/admin/dashboardAdminScreen" />;
-      // }
     }
   });
   return null;
 }
-
 const retrieveData = async () => {
   const initialUserData: any = {
     token: null,

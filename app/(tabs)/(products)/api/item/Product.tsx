@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { MultiSelect } from "react-native-element-dropdown";
 
-import Input from "../../../components/FormElements/Input";
-import ButtonComp from "../../../components/FormElements/Button";
-import ErrorModal from "../../../components/UIElements/ErrorModal";
-import LoadingSpinner from "../../../components/UIElements/LoadingSpinner";
-import ImageUpload from "../../../components/FormElements/ImageUpload";
+import Input from "../../../../components/FormElements/Input";
+import ButtonComp from "../../../../components/FormElements/Button";
+import ErrorModal from "../../../../components/UIElements/ErrorModal";
+import LoadingSpinner from "../../../../components/UIElements/LoadingSpinner";
+import ImageUpload from "../../../../components/FormElements/ImageUpload";
 import { VALIDATOR_REQUIRE, VALIDATOR_MINLENGTH } from "@/util/validators";
 import useForm from "@/hooks/form-hook";
 import useHttpClient from "@/hooks/http-hook";
@@ -174,6 +174,7 @@ const Product = ({
         );
         setPageData((prev: any) => responseData.product);
       } else {
+        formData.append("category", "api");
         const responseData = await sendRequest(
           `${process.env.EXPO_PUBLIC_API_URL}/api/products/create`,
           "POST",

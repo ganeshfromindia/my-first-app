@@ -13,9 +13,11 @@ import { PaperProvider } from "react-native-paper";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { Text } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RootLayout() {
   SplashScreen.preventAutoHideAsync();
+  //  AsyncStorage.removeItem("userData");
   const {
     token,
     login,

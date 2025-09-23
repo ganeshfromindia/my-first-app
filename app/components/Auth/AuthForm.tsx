@@ -140,15 +140,20 @@ const AuthForm = () => {
             ],
           })
         );
-        if (responseData.role === "Manufacturer") {
-          router.replace(
-            "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
-          );
-        } else if (responseData.role === "Admin") {
-          router.replace("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
-        } else if (responseData.role === "Trader") {
-          router.replace("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
+        if (responseData.role !== "Admin") {
+          router.navigate("/(pages)/categories");
+        } else {
+          router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
         }
+        // if (responseData.role === "Manufacturer") {
+        //   router.replace(
+        //     "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
+        //   );
+        // } else if (responseData.role === "Admin") {
+        //   router.replace("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
+        // } else if (responseData.role === "Trader") {
+        //   router.replace("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
+        // }
       } catch (err) {
         console.log(err);
       }
@@ -185,15 +190,20 @@ const AuthForm = () => {
           true,
           new Date(responseData.expiration)
         );
-        if (responseData.role === "Manufacturer") {
-          router.navigate(
-            "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
-          );
-        } else if (responseData.role === "Admin") {
+        if (responseData.role !== "Admin") {
+          router.navigate("/(pages)/categories");
+        } else {
           router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
-        } else if (responseData.role === "Trader") {
-          router.navigate("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
         }
+        // if (responseData.role === "Manufacturer") {
+        //   router.navigate(
+        //     "/(tabs)/(dashboard)/manufacturer/dashboardManufacturerScreen"
+        //   );
+        // } else if (responseData.role === "Admin") {
+        //   router.navigate("/(tabs)/(dashboard)/admin/dashboardAdminScreen");
+        // } else if (responseData.role === "Trader") {
+        //   router.navigate("/(tabs)/(dashboard)/trader/dashboardTraderScreen");
+        // }
       } catch (err) {
         console.log(err);
       }

@@ -13,11 +13,13 @@ import s from "@/assets/css/style";
 import Card from "../../../components/UIElements/Card";
 import { useFocusEffect } from "@react-navigation/native";
 import globalStyle from "@/assets/css/style";
+import { useLocalSearchParams } from "expo-router";
 
 const DashboardManufacturerScreen = (props: any) => {
   const [manufacturerData, setManufacturerData] = useState<any>();
   const auth = useContext(AuthContext);
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { category } = useLocalSearchParams();
   const manufacturerDashboardSubmitHandler = async (event: any) => {
     event.preventDefault();
     try {

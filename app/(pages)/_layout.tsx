@@ -11,8 +11,16 @@ export default function TabLayout() {
       <Stack.Screen name="logout" options={{ headerShown: false, title: "" }} />
 
       <Stack.Screen
+        name="categories"
+        options={{
+          headerShown: false,
+          title: "Categories",
+        }}
+      />
+
+      <Stack.Screen
         name="authScreen"
-        options={{ headerShown: true, title: "Login" }}
+        options={{ headerShown: true, title: "Login", headerLeft: () => null }}
       />
     </Stack>
   );
